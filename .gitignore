@@ -1,0 +1,21 @@
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## Project Specific
+fourinaline-android/libs/GnuBackgammon.jar
+tmp/
+*apk
+*class
+fourinaline-android/bin/
+fourinaline-android/gen/
+fourinaline-desktop/bin/
+fourinaline-desktop/data/
+fourinaline/bin/
+*.log
+google-play-services_lib/bin
+google-play-services_lib/gen
