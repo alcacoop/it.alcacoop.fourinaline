@@ -3,6 +3,7 @@
 
 package it.alcacoop.fourinaline.fsm;
 
+import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import com.badlogic.gdx.Gdx;
 
@@ -23,10 +24,51 @@ interface State {
 public class FSM implements Context {
 
   public enum Events {
-    NOOP
+    NOOP,
+    BUTTON_CLICKED,
+    GAME_TERMINATED
   }
 
   public enum States implements State {
+    
+    MAIN_MENU {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.setScreen(FourInALine.Instance.menuScreen);
+      }
+      
+      @Override
+      public boolean processEvent(Context ctx, Events evt, Object params) {
+        switch (evt) {
+          case BUTTON_CLICKED:
+            FourInALine.Instance.fsm.state(States.GAME_SCREEN);
+            break;
+          default:
+            return false;
+        }
+        return true;
+      }
+    },
+    
+    GAME_SCREEN {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.setScreen(FourInALine.Instance.gameScreen);
+      };
+      
+      @Override
+      public boolean processEvent(Context ctx, Events evt, Object params) {
+        switch (evt) {
+        case GAME_TERMINATED:
+          FourInALine.Instance.fsm.state(States.MAIN_MENU);
+          break;
+        default:
+          return false;
+      }
+        return true;
+      }
+    },
+    
     STOPPED {
       @Override
       public void enterState(Context ctx) {
@@ -45,6 +87,7 @@ public class FSM implements Context {
 
 
   public void start() {
+    state(States.MAIN_MENU);
   }
 
   public void stop() {

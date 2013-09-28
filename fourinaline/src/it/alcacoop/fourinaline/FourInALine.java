@@ -1,7 +1,9 @@
 package it.alcacoop.fourinaline;
 
+import it.alcacoop.fourinaline.fsm.FSM;
 import it.alcacoop.fourinaline.layers.BaseScreen;
 import it.alcacoop.fourinaline.layers.GameScreen;
+import it.alcacoop.fourinaline.layers.MenuScreen;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,12 +33,16 @@ public class FourInALine extends Game implements ApplicationListener {
   public BitmapFont font;
   public BaseScreen currentScreen;
   
+  public MenuScreen menuScreen;
+  public GameScreen gameScreen;
+  
+  public FSM fsm;
+  
   public static FourInALine Instance;
   
   @Override
   public void create() {		
     Instance = this;
-    
     //CHECK SCREEN DIM AND SELECT CORRECT ATLAS
     int pWidth = Gdx.graphics.getWidth();
     if (pWidth<=480) ss = 2;
@@ -48,12 +54,18 @@ public class FourInALine extends Game implements ApplicationListener {
     font = new BitmapFont(Gdx.files.internal(resname[ss]+"/checker.fnt"), false);
     
     transitionTimer = new Timer();
-    setScreen(new GameScreen());
+
+    menuScreen = new MenuScreen();
+    gameScreen = new GameScreen();
+    
+    fsm = new FSM();
+    fsm.start();
   }
 
   
   @Override
   public void setScreen(final Screen screen) {
+    System.out.println("SET SCREEN");
     if (currentScreen!=null) {
       ((BaseScreen)screen).initialize();
       currentScreen.fadeOut();
@@ -67,6 +79,7 @@ public class FourInALine extends Game implements ApplicationListener {
       transitionTimer.schedule(task, (long)(currentScreen.animationTime*1000));
     } else 
       super.setScreen(screen);
+    currentScreen = (BaseScreen)screen;
   }
   
   

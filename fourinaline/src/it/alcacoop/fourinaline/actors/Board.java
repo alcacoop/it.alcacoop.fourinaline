@@ -10,6 +10,7 @@ import org.gojul.fourinaline.model.GameModel.CellCoord;
 import org.gojul.fourinaline.model.GameModel.GameStatus;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -91,7 +92,6 @@ public class Board extends Group {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         if ((!locked)&&(color==1)) {
-          locked = true;
           int cx = (int) Math.ceil((x/dim))-1;
           play(cx);
         }
@@ -150,10 +150,12 @@ public class Board extends Group {
                 System.out.println(iterator.next().getColIndex()+":"+iterator.next().getRowIndex());
               }
               locked = true;
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 1);
             }
             else if (gameModel.getGameStatus()==GameStatus.TIE_STATUS) {
               System.out.println("PAREGGIO!");
               locked = true;
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 0);
             }
             else if (gameModel.getCurrentPlayer().hashCode()==2) {
               int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
