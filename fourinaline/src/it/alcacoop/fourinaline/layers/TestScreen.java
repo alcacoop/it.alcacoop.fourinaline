@@ -11,9 +11,10 @@ public class TestScreen extends BaseScreen {
 
   public TestScreen() {
     
-    Board b = new Board(5, 4, stage.getHeight()*0.9f);
+    Board b = new Board(7, 6, 4, stage.getHeight()*0.85f);
     b.setPosition((stage.getWidth()-b.getWidth())/2, (stage.getHeight()-b.getHeight())/2); 
     stage.addActor(b);
+    b.initMatch(1);
   }
 
   @Override
@@ -22,6 +23,13 @@ public class TestScreen extends BaseScreen {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     stage.act(delta);
     stage.draw();
+  }
+ 
+  @Override
+  public void show() {
+    super.show();
+    Gdx.input.setInputProcessor(stage);
+    Gdx.input.setCatchBackKey(true);
   }
   
   @Override
