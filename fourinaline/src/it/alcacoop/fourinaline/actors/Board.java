@@ -1,8 +1,12 @@
 package it.alcacoop.fourinaline.actors;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.gojul.fourinaline.model.AlphaBeta;
 import org.gojul.fourinaline.model.DefaultEvalScore;
 import org.gojul.fourinaline.model.GameModel;
+import org.gojul.fourinaline.model.GameModel.CellCoord;
 import org.gojul.fourinaline.model.GameModel.GameStatus;
 
 import it.alcacoop.fourinaline.FourInALine;
@@ -139,7 +143,12 @@ public class Board extends Group {
             if (color==1) color=2;
             else color = 1;
             if (gameModel.getGameStatus()==GameStatus.WON_STATUS) {
-              System.out.println("PARTITA FINITA!");
+              System.out.println("PARTITA VINTA!");
+              List<CellCoord> l = gameModel.getWinLine();
+              Iterator<CellCoord> iterator = l.iterator();
+              while (iterator.hasNext()) {
+                System.out.println(iterator.next().getColIndex()+":"+iterator.next().getRowIndex());
+              }
               locked = true;
             }
             else if (gameModel.getGameStatus()==GameStatus.TIE_STATUS) {
