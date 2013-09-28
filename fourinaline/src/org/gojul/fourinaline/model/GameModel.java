@@ -516,6 +516,13 @@ public final class GameModel implements Serializable
 	 */
 	private Map<CellCoord, Set<List<CellCoord>>> winLinesMap;
 	
+	
+	public GameModel(final int rows, final int cols, final int winLength, int firstPlayer) {
+    this(rows, cols, winLength);
+    if (firstPlayer==2) currentPlayer = PlayerMark.getNextPlayer();
+  }
+	
+	
 	/**
 	 * Constructor.
 	 */
@@ -523,6 +530,7 @@ public final class GameModel implements Serializable
 	{
 		this(6, 7, 4);
 	}
+	
 	
 	/**
 	 * Constructor.
