@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.GL10;
 
 
 
-public class TestScreen extends BaseScreen {
+public class GameScreen extends BaseScreen {
 
-  public TestScreen() {
+  public GameScreen() {
     
     Board b = new Board(7, 6, 4, stage.getHeight()*0.85f);
     b.setPosition((stage.getWidth()-b.getWidth())/2, (stage.getHeight()-b.getHeight())/2); 

@@ -1,7 +1,7 @@
 package it.alcacoop.fourinaline;
 
 import it.alcacoop.fourinaline.layers.BaseScreen;
-import it.alcacoop.fourinaline.layers.TestScreen;
+import it.alcacoop.fourinaline.layers.GameScreen;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,13 +22,13 @@ public class FourInALine extends Game implements ApplicationListener {
       {800,480},
       {480,320}
   };
-  public int ss;
   private String[] resname = {"mdpi", "mdpi", "mdpi"};
   public int resolution[];
+  public int ss;
+  
   public TextureAtlas atlas;
   public Skin skin;
   public BitmapFont font;
-  
   public BaseScreen currentScreen;
   
   public static FourInALine Instance;
@@ -48,7 +48,7 @@ public class FourInALine extends Game implements ApplicationListener {
     font = new BitmapFont(Gdx.files.internal(resname[ss]+"/checker.fnt"), false);
     
     transitionTimer = new Timer();
-    setScreen(new TestScreen());
+    setScreen(new GameScreen());
   }
 
   
