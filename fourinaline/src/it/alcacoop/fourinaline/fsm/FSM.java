@@ -26,7 +26,7 @@ public class FSM implements Context {
   public enum Events {
     NOOP,
     BUTTON_CLICKED,
-    GAME_TERMINATED, BOARD_RESETTED, MOVE_END
+    GAME_TERMINATED, BOARD_RESETTED, MOVE_END, PLAY_COL
   }
 
   public enum States implements State {
@@ -59,6 +59,9 @@ public class FSM implements Context {
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
+          case PLAY_COL:
+            FourInALine.Instance.gameScreen.board.play((Integer)params);
+            break;
           case MOVE_END:
             break;
           case GAME_TERMINATED:

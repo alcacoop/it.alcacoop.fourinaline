@@ -2,6 +2,7 @@ package it.alcacoop.fourinaline.actors;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.logic.AIExecutor;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -110,7 +111,7 @@ public class Board extends Group {
         } else {
           if ((!locked)&&(color==1)) {
             int cx = (int) Math.ceil((x/dim))-1;
-            play(cx);
+            FourInALine.Instance.fsm.processEvent(Events.PLAY_COL, cx);
           } 
         }
       }
@@ -168,8 +169,7 @@ public class Board extends Group {
     } else {
       locked = false;
       if (gameModel.getCurrentPlayer().hashCode()==2) {
-        int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
-        play(a);
+        AIExecutor.getBestColIndex(alphaBeta, gameModel);
       }
     }
   }
@@ -178,15 +178,14 @@ public class Board extends Group {
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: "+gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 2, 1);
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 4, 0.5f);
 
     gameEnded = -1;
     
     locked = false;
     color = gameModel.getCurrentPlayer().hashCode();
     if (color==2) {
-      int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
-      play(a);
+      AIExecutor.getBestColIndex(alphaBeta, gameModel);
     }
   }
 
