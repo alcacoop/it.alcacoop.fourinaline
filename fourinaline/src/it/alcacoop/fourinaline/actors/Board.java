@@ -35,6 +35,7 @@ public class Board extends Group {
   private AlphaBeta alphaBeta;
   
   private Pool<Checker> checkers;
+  private ParticleEffectActor[] effects;
   
   private int color;
   private boolean locked;
@@ -42,16 +43,15 @@ public class Board extends Group {
   
   private int gameEnded;
   
-  int wx;
-  int wy;
-  int winLength;
+  private int wx;
+  private int wy;
+  private int winLength;
   
   public Board(final int wx, final int wy, final int winLength, final float height) {
     super();
     this.wx = wx;
     this.wy = wy;
     this.winLength = winLength;
-    
     
     checkers = new Pool<Checker>(wx*wy) {
       @Override
@@ -94,6 +94,13 @@ public class Board extends Group {
       mask.row();
     }
     addActor(mask);
+    
+    effects = new ParticleEffectActor[4];
+    for (int i=0;i<4;i++) {
+      effects[i] = new ParticleEffectActor();
+      effects[i].setVisible(false);
+      addActor(effects[i]);
+    }
 
     mask.addListener(new ClickListener(){
       @Override
@@ -128,7 +135,6 @@ public class Board extends Group {
     checker.setPosition(dim*col, checkersLayer.getHeight());
 
     CellCoord cc = new CellCoord(col, row);
-    System.out.println("SAVING ON: "+cc.getColIndex()+":"+cc.getRowIndex());
     usedCheckers.put(cc, checker);
     checker.addAction(
       Actions.sequence(
@@ -172,7 +178,7 @@ public class Board extends Group {
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: "+gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 3, 1);
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 2, 1);
 
     gameEnded = -1;
     
@@ -204,6 +210,8 @@ public class Board extends Group {
       ));
       iter.remove();
     }
+    for (int i=0;i<4;i++)
+      effects[i].setVisible(false);
   }
   
   
@@ -211,12 +219,10 @@ public class Board extends Group {
     for (int c=0;c<gameModel.getWinLine().size();c++) {
       int row = gameModel.getWinLine().get(c).getRowIndex();
       int col = gameModel.getWinLine().get(c).getColIndex();
-      System.out.println(col+":"+row);
-      Checker ch = usedCheckers.get(new CellCoord(col, row));
-      if (ch!=null)
-        ch.highlight();
-      else
-        System.out.println("errore!");
+      //Checker ch = usedCheckers.get(new CellCoord(col, row));
+      //System.out.println((ch.getX()+ch.getWidth())+" -> "+dim*(col+1)+" --- "+ch.getWidth());
+      effects[c].setPosition(dim*(col+1), dim*(wy-row));
+      effects[c].setVisible(true);
     }
   }
   
