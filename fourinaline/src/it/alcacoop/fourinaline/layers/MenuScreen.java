@@ -53,7 +53,6 @@ public class MenuScreen extends BaseScreen {
   
   @Override
   public void fadeOut() {
-    System.out.println("FOUT");
     table.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(animationTime),Actions.moveTo(-stage.getWidth(), (stage.getHeight()-table.getHeight())/2, animationTime))));
   }
 }

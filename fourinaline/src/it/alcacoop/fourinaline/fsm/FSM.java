@@ -26,7 +26,7 @@ public class FSM implements Context {
   public enum Events {
     NOOP,
     BUTTON_CLICKED,
-    GAME_TERMINATED
+    GAME_TERMINATED, BOARD_RESETTED, MOVE_END
   }
 
   public enum States implements State {
@@ -59,15 +59,21 @@ public class FSM implements Context {
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
-        case GAME_TERMINATED:
-          FourInALine.Instance.fsm.state(States.MAIN_MENU);
-          break;
-        default:
-          return false;
-      }
+          case MOVE_END:
+            break;
+          case GAME_TERMINATED:
+            FourInALine.Instance.gameScreen.board.reset();
+            break;
+          case BOARD_RESETTED:
+            FourInALine.Instance.fsm.state(States.MAIN_MENU);
+            break;
+          default:
+            return false;
+        }
         return true;
       }
     },
+    
     
     STOPPED {
       @Override

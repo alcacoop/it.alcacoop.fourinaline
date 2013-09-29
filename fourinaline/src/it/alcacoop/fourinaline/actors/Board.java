@@ -1,16 +1,17 @@
 package it.alcacoop.fourinaline.actors;
 
+import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
+
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map.Entry;
 
 import org.gojul.fourinaline.model.AlphaBeta;
 import org.gojul.fourinaline.model.DefaultEvalScore;
 import org.gojul.fourinaline.model.GameModel;
 import org.gojul.fourinaline.model.GameModel.CellCoord;
 import org.gojul.fourinaline.model.GameModel.GameStatus;
-
-import it.alcacoop.fourinaline.FourInALine;
-import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -37,6 +38,9 @@ public class Board extends Group {
   
   private int color;
   private boolean locked;
+  private HashMap<CellCoord, Checker> usedCheckers;
+  
+  private int gameEnded;
   
   int wx;
   int wy;
@@ -48,12 +52,15 @@ public class Board extends Group {
     this.wy = wy;
     this.winLength = winLength;
     
+    
     checkers = new Pool<Checker>(wx*wy) {
       @Override
       protected Checker newObject() {
         return new Checker();
       }
     };
+    
+    usedCheckers = new HashMap<GameModel.CellCoord, Checker>();
     
     NinePatch patch = null;
     TextureRegion r = FourInALine.Instance.atlas.findRegion("bbg");
@@ -91,82 +98,126 @@ public class Board extends Group {
     mask.addListener(new ClickListener(){
       @Override
       public void clicked(InputEvent event, float x, float y) {
-        if ((!locked)&&(color==1)) {
-          int cx = (int) Math.ceil((x/dim))-1;
-          play(cx);
+        if (gameEnded>=0) {
+          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, gameEnded);
+        } else {
+          if ((!locked)&&(color==1)) {
+            int cx = (int) Math.ceil((x/dim))-1;
+            play(cx);
+          } 
         }
       }
     });
   }
   
   
+  public boolean play(int col) {
+    int row=gameModel.getFreeRowIndexForColumn(col);
+    if (row==-1) return false;
+    locked = true;
+    
+    System.out.println("COORD: "+col+":"+row);
+    
+    gameModel.play(col, gameModel.getCurrentPlayer());
+    
+    Checker checker = checkers.obtain();
+    checker.setColor(color);
+    checker.setWidth(dim);
+    checker.setHeight(dim);
+    checkersLayer.addActor(checker);
+    checker.setPosition(dim*col, checkersLayer.getHeight());
+
+    CellCoord cc = new CellCoord(col, row);
+    System.out.println("SAVING ON: "+cc.getColIndex()+":"+cc.getRowIndex());
+    usedCheckers.put(cc, checker);
+    checker.addAction(
+      Actions.sequence(
+        Actions.moveTo(dim*col, dim*(wy-row-1), 0.3f),
+        Actions.run(new Runnable() {
+          @Override
+          public void run() {
+            moveEnd();
+          }
+        })
+    ));
+    return true;
+  }
+  
+  
+  public void moveEnd() {
+    if (color==1) color=2;
+    else color = 1;
+    
+    if (gameModel.getGameStatus()!=GameStatus.CONTINUE_STATUS) {
+      locked = true;
+      if (gameModel.getGameStatus()==GameStatus.WON_STATUS) {
+        System.out.println("PARTITA VINTA!");
+        highlightWinLine();
+        gameEnded = 1; //TODO: 1 o 2
+      }
+      else if (gameModel.getGameStatus()==GameStatus.TIE_STATUS) {
+        System.out.println("PAREGGIO!");
+        gameEnded = 0;
+      }
+    } else {
+      locked = false;
+      if (gameModel.getCurrentPlayer().hashCode()==2) {
+        int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
+        play(a);
+      }
+    }
+  }
+
+  
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: "+gameModel.getCurrentPlayer());
     alphaBeta = new AlphaBeta(new DefaultEvalScore(), 3, 1);
+
+    gameEnded = -1;
     
     locked = false;
-    
     color = gameModel.getCurrentPlayer().hashCode();
     if (color==2) {
       int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
       play(a);
     }
-    
+  }
+
+  
+  public void reset() {
+    Iterator<Entry<CellCoord, Checker>> iter = usedCheckers.entrySet().iterator();
+    while (iter.hasNext()) {
+      Entry<CellCoord, Checker> entry = iter.next();
+      final Checker c = entry.getValue();
+      c.addAction(Actions.sequence(
+          Actions.fadeOut(0.4f),
+          Actions.run(new Runnable() {
+            @Override
+            public void run() {
+              c.remove();
+              checkers.free(c);
+              if (usedCheckers.size()==0) //TODO: mettere un if
+                FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
+            }
+          })
+      ));
+      iter.remove();
+    }
   }
   
   
-  public boolean play(int col) {
-    int row=gameModel.getFreeRowIndexForColumn(col);
-    if (row==-1) return false;
-    
-    locked = true;
-    int dist = row+1;
-    row = wy-row;
-    
-    gameModel.play(col, gameModel.getCurrentPlayer());
-    
-    Checker c = checkers.obtain();
-    c.setColor(color);
-    c.setWidth(dim);
-    c.setHeight(dim);
-    checkersLayer.addActor(c);
-    c.setPosition(dim*col, checkersLayer.getHeight());
-    
-    c.addAction(
-      Actions.sequence(
-        Actions.moveTo(dim*col, dim*(row-1), dist*0.1f),
-        Actions.run(new Runnable() {
-          @Override
-          public void run() {
-            locked = false;
-            if (color==1) color=2;
-            else color = 1;
-            if (gameModel.getGameStatus()==GameStatus.WON_STATUS) {
-              System.out.println("PARTITA VINTA!");
-              List<CellCoord> l = gameModel.getWinLine();
-              Iterator<CellCoord> iterator = l.iterator();
-              while (iterator.hasNext()) {
-                System.out.println(iterator.next().getColIndex()+":"+iterator.next().getRowIndex());
-              }
-              locked = true;
-              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 1);
-            }
-            else if (gameModel.getGameStatus()==GameStatus.TIE_STATUS) {
-              System.out.println("PAREGGIO!");
-              locked = true;
-              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 0);
-            }
-            else if (gameModel.getCurrentPlayer().hashCode()==2) {
-              int a = alphaBeta.getColumnIndex(gameModel, gameModel.getCurrentPlayer());
-              play(a);
-            }
-          }
-        })
-    ));
-    
-    System.out.println(gameModel+" "+gameModel.getGameStatus());
-    return true;
+  public void highlightWinLine() {
+    for (int c=0;c<gameModel.getWinLine().size();c++) {
+      int row = gameModel.getWinLine().get(c).getRowIndex();
+      int col = gameModel.getWinLine().get(c).getColIndex();
+      System.out.println(col+":"+row);
+      Checker ch = usedCheckers.get(new CellCoord(col, row));
+      if (ch!=null)
+        ch.highlight();
+      else
+        System.out.println("errore!");
+    }
   }
   
   

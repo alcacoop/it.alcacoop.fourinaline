@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class GameScreen extends BaseScreen {
 
-  private Board board;
+  public Board board;
   
   public GameScreen() {
     board = new Board(7, 6, 4, stage.getHeight()*0.85f);

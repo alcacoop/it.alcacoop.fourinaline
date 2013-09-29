@@ -61,6 +61,13 @@ gplus
   orig: 70, 63
   offset: 0, 0
   index: -1
+hi
+  rotate: false
+  xy: 713, 399
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 hole
   rotate: false
   xy: 583, 303
