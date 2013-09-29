@@ -265,10 +265,11 @@ public final class GameModel implements Serializable
 		 * @return the next player.
 		 */
 		private final static PlayerMark getNextPlayer()
-		{						
+		{	
+		  /*
 			if (itPlayers == null || !itPlayers.hasNext())
 				itPlayers = players.iterator();
-			
+			*/
 			PlayerMark result = itPlayers.next();
 			
 			return result;
@@ -316,12 +317,12 @@ public final class GameModel implements Serializable
 		/**
 		 * The player A mark.
 		 */
-		public final static PlayerMark PLAYER_A_MARK = new PlayerMark(1);
+		//public final static PlayerMark PLAYER_A_MARK = new PlayerMark(1);
 		
 		/**
 		 * The player B mark.
 		 */
-		public final static PlayerMark PLAYER_B_MARK = new PlayerMark(2);
+		//public final static PlayerMark PLAYER_B_MARK = new PlayerMark(2);
 		
 	}
 	
@@ -518,8 +519,16 @@ public final class GameModel implements Serializable
 	
 	
 	public GameModel(final int rows, final int cols, final int winLength, int firstPlayer) {
-    this(rows, cols, winLength);
-    if (firstPlayer==2) currentPlayer = PlayerMark.getNextPlayer();
+    PlayerMark.players.clear();
+    if (firstPlayer==1) {
+      new PlayerMark(1);
+      new PlayerMark(2);
+    } else {
+      new PlayerMark(2);
+      new PlayerMark(1);
+    }
+    PlayerMark.itPlayers = PlayerMark.players.iterator();
+    create(rows, cols, winLength);
   }
 	
 	
@@ -528,7 +537,7 @@ public final class GameModel implements Serializable
 	 */
 	public GameModel()
 	{
-		this(6, 7, 4);
+		this(6, 7, 4, 1);
 	}
 	
 	
@@ -543,7 +552,7 @@ public final class GameModel implements Serializable
 	 * greater than <code>Math.min(rows, cols)</code>, or if <code>winLength</code>
 	 * is smaller or equal to 2.
 	 */
-	public GameModel(final int rows, final int cols, final int winLength)
+	public void create(final int rows, final int cols, final int winLength)
 	   throws IllegalArgumentException
 	{
 		if (rows <= 0 || cols <= 0)
