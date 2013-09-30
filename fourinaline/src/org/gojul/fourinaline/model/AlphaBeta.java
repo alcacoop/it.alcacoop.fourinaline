@@ -120,6 +120,9 @@ public class AlphaBeta implements Serializable
       playOrder.add(column);
       column += (i % 2 == 1) ? i: -i;
     }
+    //for (int i=0; i<tempModel.getColCount();i++)
+      //playOrder.add(i);
+    
     List<Integer> iterationOrder = new ArrayList<Integer>(playOrder);
     iterationOrder.retainAll(possiblePlays);
     
@@ -143,6 +146,8 @@ public class AlphaBeta implements Serializable
         scoreCache.put(key, Integer.valueOf(currentScore));
       } 
       
+      System.out.println("SCORE "+colIndex+": "+currentScore);
+      
       tempModel.cancelLastPlay();
       
       if (currentScore > bestScore)
@@ -156,7 +161,7 @@ public class AlphaBeta implements Serializable
         }
       }
     }
-    
+    System.out.println("BEST COLUMN: "+bestColumn+"\n");
     return bestColumn;
   }
   
