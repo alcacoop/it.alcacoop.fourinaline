@@ -124,8 +124,6 @@ public class Board extends Group {
     if (row==-1) return false;
     locked = true;
     
-    System.out.println("COORD: "+col+":"+row);
-    
     gameModel.play(col, gameModel.getCurrentPlayer());
     
     Checker checker = checkers.obtain();
@@ -178,7 +176,7 @@ public class Board extends Group {
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: "+gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 4, 0.5f);
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 2, 0.5f); //3 è il minimo per evitare errori banali
 
     gameEnded = -1;
     
