@@ -26,7 +26,9 @@ public class FSM implements Context {
   public enum Events {
     NOOP,
     BUTTON_CLICKED,
-    GAME_TERMINATED, BOARD_RESETTED, MOVE_END, PLAY_COL
+    GAME_TERMINATED, 
+    BOARD_RESETTED, 
+    MOVE_END, PLAY_COL
   }
 
   public enum States implements State {
