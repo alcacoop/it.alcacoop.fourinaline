@@ -3,6 +3,7 @@ package it.alcacoop.fourinaline.actors;
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.logic.AIExecutor;
+import it.alcacoop.fourinaline.logic.MatchState;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Pool;
 
@@ -36,8 +38,7 @@ public class Board extends Group {
 
   private Pool<Checker> checkers;
   private ParticleEffectActor[] effects;
-
-  private int color;
+  
   private boolean locked;
   private HashMap<CellCoord, Checker> usedCheckers;
 
@@ -98,7 +99,7 @@ public class Board extends Group {
         if (gameEnded >= 0) {
           FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, gameEnded);
         } else {
-          if ((!locked) && (color == 1)) {
+          if ((!locked) && (MatchState.currentPlayer == 1)) {
             int cx = (int)Math.ceil((x / dim)) - 1;
             FourInALine.Instance.fsm.processEvent(Events.PLAY_COL, cx);
           }
@@ -114,11 +115,13 @@ public class Board extends Group {
     if (row == -1)
       return false;
     locked = true;
+    
+    MatchState.mCount++;
 
     gameModel.play(col, gameModel.getCurrentPlayer());
-
+    
     Checker checker = checkers.obtain();
-    checker.setColor(color);
+    checker.setColor(MatchState.currentPlayer);
     checker.setWidth(dim);
     checker.setHeight(dim);
     checkersLayer.addActor(checker);
@@ -137,22 +140,27 @@ public class Board extends Group {
 
 
   public void moveEnd() {
-    if (color == 1)
-      color = 2;
-    else color = 1;
+    if (MatchState.currentPlayer == 1)
+      MatchState.currentPlayer = 2;
+    else MatchState.currentPlayer = 1;
+    System.out.println("Livello: " + MatchState.currentLevel);
 
     if (gameModel.getGameStatus() != GameStatus.CONTINUE_STATUS) {
       locked = true;
       if (gameModel.getGameStatus() == GameStatus.WON_STATUS) {
         System.out.println("PARTITA VINTA!");
         highlightWinLine();
-        gameEnded = 1; // TODO: 1 o 2
+        gameEnded = gameModel.getCurrentPlayer().hashCode();
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
         gameEnded = 0;
       }
     } else {
       locked = false;
+      if ((MatchState.mCount > 5) && (MatchState.currentLevel != MatchState.gameLevel)) {
+        alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.gameLevel, 0.5f);
+        MatchState.currentLevel = MatchState.gameLevel;
+      }
       if (gameModel.getCurrentPlayer().hashCode() == 2) {
         AIExecutor.getBestColIndex(alphaBeta, gameModel);
       }
@@ -162,33 +170,38 @@ public class Board extends Group {
 
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
-    System.out.println("START GAME: " + gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), 2, 0.5f); // 3 è il minimo per evitare errori banali
+    System.out.println("START GAME: "+gameModel.getCurrentPlayer());
+
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentLevel, 0.5f);
 
     gameEnded = -1;
-
+    
     locked = false;
-    color = gameModel.getCurrentPlayer().hashCode();
-    if (color == 2) {
+    MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();
+    if (MatchState.currentPlayer==2) {
       AIExecutor.getBestColIndex(alphaBeta, gameModel);
     }
   }
 
-
+  
   public void reset() {
     Iterator<Entry<CellCoord, Checker>> iter = usedCheckers.entrySet().iterator();
     while (iter.hasNext()) {
       Entry<CellCoord, Checker> entry = iter.next();
       final Checker c = entry.getValue();
-      c.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.run(new Runnable() {
-        @Override
-        public void run() {
-          c.remove();
-          checkers.free(c);
-          if (usedCheckers.size() == 0) // TODO: mettere un if
-            FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
-        }
-      })));
+      final boolean hasNext = iter.hasNext();
+      c.addAction(Actions.sequence(
+          Actions.fadeOut(0.4f),
+          Actions.run(new Runnable() {
+            @Override
+            public void run() {
+              c.remove();
+              checkers.free(c);
+              if ((usedCheckers.size()==0) && (!hasNext))
+                FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
+            }
+          })
+      ));
       iter.remove();
     }
     for (int i = 0; i < 4; i++)

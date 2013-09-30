@@ -5,6 +5,8 @@ package it.alcacoop.fourinaline.fsm;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.logic.MatchState;
+
 import com.badlogic.gdx.Gdx;
 
 
@@ -28,7 +30,8 @@ public class FSM implements Context {
     BUTTON_CLICKED,
     GAME_TERMINATED, 
     BOARD_RESETTED, 
-    MOVE_END, PLAY_COL
+    MOVE_END,
+    PLAY_COL
   }
 
   public enum States implements State {
@@ -43,6 +46,8 @@ public class FSM implements Context {
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case BUTTON_CLICKED:
+            MatchState.gamesIntoMatch = 1;
+            MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
             FourInALine.Instance.fsm.state(States.GAME_SCREEN);
             break;
           default:
@@ -67,10 +72,19 @@ public class FSM implements Context {
           case MOVE_END:
             break;
           case GAME_TERMINATED:
+            int gameResult = (Integer)params; // TODO: gameResult = esito partita
             FourInALine.Instance.gameScreen.board.reset();
             break;
           case BOARD_RESETTED:
-            FourInALine.Instance.fsm.state(States.MAIN_MENU);
+            MatchState.mCount = 0;
+            MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
+            if (MatchState.gamesIntoMatch < MatchState.nMatchTo) {
+              System.out.println("Games into match:" + MatchState.gamesIntoMatch);
+              MatchState.gamesIntoMatch++;
+              FourInALine.Instance.fsm.state(States.GAME_SCREEN);
+            } else {
+              FourInALine.Instance.fsm.state(States.MAIN_MENU);
+            }
             break;
           default:
             return false;
