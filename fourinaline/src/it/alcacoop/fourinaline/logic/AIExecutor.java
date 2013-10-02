@@ -14,12 +14,12 @@ import com.badlogic.gdx.Gdx;
 public class AIExecutor {
 
   private static ExecutorService dispatchExecutor;
-  
+
   static {
     dispatchExecutor = Executors.newSingleThreadExecutor();
   }
 
-  
+
   public static void getBestColIndex(final AlphaBeta alphaBeta, final GameModel gameModel) {
     dispatchExecutor.execute(new Runnable() {
       @Override
@@ -28,7 +28,7 @@ public class AIExecutor {
         Gdx.app.postRunnable(new Runnable() {
           @Override
           public void run() {
-            FourInALine.Instance.fsm.processEvent(Events.PLAY_COL, col);
+            FourInALine.Instance.fsm.processEvent(Events.AI_EVALUETED, col);
           }
         });
       }
