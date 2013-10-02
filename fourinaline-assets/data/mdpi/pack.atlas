@@ -31,6 +31,13 @@ CSW_orig
   orig: 128, 128
   offset: 0, 0
   index: -1
+abt
+  rotate: false
+  xy: 1, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 achievements
   rotate: false
   xy: 924, 942
@@ -61,11 +68,25 @@ bg
   orig: 627, 460
   offset: 0, 0
   index: -1
+dp
+  rotate: false
+  xy: 35, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 facebook
   rotate: false
   xy: 924, 545
   size: 70, 62
   orig: 70, 62
+  offset: 0, 0
+  index: -1
+gpl
+  rotate: false
+  xy: 69, 4
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1
 gplus
@@ -77,7 +98,7 @@ gplus
   index: -1
 hi
   rotate: false
-  xy: 1, 4
+  xy: 103, 4
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -96,6 +117,13 @@ hole_orig
   orig: 128, 128
   offset: 0, 0
   index: -1
+how
+  rotate: false
+  xy: 137, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 leaderboards
   rotate: false
   xy: 924, 870
@@ -108,6 +136,34 @@ logo
   xy: 515, 495
   size: 407, 55
   orig: 407, 55
+  offset: 0, 0
+  index: -1
+opt
+  rotate: false
+  xy: 171, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+pro
+  rotate: false
+  xy: 205, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sp
+  rotate: false
+  xy: 239, 4
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+str
+  rotate: false
+  xy: 273, 4
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1
 texture
