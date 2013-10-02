@@ -2,6 +2,7 @@ package it.alcacoop.fourinaline.actors;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
 import it.alcacoop.fourinaline.logic.AIExecutor;
 import it.alcacoop.fourinaline.logic.MatchState;
 
@@ -94,6 +95,7 @@ public class Board extends Group {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         if (MatchState.winner >= 0) {
+          FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
           FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, MatchState.winner);
         } else {
           if (!locked) {

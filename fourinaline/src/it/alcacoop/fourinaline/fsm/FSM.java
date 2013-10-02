@@ -48,7 +48,7 @@ public class FSM implements Context {
           case BUTTON_CLICKED:
             MatchState.gamesIntoMatch = 1;
             MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
-            FourInALine.Instance.fsm.state(States.GAME_SCREEN);
+            FourInALine.Instance.fsm.state(States.INIT_GAME);
             break;
           default:
             return false;
@@ -58,13 +58,31 @@ public class FSM implements Context {
     },
 
 
-    LOCAL_TURN {
+    INIT_GAME {
       @Override
       public void enterState(Context ctx) {
-        if (MatchState.winner != -1) {
+        int[] a = { 1, 2 };
+        if (MatchState.gamesIntoMatch == 1) {
+          FourInALine.Instance.setScreen(FourInALine.Instance.gameScreen);
+          MatchState.whoStart = new Random().nextInt(2) + 1;
+        } else {
+          MatchState.whoStart = ((MatchState.whoStart - 1) == 0) ? a[1] : a[0];
         }
-      }
+        MatchState.nMatchTo = 3; // TODO: leggere da preferences
+        MatchState.gameLevel = 1; // TODO: leggere da preferences
+        FourInALine.Instance.board.initMatch(MatchState.whoStart);
 
+        if (MatchState.matchType == 0) {
+          System.out.println("WHO: " + MatchState.whoStart);
+          if (MatchState.whoStart == 1)
+            FourInALine.Instance.fsm.state(LOCAL_TURN);
+          else FourInALine.Instance.fsm.state(AI_TURN);
+        }
+      };
+    },
+
+
+    LOCAL_TURN {
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
@@ -73,7 +91,7 @@ public class FSM implements Context {
             break;
 
           case MOVE_END:
-            int gameState = (Integer)params;
+            // int gameState = (Integer)params;
             if (MatchState.matchType == 0)
               FourInALine.Instance.fsm.state(AI_TURN);
             break;
@@ -116,41 +134,12 @@ public class FSM implements Context {
     },
 
 
-    GAME_SCREEN {
-      @Override
-      public void enterState(Context ctx) {
-        FourInALine.Instance.setScreen(FourInALine.Instance.gameScreen);
-
-        int[] a = { 1, 2 };
-        if (MatchState.gamesIntoMatch == 1)
-          MatchState.whoStart = new Random().nextInt(2) + 1;
-        else {
-          MatchState.whoStart = ((MatchState.whoStart - 1) == 0) ? a[1] : a[0];
-        }
-        MatchState.nMatchTo = 3; // TODO: leggere da preferences
-        MatchState.gameLevel = 1; // TODO: leggere da preferences
-        FourInALine.Instance.board.initMatch(MatchState.whoStart);
-
-        if (MatchState.matchType == 0) {
-          System.out.println("WHO: " + MatchState.whoStart);
-          if (MatchState.whoStart == 1)
-            FourInALine.Instance.fsm.state(LOCAL_TURN);
-          else FourInALine.Instance.fsm.state(AI_TURN);
-        }
-      };
-
-      /*
+    CHECK_END_MATCH {
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
-          case CLICKED_COL:
-            FourInALine.Instance.gameScreen.board.play((Integer)params);
-            break;
-          case MOVE_END:
-            break;
           case GAME_TERMINATED:
-            int gameResult = (Integer)params; // TODO: gameResult = esito partita
-            FourInALine.Instance.gameScreen.board.reset();
+            FourInALine.Instance.board.reset();
             break;
           case BOARD_RESETTED:
             MatchState.mCount = 0;
@@ -158,7 +147,7 @@ public class FSM implements Context {
             if (MatchState.gamesIntoMatch < MatchState.nMatchTo) {
               System.out.println("Games into match:" + MatchState.gamesIntoMatch);
               MatchState.gamesIntoMatch++;
-              FourInALine.Instance.fsm.state(States.GAME_SCREEN);
+              FourInALine.Instance.fsm.state(States.INIT_GAME);
             } else {
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
             }
@@ -168,9 +157,7 @@ public class FSM implements Context {
         }
         return true;
       }
-      */
     },
-
 
     STOPPED {
       @Override
