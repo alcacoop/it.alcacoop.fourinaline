@@ -72,11 +72,18 @@ public class FSM implements Context {
         MatchState.gameLevel = 1; // TODO: leggere da preferences
         FourInALine.Instance.board.initMatch(MatchState.whoStart);
 
-        if (MatchState.matchType == 0) {
-          System.out.println("WHO: " + MatchState.whoStart);
-          if (MatchState.whoStart == 1)
+        switch (MatchState.matchType) {
+          case 0: // SINGLE PLAYER
+            System.out.println("WHO: " + MatchState.whoStart);
+            if (MatchState.whoStart == 1)
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
+            else FourInALine.Instance.fsm.state(AI_TURN);
+            break;
+          case 1:
             FourInALine.Instance.fsm.state(LOCAL_TURN);
-          else FourInALine.Instance.fsm.state(AI_TURN);
+            break;
+          default:
+            break;
         }
       };
     },
@@ -94,6 +101,8 @@ public class FSM implements Context {
             // int gameState = (Integer)params;
             if (MatchState.matchType == 0)
               FourInALine.Instance.fsm.state(AI_TURN);
+            else if (MatchState.matchType == 1)
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           default:
