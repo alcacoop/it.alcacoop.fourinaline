@@ -4,7 +4,7 @@ public class MatchState {
 
   public static int mCount = 0; // contatore mosse effettuate
 
-  public static int defaultStartLevel = 1; // livello di partenza
+  public static int defaultStartLevel = 3; // livello di partenza
   public static int gameLevel = 1; // livello scelto dal giocatore
   public static int currentLevel = 1; // livello corrente, in generale
                                       // currentLevel=gameLevel
