@@ -17,5 +17,5 @@ public class MatchState {
 
   public static int[] anScore = { 0, 0 }; // MATCH SCORES
   public static int matchType = 0; // 0=SINGLE PLAYER, 1=TWO PLAYERS, 2=GSERVICE
-  public static int winner = 0; // 0=TIE, 1=HUMAN, 2=AI
+  public static int winner = -1; // -1= partina in corso, 0=TIE, 1=HUMAN, 2=AI
 }

@@ -60,10 +60,16 @@ public class FSM implements Context {
 
     LOCAL_TURN {
       @Override
+      public void enterState(Context ctx) {
+        if (MatchState.winner != -1) {
+        }
+      }
+
+      @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case CLICKED_COL:
-            FourInALine.Instance.gameScreen.board.play((Integer)params);
+            FourInALine.Instance.board.play((Integer)params);
             break;
 
           case MOVE_END:
@@ -83,14 +89,14 @@ public class FSM implements Context {
     AI_TURN {
       @Override
       public void enterState(Context ctx) {
-        FourInALine.Instance.gameScreen.board.playAI();
+        FourInALine.Instance.board.playAI();
       }
 
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case AI_EVALUETED:
-            FourInALine.Instance.gameScreen.board.play((Integer)params);
+            FourInALine.Instance.board.play((Integer)params);
             break;
 
           case MOVE_END:
@@ -123,7 +129,7 @@ public class FSM implements Context {
         }
         MatchState.nMatchTo = 3; // TODO: leggere da preferences
         MatchState.gameLevel = 1; // TODO: leggere da preferences
-        FourInALine.Instance.gameScreen.board.initMatch(MatchState.whoStart);
+        FourInALine.Instance.board.initMatch(MatchState.whoStart);
 
         if (MatchState.matchType == 0) {
           System.out.println("WHO: " + MatchState.whoStart);

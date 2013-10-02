@@ -13,6 +13,7 @@ import org.gojul.fourinaline.model.AlphaBeta;
 import org.gojul.fourinaline.model.DefaultEvalScore;
 import org.gojul.fourinaline.model.GameModel;
 import org.gojul.fourinaline.model.GameModel.CellCoord;
+import org.gojul.fourinaline.model.GameModel.GameStatus;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -39,8 +40,6 @@ public class Board extends Group {
 
   private boolean locked;
   private HashMap<CellCoord, Checker> usedCheckers;
-
-  private int gameEnded;
 
   private int wx;
   private int wy;
@@ -94,8 +93,8 @@ public class Board extends Group {
     boardImage.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
-        if (gameEnded >= 0) {
-          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, gameEnded);
+        if (MatchState.winner >= 0) {
+          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, MatchState.winner);
         } else {
           if (!locked) {
             int cx = (int)Math.ceil((x / dim)) - 1;
@@ -143,18 +142,17 @@ public class Board extends Group {
     else MatchState.currentPlayer = 1;
     System.out.println("Livello: " + MatchState.currentLevel);
     locked = false;
-    FourInALine.Instance.fsm.processEvent(Events.MOVE_END, -1);
     // -1=CONTINUE, 0=TIE, 1=WON1, 2=WON2
-    /*
+
     if (gameModel.getGameStatus() != GameStatus.CONTINUE_STATUS) {
       locked = true;
       if (gameModel.getGameStatus() == GameStatus.WON_STATUS) {
         System.out.println("PARTITA VINTA!");
         highlightWinLine();
-        gameEnded = gameModel.getCurrentPlayer().hashCode();
+        MatchState.winner = gameModel.getCurrentPlayer().hashCode();
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
-        gameEnded = 0;
+        MatchState.winner = 0;
       }
     } else {
       locked = false;
@@ -162,12 +160,8 @@ public class Board extends Group {
         alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.gameLevel, 0.5f);
         MatchState.currentLevel = MatchState.gameLevel;
       }
-      /*
-      if (gameModel.getCurrentPlayer().hashCode() == 2) {
-        AIExecutor.getBestColIndex(alphaBeta, gameModel);
-      }
     }
-     */
+    FourInALine.Instance.fsm.processEvent(Events.MOVE_END, MatchState.winner);
   }
 
 
@@ -179,7 +173,7 @@ public class Board extends Group {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: " + gameModel.getCurrentPlayer());
     alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentLevel, 0.5f);
-    gameEnded = -1;
+    MatchState.winner = -1;
     locked = false;
     MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();
     /*
