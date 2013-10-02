@@ -72,7 +72,6 @@ public class FourInALine extends Game implements ApplicationListener {
       TimerTask task = new TimerTask() {
         @Override
         public void run() {
-          ((BaseScreen)(screen)).fixBGImg();
           FourInALine.super.setScreen(screen);    
         }
       };
