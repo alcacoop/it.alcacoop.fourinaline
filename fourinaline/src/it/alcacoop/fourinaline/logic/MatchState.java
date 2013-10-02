@@ -2,7 +2,7 @@ package it.alcacoop.fourinaline.logic;
 
 public class MatchState {
   
-  public static int currentLevel = 1; //ALPHABETA DEEPNESS
+  public static int currentLevel = 1; //ALPHABETA DEEPNESS [1..5]
   public static int fMove = 1; //TURNO (1=HUMAN, 2=AI)
   public static int nMatchTo = 1; 
   public static int[] anScore = {0,0}; //MATCH SCORES
