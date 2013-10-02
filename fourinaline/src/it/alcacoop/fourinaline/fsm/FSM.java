@@ -68,18 +68,19 @@ public class FSM implements Context {
         } else {
           MatchState.whoStart = ((MatchState.whoStart - 1) == 0) ? a[1] : a[0];
         }
-        MatchState.nMatchTo = 3; // TODO: leggere da preferences
-        MatchState.gameLevel = 1; // TODO: leggere da preferences
         FourInALine.Instance.board.initMatch(MatchState.whoStart);
 
+        System.out.println("WHO: " + MatchState.whoStart);
         switch (MatchState.matchType) {
+          case -1: // SIMULATION
+            FourInALine.Instance.fsm.state(AI_TURN);
+            break;
           case 0: // SINGLE PLAYER
-            System.out.println("WHO: " + MatchState.whoStart);
             if (MatchState.whoStart == 1)
               FourInALine.Instance.fsm.state(LOCAL_TURN);
             else FourInALine.Instance.fsm.state(AI_TURN);
             break;
-          case 1:
+          case 1: // TWO PLAYER
             FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
           default:
@@ -116,7 +117,8 @@ public class FSM implements Context {
     AI_TURN {
       @Override
       public void enterState(Context ctx) {
-        FourInALine.Instance.board.playAI();
+        if (MatchState.winner == -1)
+          FourInALine.Instance.board.playAI();
       }
 
       @Override
@@ -127,7 +129,9 @@ public class FSM implements Context {
             break;
 
           case MOVE_END:
-            FourInALine.Instance.fsm.state(LOCAL_TURN);
+            if (MatchState.matchType == -1)
+              FourInALine.Instance.fsm.state(AI_TURN);
+            else FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           default:
@@ -154,7 +158,7 @@ public class FSM implements Context {
             MatchState.mCount = 0;
             MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
             if (MatchState.gamesIntoMatch < MatchState.nMatchTo) {
-              System.out.println("Games into match:" + MatchState.gamesIntoMatch);
+              System.out.println("Games: " + MatchState.gamesIntoMatch + " of " + MatchState.nMatchTo);
               MatchState.gamesIntoMatch++;
               FourInALine.Instance.fsm.state(States.INIT_GAME);
             } else {
@@ -206,7 +210,7 @@ public class FSM implements Context {
 
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
-    System.out.println("PROCESS " + evt + " ON " + state());
+    // System.out.println("PROCESS " + evt + " ON " + state());
     Gdx.app.postRunnable(new Runnable() {
       @Override
       public void run() {

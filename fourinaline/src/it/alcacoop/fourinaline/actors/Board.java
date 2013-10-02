@@ -152,6 +152,7 @@ public class Board extends Group {
         System.out.println("PARTITA VINTA!");
         highlightWinLine();
         MatchState.winner = gameModel.getCurrentPlayer().hashCode();
+        System.out.println("THE WINNER IS: " + MatchState.winner);
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
         MatchState.winner = 0;
@@ -178,11 +179,6 @@ public class Board extends Group {
     MatchState.winner = -1;
     locked = false;
     MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();
-    /*
-    if (MatchState.currentPlayer == 2) {
-      AIExecutor.getBestColIndex(alphaBeta, gameModel);
-    }
-    */
   }
 
 
