@@ -5,28 +5,42 @@ filter: Linear,Linear
 repeat: none
 CSB
   rotate: false
-  xy: 1, 1
+  xy: 879, 609
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+CSB_orig
+  rotate: false
+  xy: 630, 884
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 CSW
   rotate: false
-  xy: 453, 303
+  xy: 630, 754
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+CSW_orig
+  rotate: false
+  xy: 760, 884
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 achievements
   rotate: false
-  xy: 698, 433
+  xy: 924, 942
   size: 69, 70
   orig: 69, 70
   offset: 0, 0
   index: -1
 alca
   rotate: false
-  xy: 453, 433
+  xy: 630, 595
   size: 243, 70
   split: 121, 121, 68, 1
   orig: 243, 70
@@ -34,65 +48,93 @@ alca
   index: -1
 bbg
   rotate: false
-  xy: 131, 1
+  xy: 760, 754
   size: 128, 128
-  split: 34, 34, 34, 34
+  split: 16, 16, 16, 16
   orig: 128, 128
   offset: 0, 0
   index: -1
 bg
   rotate: false
-  xy: 1, 203
-  size: 450, 300
-  orig: 450, 300
+  xy: 1, 552
+  size: 627, 460
+  orig: 627, 460
   offset: 0, 0
   index: -1
 facebook
   rotate: false
-  xy: 322, 139
+  xy: 924, 545
   size: 70, 62
   orig: 70, 62
   offset: 0, 0
   index: -1
 gplus
   rotate: false
-  xy: 769, 440
+  xy: 924, 739
   size: 70, 63
   orig: 70, 63
   offset: 0, 0
   index: -1
 hi
   rotate: false
-  xy: 713, 399
+  xy: 1, 4
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 hole
   rotate: false
-  xy: 583, 303
+  xy: 515, 365
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+hole_orig
+  rotate: false
+  xy: 515, 235
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 leaderboards
   rotate: false
-  xy: 251, 131
+  xy: 924, 870
   size: 69, 70
   orig: 69, 70
   offset: 0, 0
   index: -1
+logo
+  rotate: false
+  xy: 515, 495
+  size: 407, 55
+  orig: 407, 55
+  offset: 0, 0
+  index: -1
+texture
+  rotate: false
+  xy: 1, 38
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
 topborder
   rotate: false
-  xy: 1, 131
-  size: 248, 70
-  split: 117, 130, 1, 68
-  orig: 248, 70
+  xy: 630, 667
+  size: 247, 70
+  split: 117, 129, 1, 68
+  orig: 247, 70
+  offset: 0, 0
+  index: -1
+transparent
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  orig: 1, 1
   offset: 0, 0
   index: -1
 twitter
   rotate: false
-  xy: 453, 237
+  xy: 924, 804
   size: 70, 64
   orig: 70, 64
   offset: 0, 0
