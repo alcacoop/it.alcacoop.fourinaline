@@ -20,7 +20,7 @@ public class MenuScreen extends BaseScreen {
 
   public MenuScreen() {
     table = new Table();
-    table.setWidth(stage.getWidth() * 0.7f);
+    table.setWidth(stage.getWidth() * 0.66f);
     table.setHeight(stage.getHeight() * 0.9f);
 
     float height = table.getHeight() / 7;
