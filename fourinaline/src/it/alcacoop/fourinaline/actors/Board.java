@@ -142,7 +142,7 @@ public class Board extends Group {
     if (MatchState.currentPlayer == 1)
       MatchState.currentPlayer = 2;
     else MatchState.currentPlayer = 1;
-    System.out.println("Livello: " + MatchState.currentLevel);
+    System.out.println("Livello: " + MatchState.currentAILevel);
     locked = false;
     // -1=CONTINUE, 0=TIE, 1=WON1, 2=WON2
 
@@ -159,9 +159,9 @@ public class Board extends Group {
       }
     } else {
       locked = false;
-      if ((MatchState.mCount > 5) && (MatchState.currentLevel != MatchState.gameLevel)) {
-        alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.gameLevel, 0.5f);
-        MatchState.currentLevel = MatchState.gameLevel;
+      if ((MatchState.mCount > 5) && (MatchState.currentAILevel != MatchState.AILevel)) {
+        alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.AILevel, 0.5f);
+        MatchState.currentAILevel = MatchState.AILevel;
       }
     }
     FourInALine.Instance.fsm.processEvent(Events.MOVE_END, MatchState.winner);
@@ -175,7 +175,7 @@ public class Board extends Group {
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: " + gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentLevel, 0.5f);
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentAILevel, 0.5f);
     MatchState.winner = -1;
     locked = false;
     MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();

@@ -4,10 +4,9 @@ public class MatchState {
 
   public static int mCount = 0; // contatore mosse effettuate
 
-  public static int defaultStartLevel = 3; // livello di partenza
-  public static int gameLevel = 1; // livello scelto dal giocatore
-  public static int currentLevel = 1; // livello corrente, in generale
-                                      // currentLevel=gameLevel
+  public static int defaultAIStartLevel = 3; // livello di partenza
+  public static int AILevel = 1; // livello scelto dal giocatore
+  public static int currentAILevel = 1; // livello corrente, in generale currentLevel=gameLevel
   public static int whoStart = 2; // 1=PLAYER1, 2=AI|REMOTE
 
   public static int nMatchTo = 1;

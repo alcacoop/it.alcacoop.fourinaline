@@ -177,7 +177,7 @@ public class MatchOptionsScreen extends BaseScreen {
 
     for (int i = 0; i < _levels.length; i++) {
       if (_levels[i].equals(sLevel))
-        MatchState.gameLevel = (i + 1);
+        MatchState.AILevel = (i + 1);
     }
 
     MatchState.nMatchTo = Integer.parseInt(sMatchTo);
