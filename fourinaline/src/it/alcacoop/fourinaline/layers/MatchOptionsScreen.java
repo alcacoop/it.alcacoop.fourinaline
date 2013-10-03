@@ -191,7 +191,6 @@ public class MatchOptionsScreen extends BaseScreen {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     stage.act(delta);
     stage.draw();
-    Table.drawDebug(stage);
   }
 
 
