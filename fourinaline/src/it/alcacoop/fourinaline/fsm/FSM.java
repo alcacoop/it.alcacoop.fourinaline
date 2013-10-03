@@ -53,6 +53,8 @@ public class FSM implements Context {
             } else if (btn.equals("TWO PLAYERS")) {
               MatchState.matchType = 1;
               FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
+            } else if (btn.equals("OPTIONS")) {
+              FourInALine.Instance.fsm.state(States.GAME_OPTIONS);
             }
             break;
           default:
@@ -61,6 +63,30 @@ public class FSM implements Context {
         return true;
       }
     },
+
+
+    GAME_OPTIONS {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.setScreen(FourInALine.Instance.optionsScreen);
+      }
+
+      @Override
+      public boolean processEvent(Context ctx, Events evt, Object params) {
+        switch (evt) {
+          case BUTTON_CLICKED:
+            String btn = ((String)params);
+            if (btn.equals("BACK")) {
+              FourInALine.Instance.fsm.back();
+            }
+            break;
+          default:
+            return false;
+        }
+        return true;
+      }
+    },
+
 
     MATCH_OPTIONS {
       @Override

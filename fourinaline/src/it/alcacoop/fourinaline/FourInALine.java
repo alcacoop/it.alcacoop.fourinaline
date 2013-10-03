@@ -6,6 +6,7 @@ import it.alcacoop.fourinaline.layers.BaseScreen;
 import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.layers.MatchOptionsScreen;
 import it.alcacoop.fourinaline.layers.MenuScreen;
+import it.alcacoop.fourinaline.layers.OptionsScreen;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +35,8 @@ public class FourInALine extends Game implements ApplicationListener {
   public MenuScreen menuScreen;
   public GameScreen gameScreen;
   public MatchOptionsScreen matchOptionsScreen;
+  public OptionsScreen optionsScreen;
+
   public Board board;
 
   public FSM fsm;
@@ -60,6 +63,7 @@ public class FourInALine extends Game implements ApplicationListener {
     menuScreen = new MenuScreen();
     gameScreen = new GameScreen();
     matchOptionsScreen = new MatchOptionsScreen();
+    optionsScreen = new OptionsScreen();
 
     board = new Board(7, 6, 4, gameScreen.getStage().getHeight() * 0.85f);
     board.setPosition(-gameScreen.getStage().getWidth(), (gameScreen.getStage().getHeight() - board.getHeight()) / 2);
