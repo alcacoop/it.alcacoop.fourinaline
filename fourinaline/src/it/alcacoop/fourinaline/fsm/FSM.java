@@ -4,6 +4,7 @@
 package it.alcacoop.fourinaline.fsm;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.logic.MatchState;
 
@@ -55,7 +56,10 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
             } else if (btn.equals("OPTIONS")) {
               FourInALine.Instance.fsm.state(States.GAME_OPTIONS);
+            } else if (btn.equals("ABOUT..")) {
+              UIDialog.getAboutDialog();
             }
+
             break;
           default:
             return false;
