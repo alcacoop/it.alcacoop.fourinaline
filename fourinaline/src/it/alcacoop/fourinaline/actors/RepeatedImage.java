@@ -16,6 +16,8 @@
 
 package it.alcacoop.fourinaline.actors;
 
+import it.alcacoop.fourinaline.FourInALine;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -33,7 +35,7 @@ public class RepeatedImage extends Widget {
   private float imageX, imageY, imageWidth, imageHeight;
   private Drawable drawable;
   private int nx, ny;
-  private TextureRegion tile;// , wood, mask;
+  private TextureRegion tile, wood;// , mask;
 
 
   public RepeatedImage(TextureRegion region, final float imageWidth, final float imageHeight, final int nx, final int ny) {
@@ -46,6 +48,7 @@ public class RepeatedImage extends Widget {
     setHeight(imageHeight);
     tile = region;
 
+    wood = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(imageWidth), Math.round(imageHeight));
     /*
     wood = FourInALine.Instance.atlas.findRegion("texture");
     Texture t = new Texture(128, 128, Format.RGBA8888);
@@ -105,7 +108,9 @@ public class RepeatedImage extends Widget {
           batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
         }
     }
-
+    batch.setColor(1, 1, 1, 0.3f);
+    batch.draw(wood, getX(), getY());
+    batch.setColor(1, 1, 1, 1);
     /*
     batch.flush();
     // MASK

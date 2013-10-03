@@ -15,6 +15,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -37,6 +38,8 @@ public class FourInALine extends Game implements ApplicationListener {
   public MatchOptionsScreen matchOptionsScreen;
   public OptionsScreen optionsScreen;
 
+  public Texture wood;
+
   public Board board;
 
   public FSM fsm;
@@ -57,6 +60,7 @@ public class FourInALine extends Game implements ApplicationListener {
     atlas = new TextureAtlas(Gdx.files.internal(resname[ss] + "/pack.atlas"));
     skin = new Skin(Gdx.files.internal(resname[ss] + "/myskin.json"));
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
+    wood = new Texture(Gdx.files.internal("mdpi/texture.jpg"));
 
     transitionTimer = new Timer();
 

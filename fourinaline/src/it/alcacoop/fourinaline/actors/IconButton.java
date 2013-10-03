@@ -32,7 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 public class IconButton extends Button {
   private final Label label;
   private TextButtonStyle style;
-
+  private TextureRegion reg;
 
   public IconButton(String text, TextureRegion icon, TextButtonStyle tl) {
     super(tl);
@@ -54,6 +54,8 @@ public class IconButton extends Button {
 
     setWidth(getPrefWidth());
     setHeight(getPrefHeight());
+
+    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
   }
 
   public void setStyle(ButtonStyle style) {
@@ -97,10 +99,23 @@ public class IconButton extends Button {
     }
 
     // HERE TEXTURE!
-    batch.setColor(1, 1, 1, 0.25f);
-    batch.draw(FourInALine.Instance.atlas.findRegion("texture"), 0 + getX(), 0 + getY(), getWidth(), getHeight());
+    batch.setColor(1, 1, 1, 0.35f);
+    batch.draw(reg, 0 + getX(), 0 + getY(), getWidth(), getHeight());
     batch.setColor(1, 1, 1, 1);
     drawChildren(batch, parentAlpha);
+  }
+
+  @Override
+  public void setWidth(float width) {
+    System.out.println("SETWOIDTH");
+    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
+    super.setWidth(width);
+  }
+
+  @Override
+  public void setHeight(float height) {
+    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
+    super.setHeight(height);
   }
 
   public void draw(SpriteBatch batch, float parentAlpha) {
