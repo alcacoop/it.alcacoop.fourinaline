@@ -36,6 +36,7 @@ package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.actors.FixedButtonGroup;
+import it.alcacoop.fourinaline.actors.IconButton;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.logic.MatchState;
 
@@ -48,7 +49,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -62,25 +62,21 @@ public class MatchOptionsScreen extends BaseScreen {
   private final FixedButtonGroup gametype;
 
   private String _levels[] = { "Beginner", "Casual", "Intermediate", "Advanced", "Expert" };
-  private TextButton levelButtons[];
+  private IconButton levelButtons[];
 
   private String _matchTo[] = { "1", "3", "5", "7" };
-  private TextButton matchToButtons[];
+  private IconButton matchToButtons[];
 
   private String _yesNo[] = { "Yes", "No" };
-  private TextButton doublingButtons[];
-  private TextButton crawfordButtons[];
 
-  private String _gametype[] = { "7x6x4 (Standard)", "9x7x5" };
-  private TextButton gameTypeButtons[];
+  private String _gametype[] = { "7x6x4 (Standard)", "9x7x5 (Bigger)" };
+  private IconButton gameTypeButtons[];
 
   private Label difficultyLabel;
   private Table table;
-  private Label doublingLabel;
-  private Label crawfordLabel;
   private Label gameTypeLabel;
-  private TextButton back;
-  private TextButton play;
+  private IconButton back;
+  private IconButton play;
   private Label playToLabel;
   private Label titleLabel;
 
@@ -109,32 +105,34 @@ public class MatchOptionsScreen extends BaseScreen {
       };
     };
 
+
     titleLabel = new Label("MATCH SETTINGS", FourInALine.Instance.skin);
     difficultyLabel = new Label("Difficulty:", FourInALine.Instance.skin);
     playToLabel = new Label("Match to:", FourInALine.Instance.skin);
     gameTypeLabel = new Label("Variant:", FourInALine.Instance.skin);
 
     TextButtonStyle ts = FourInALine.Instance.skin.get("toggle", TextButtonStyle.class);
-    levelButtons = new TextButton[_levels.length];
+
+    levelButtons = new IconButton[_levels.length];
     level = new FixedButtonGroup();
     for (int i = 0; i < _levels.length; i++) {
-      levelButtons[i] = new TextButton(_levels[i], ts);
+      levelButtons[i] = new IconButton(_levels[i], null, ts);
       levelButtons[i].addListener(cls);
       level.add(levelButtons[i]);
     }
 
-    matchToButtons = new TextButton[_matchTo.length];
+    matchToButtons = new IconButton[_matchTo.length];
     matchTo = new FixedButtonGroup();
     for (int i = 0; i < _matchTo.length; i++) {
-      matchToButtons[i] = new TextButton(_matchTo[i], ts);
+      matchToButtons[i] = new IconButton(_matchTo[i], null, ts);
       matchToButtons[i].addListener(cls);
       matchTo.add(matchToButtons[i]);
     }
 
-    gameTypeButtons = new TextButton[_gametype.length];
+    gameTypeButtons = new IconButton[_gametype.length];
     gametype = new FixedButtonGroup();
     for (int i = 0; i < _yesNo.length; i++) {
-      gameTypeButtons[i] = new TextButton(_gametype[i], ts);
+      gameTypeButtons[i] = new IconButton(_gametype[i], null, ts);
       gameTypeButtons[i].addListener(cls);
       gametype.add(gameTypeButtons[i]);
     }
@@ -142,12 +140,14 @@ public class MatchOptionsScreen extends BaseScreen {
     ClickListener cl = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         savePrefs();
-        FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, ((TextButton)event.getListenerActor()).getText().toString().toUpperCase());
+        FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, ((IconButton)event.getListenerActor()).getText().toString().toUpperCase());
       };
     };
-    play = new TextButton("PLAY", FourInALine.Instance.skin);
+
+    ts = FourInALine.Instance.skin.get("button", TextButtonStyle.class);
+    play = new IconButton("PLAY", null, ts);
     play.addListener(cl);
-    back = new TextButton("BACK", FourInALine.Instance.skin);
+    back = new IconButton("BACK", null, ts);
     back.addListener(cl);
     initFromPrefs();
     table = new Table();
@@ -166,16 +166,18 @@ public class MatchOptionsScreen extends BaseScreen {
 
 
   public void savePrefs() {
-    String sLevel = ((TextButton)level.getChecked()).getText().toString();
+    String sLevel = ((IconButton)level.getChecked()).getText().toString();
     prefs.putString("LEVEL", sLevel);
-    String sMatchTo = ((TextButton)matchTo.getChecked()).getText().toString();
+    String sMatchTo = ((IconButton)matchTo.getChecked()).getText().toString();
     prefs.putString("MATCHTO", sMatchTo);
-    String sGameType = ((TextButton)gametype.getChecked()).getText().toString();
+    String sGameType = ((IconButton)gametype.getChecked()).getText().toString();
     prefs.putString("VARIANT", sGameType);
 
     prefs.flush();
 
-    MatchState.gameLevel = Integer.parseInt(sLevel);
+    for (int i = 0; i < _levels.length; i++)
+      if (sLevel == _levels[i])
+        MatchState.gameLevel = i;
     MatchState.nMatchTo = Integer.parseInt(sMatchTo);
     MatchState.anScore[0] = 0;
     MatchState.anScore[1] = 0;
@@ -220,89 +222,64 @@ public class MatchOptionsScreen extends BaseScreen {
   }
 
   public void initTable() {
-    // float height = stage.getWidth()/15;
     table.clear();
-
-    table.setWidth(stage.getWidth() * 0.9f);
     table.setHeight(stage.getHeight() * 0.9f);
-    table.setX(-stage.getWidth());
-    table.setY((stage.getHeight() - table.getHeight()) / 2);
+    table.setWidth(stage.getWidth() * 0.9f);
+    table.setPosition(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
 
-    float width = table.getWidth() / 9f;
+    float height = table.getHeight() / 7;
+    float width = table.getWidth() / 5;
+    float pad = height / 55;
+
 
     table.add(titleLabel).colspan(9);
 
+    table.row().pad(pad);
+    table.add().expand().fill();
+
     if (MatchState.matchType == 0) {
-      table.row();
-      table.add().expand().fill();
-      table.row();
-      table.add().expand().fill();
-      table.row();
-      table.add(difficultyLabel).right().spaceRight(6);
-      table.add(levelButtons[0]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[1]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[2]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[3]).expand().fill().colspan(2).width(2 * width);
-      table.row();
+      table.row().pad(pad);
+      table.add(difficultyLabel).right();
+      table.add(levelButtons[0]).height(height).width(width).fill().expand();
+      table.add(levelButtons[1]).height(height).width(width).fill().expand();
+      table.add(levelButtons[2]).height(height).width(width).fill().expand();
+      table.add(levelButtons[3]).height(height).width(width).fill().expand();
+      table.row().pad(pad);
       table.add();
-      table.add(levelButtons[4]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[5]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[6]).expand().fill().colspan(2).width(2 * width);
-      table.add(levelButtons[7]).expand().fill().colspan(2).width(2 * width);
+      table.add(levelButtons[4]).height(height).width(width).fill().expand();
+
+      table.row().pad(pad);
+      table.add().expand().fill();
     }
 
-    table.row();
-    table.add().expand().fill();
-    table.row();
-    table.add().expand().fill();
 
-    table.row();
-    table.add(playToLabel).right().spaceRight(6);
-    table.add(matchToButtons[0]).expand().fill().width(width);
-    table.add(matchToButtons[1]).expand().fill().width(width);
-    table.add(matchToButtons[2]).expand().fill().width(width);
-    table.add(matchToButtons[3]).expand().fill().width(width);
-    table.add(matchToButtons[4]).expand().fill().width(width);
-    table.add(matchToButtons[5]).expand().fill().width(width);
-    table.add(matchToButtons[6]).expand().fill().width(width);
-    table.add(matchToButtons[7]).expand().fill().width(width);
+    table.row().pad(pad);
+    table.add(playToLabel).right();
+    table.add(matchToButtons[0]).expand().fill().width(width).height(height);
+    table.add(matchToButtons[1]).expand().fill().width(width).height(height);
+    table.add(matchToButtons[2]).expand().fill().width(width).height(height);
+    table.add(matchToButtons[3]).expand().fill().width(width).height(height);
 
-    table.row();
+    table.row().pad(pad);
     table.add().expand().fill();
 
-    table.row();
-    table.add(doublingLabel).right().spaceRight(6);
-    table.add(doublingButtons[0]).expand().fill().width(width);
-    table.add(doublingButtons[1]).expand().fill().width(width);
-    table.add();
-    table.add(crawfordLabel).right().colspan(2).spaceRight(6);
-    table.add(crawfordButtons[0]).expand().fill().width(width);
-    table.add(crawfordButtons[1]).expand().fill().width(width);
+
+    table.row().pad(pad);
+    table.add(gameTypeLabel).right();
+    table.add(gameTypeButtons[0]).expand().fill().colspan(2).height(height);
+    table.add(gameTypeButtons[1]).expand().fill().colspan(2).height(height);
     table.add();
 
-    table.row();
+    table.row().pad(pad);
     table.add().expand().fill();
 
-    table.row();
-    table.add(gameTypeLabel).right().spaceRight(6);
-    table.add(gameTypeButtons[0]).expand().fill().colspan(2).width(2 * width);
-    table.add(gameTypeButtons[1]).expand().fill().colspan(2).width(2 * width);
-    table.add().colspan(6);
-    table.add();
-
-    table.row();
-    table.add().expand().fill();
-    table.row();
-    table.add().expand().fill();
-
-    table.row();
-    table.add().colspan(2);
-    table.add(back).fill().expand().colspan(2);
-    table.add();
-    table.add(play).fill().expand().colspan(2);
-    table.add().colspan(2);
-
-    table.row();
-    table.add().expand().fill();
+    table.row().pad(pad);
+    Table tbl = new Table();
+    tbl.add().width(width / 3);
+    tbl.add(back).width(width * 3 / 2).fill().expand();
+    tbl.add().width(width / 3);
+    tbl.add(play).width(width * 3 / 2).fill().expand();
+    tbl.add().width(width / 3);
+    table.add(tbl).fill().expand().height(height).colspan(5);
   }
 }

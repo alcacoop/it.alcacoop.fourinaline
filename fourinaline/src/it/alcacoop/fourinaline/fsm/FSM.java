@@ -46,9 +46,40 @@ public class FSM implements Context {
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case BUTTON_CLICKED:
-            MatchState.gamesIntoMatch = 1;
-            MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
-            FourInALine.Instance.fsm.state(States.INIT_GAME);
+            String btn = ((String)params);
+            if (btn.equals("SINGLE PLAYER")) {
+              MatchState.matchType = 0;
+              FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
+            } else if (btn.equals("TWO PLAYERS")) {
+              MatchState.matchType = 1;
+              FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
+            }
+            break;
+          default:
+            return false;
+        }
+        return true;
+      }
+    },
+
+    MATCH_OPTIONS {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.setScreen(FourInALine.Instance.matchOptionsScreen);
+      }
+
+      @Override
+      public boolean processEvent(Context ctx, Events evt, Object params) {
+        switch (evt) {
+          case BUTTON_CLICKED:
+            String btn = ((String)params);
+            if (btn.equals("BACK")) {
+              FourInALine.Instance.fsm.back();
+            } else if (btn.equals("PLAY")) {
+              MatchState.gamesIntoMatch = 1;
+              MatchState.currentLevel = (MatchState.gameLevel >= 3) ? MatchState.gameLevel : MatchState.defaultStartLevel;
+              FourInALine.Instance.fsm.state(States.INIT_GAME);
+            }
             break;
           default:
             return false;
