@@ -191,6 +191,7 @@ public class MatchOptionsScreen extends BaseScreen {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     stage.act(delta);
     stage.draw();
+    Table.drawDebug(stage);
   }
 
 
@@ -242,13 +243,13 @@ public class MatchOptionsScreen extends BaseScreen {
     if (MatchState.matchType == 0) {
       table.row().pad(pad);
       table.add(difficultyLabel).right();
-      table.add(levelButtons[0]).height(height).width(width).fill().expand();
-      table.add(levelButtons[1]).height(height).width(width).fill().expand();
-      table.add(levelButtons[2]).height(height).width(width).fill().expand();
-      table.add(levelButtons[3]).height(height).width(width).fill().expand();
+      table.add(levelButtons[0]).height(height).width(width).fill().expandX();
+      table.add(levelButtons[1]).height(height).width(width).fill().expandX();
+      table.add(levelButtons[2]).height(height).width(width).fill().expandX();
+      table.add(levelButtons[3]).height(height).width(width).fill().expandX();
       table.row().pad(pad);
       table.add();
-      table.add(levelButtons[4]).height(height).width(width).fill().expand();
+      table.add(levelButtons[4]).height(height).width(width).fill().expandX();
 
       table.row().pad(pad);
       table.add().expand().fill();
@@ -257,19 +258,16 @@ public class MatchOptionsScreen extends BaseScreen {
 
     table.row().pad(pad);
     table.add(playToLabel).right();
-    table.add(matchToButtons[0]).expand().fill().width(width).height(height);
-    table.add(matchToButtons[1]).expand().fill().width(width).height(height);
-    table.add(matchToButtons[2]).expand().fill().width(width).height(height);
-    table.add(matchToButtons[3]).expand().fill().width(width).height(height);
-
-    table.row().pad(pad);
-    table.add().expand().fill();
+    table.add(matchToButtons[0]).expandX().fill().width(width).height(height);
+    table.add(matchToButtons[1]).expandX().fill().width(width).height(height);
+    table.add(matchToButtons[2]).expandX().fill().width(width).height(height);
+    table.add(matchToButtons[3]).expandX().fill().width(width).height(height);
 
 
     table.row().pad(pad);
     table.add(gameTypeLabel).right();
-    table.add(gameTypeButtons[0]).expand().fill().colspan(2).height(height);
-    table.add(gameTypeButtons[1]).expand().fill().colspan(2).height(height);
+    table.add(gameTypeButtons[0]).expandX().fill().colspan(2).height(height);
+    table.add(gameTypeButtons[1]).expandX().fill().colspan(2).height(height);
     table.add();
 
     table.row().pad(pad);
