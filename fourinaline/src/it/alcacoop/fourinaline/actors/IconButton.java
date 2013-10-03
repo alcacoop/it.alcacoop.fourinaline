@@ -39,12 +39,18 @@ public class IconButton extends Button {
     this.style = tl;
     label = new Label(text, new LabelStyle(tl.font, tl.fontColor));
     label.setAlignment(Align.center);
-    Image icon1 = new Image(icon);
-    Image icon2 = new Image(icon);
 
-    add(icon1).expandY();
+    if (icon != null) {
+      Image icon1 = new Image(icon);
+      add(icon1).expandY();
+    }
+
     add(label).expand().fill();
-    add(icon2).expandY();
+
+    if (icon != null) {
+      Image icon2 = new Image(icon);
+      add(icon2).expandY();
+    }
 
     setWidth(getPrefWidth());
     setHeight(getPrefHeight());
