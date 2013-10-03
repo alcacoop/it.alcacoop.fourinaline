@@ -175,9 +175,11 @@ public class MatchOptionsScreen extends BaseScreen {
 
     prefs.flush();
 
-    for (int i = 0; i < _levels.length; i++)
-      if (sLevel == _levels[i])
-        MatchState.gameLevel = i;
+    for (int i = 0; i < _levels.length; i++) {
+      if (_levels[i].equals(sLevel))
+        MatchState.gameLevel = (i + 1);
+    }
+
     MatchState.nMatchTo = Integer.parseInt(sMatchTo);
     MatchState.anScore[0] = 0;
     MatchState.anScore[1] = 0;
