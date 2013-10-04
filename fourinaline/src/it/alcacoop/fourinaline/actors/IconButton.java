@@ -62,7 +62,6 @@ public class IconButton extends Button {
   @Override
   public void layout() {
     super.layout();
-    System.out.println(getWidth() + ":" + getHeight());
     int x = rnd.nextInt((int)(FourInALine.Instance.btntxt.getWidth() - getWidth()));
     int y = rnd.nextInt((int)(FourInALine.Instance.btntxt.getHeight() - getHeight()));
     reg = new TextureRegion(FourInALine.Instance.btntxt, x, y, Math.round(getWidth()), Math.round(getHeight()));
