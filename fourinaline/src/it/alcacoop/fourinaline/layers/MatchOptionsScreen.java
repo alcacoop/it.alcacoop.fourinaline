@@ -224,18 +224,18 @@ public class MatchOptionsScreen extends BaseScreen {
   public void initTable() {
     table.clear();
     table.setHeight(stage.getHeight() * 0.9f);
-    table.setWidth(stage.getWidth() * 0.9f);
+    table.setWidth(stage.getWidth() * 0.85f);
     table.setPosition(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
 
     float height = table.getHeight() / 7;
     float width = table.getWidth() / 5;
-    float pad = height / 55;
+    float pad = width / 45;
 
-
-    table.add(titleLabel).colspan(9);
+    table.add(titleLabel).colspan(5);
 
     table.row().pad(pad);
-    table.add().expand().fill();
+    table.add().width(width).expand().fill();
+    table.add().expand().fill().colspan(4);
 
     if (MatchState.matchType == 0) {
       table.row().pad(pad);
@@ -244,12 +244,13 @@ public class MatchOptionsScreen extends BaseScreen {
       table.add(levelButtons[1]).height(height).width(width).fill().expandX();
       table.add(levelButtons[2]).height(height).width(width).fill().expandX();
       table.add(levelButtons[3]).height(height).width(width).fill().expandX();
-      table.row().pad(pad);
+      table.row().pad(pad).padTop(0);
       table.add();
       table.add(levelButtons[4]).height(height).width(width).fill().expandX();
+      table.add().colspan(3);
 
       table.row().pad(pad);
-      table.add().expand().fill();
+      table.add().expand().fill().colspan(5);
     }
 
 
@@ -263,12 +264,11 @@ public class MatchOptionsScreen extends BaseScreen {
 
     table.row().pad(pad);
     table.add(gameTypeLabel).right();
-    table.add(gameTypeButtons[0]).expandX().fill().colspan(2).height(height);
-    table.add(gameTypeButtons[1]).expandX().fill().colspan(2).height(height);
-    table.add();
+    table.add(gameTypeButtons[0]).expandX().fill().colspan(2).height(height).width(2 * width + 2 * pad);
+    table.add(gameTypeButtons[1]).expandX().fill().colspan(2).height(height).width(2 * width + 2 * pad);
 
     table.row().pad(pad);
-    table.add().expand().fill();
+    table.add().expand().fill().colspan(5);
 
     table.row().pad(pad);
     Table tbl = new Table();
