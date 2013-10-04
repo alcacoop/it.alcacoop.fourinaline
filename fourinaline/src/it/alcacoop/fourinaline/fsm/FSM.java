@@ -32,7 +32,7 @@ interface State {
 public class FSM implements Context {
 
   public enum Events {
-    NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED
+    NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME
   }
 
   public enum States implements State {
@@ -130,24 +130,32 @@ public class FSM implements Context {
           MatchState.whoStart = ((MatchState.whoStart - 1) == 0) ? a[1] : a[0];
         }
         FourInALine.Instance.board.initMatch(MatchState.whoStart);
+        super.enterState(ctx);
+      }
 
-        System.out.println("WHO: " + MatchState.whoStart);
-        switch (MatchState.matchType) {
-          case -1: // SIMULATION
-            FourInALine.Instance.fsm.state(AI_TURN);
-            break;
-          case 0: // SINGLE PLAYER
-            if (MatchState.whoStart == 1)
+      @Override
+      public boolean processEvent(Context ctx, Events evt, Object params) {
+        if (evt == Events.START_GAME) {
+          System.out.println("WHO: " + MatchState.whoStart);
+          switch (MatchState.matchType) {
+            case -1: // SIMULATION
+              FourInALine.Instance.fsm.state(AI_TURN);
+              break;
+            case 0: // SINGLE PLAYER
+              if (MatchState.whoStart == 1)
+                FourInALine.Instance.fsm.state(LOCAL_TURN);
+              else FourInALine.Instance.fsm.state(AI_TURN);
+              break;
+            case 1: // TWO PLAYER
               FourInALine.Instance.fsm.state(LOCAL_TURN);
-            else FourInALine.Instance.fsm.state(AI_TURN);
-            break;
-          case 1: // TWO PLAYER
-            FourInALine.Instance.fsm.state(LOCAL_TURN);
-            break;
-          default:
-            break;
+              break;
+            default:
+              break;
+          }
+          return true;
         }
-      };
+        return false;
+      }
     },
 
 
@@ -222,6 +230,7 @@ public class FSM implements Context {
               System.out.println("Games: " + MatchState.gamesIntoMatch + " of " + MatchState.nMatchTo);
               MatchState.gamesIntoMatch++;
               FourInALine.Instance.fsm.state(States.INIT_GAME);
+              FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
             } else {
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
             }

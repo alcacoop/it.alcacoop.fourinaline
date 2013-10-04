@@ -1,6 +1,7 @@
 package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
@@ -31,8 +32,15 @@ public class GameScreen extends BaseScreen {
     super.show();
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
-    FourInALine.Instance.board.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(animationTime),
-        Actions.moveTo((stage.getWidth() - FourInALine.Instance.board.getWidth()) / 2, (stage.getHeight() - FourInALine.Instance.board.getHeight()) / 2, animationTime))));
+    FourInALine.Instance.board.addAction(Actions.sequence(
+        Actions.parallel(Actions.fadeIn(animationTime),
+            Actions.moveTo((stage.getWidth() - FourInALine.Instance.board.getWidth()) / 2, (stage.getHeight() - FourInALine.Instance.board.getHeight()) / 2, animationTime)),
+        Actions.run(new Runnable() {
+          @Override
+          public void run() {
+            FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
+          }
+        })));
   }
 
   @Override
