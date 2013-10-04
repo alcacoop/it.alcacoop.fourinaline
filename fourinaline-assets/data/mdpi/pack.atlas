@@ -5,49 +5,49 @@ filter: Linear,Linear
 repeat: none
 CSB
   rotate: false
-  xy: 879, 609
+  xy: 630, 182
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 CSB_orig
   rotate: false
-  xy: 630, 884
+  xy: 630, 52
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 CSW
   rotate: false
-  xy: 630, 754
+  xy: 760, 182
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 CSW_orig
   rotate: false
-  xy: 760, 884
+  xy: 760, 52
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 abt
   rotate: false
-  xy: 1, 4
+  xy: 1, 17
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 achievements
   rotate: false
-  xy: 924, 942
+  xy: 1183, 441
   size: 69, 70
   orig: 69, 70
   offset: 0, 0
   index: -1
 alca
   rotate: false
-  xy: 630, 595
+  xy: 630, 312
   size: 243, 70
   split: 121, 121, 68, 1
   orig: 243, 70
@@ -55,7 +55,7 @@ alca
   index: -1
 bbg
   rotate: false
-  xy: 760, 754
+  xy: 879, 326
   size: 128, 128
   split: 16, 16, 16, 16
   orig: 128, 128
@@ -63,119 +63,112 @@ bbg
   index: -1
 bg
   rotate: false
-  xy: 1, 552
+  xy: 1, 51
   size: 627, 460
   orig: 627, 460
   offset: 0, 0
   index: -1
 dp
   rotate: false
-  xy: 35, 4
+  xy: 962, 32
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 facebook
   rotate: false
-  xy: 924, 545
+  xy: 1039, 449
   size: 70, 62
   orig: 70, 62
   offset: 0, 0
   index: -1
 gpl
   rotate: false
-  xy: 69, 4
+  xy: 1325, 479
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 gplus
   rotate: false
-  xy: 924, 739
+  xy: 890, 1
   size: 70, 63
   orig: 70, 63
   offset: 0, 0
   index: -1
 hi
   rotate: false
-  xy: 103, 4
+  xy: 35, 17
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 hole
   rotate: false
-  xy: 515, 365
+  xy: 890, 196
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 hole_orig
   rotate: false
-  xy: 515, 235
+  xy: 890, 66
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 how
   rotate: false
-  xy: 137, 4
+  xy: 1325, 445
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 leaderboards
   rotate: false
-  xy: 924, 870
+  xy: 1254, 441
   size: 69, 70
   orig: 69, 70
   offset: 0, 0
   index: -1
 logo
   rotate: false
-  xy: 515, 495
+  xy: 630, 456
   size: 407, 55
   orig: 407, 55
   offset: 0, 0
   index: -1
 opt
   rotate: false
-  xy: 171, 4
+  xy: 1359, 479
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 pro
   rotate: false
-  xy: 205, 4
+  xy: 69, 17
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 sp
   rotate: false
-  xy: 239, 4
+  xy: 1359, 445
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 str
   rotate: false
-  xy: 273, 4
+  xy: 1393, 479
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-texture
-  rotate: false
-  xy: 1, 38
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
 topborder
   rotate: false
-  xy: 630, 667
+  xy: 630, 384
   size: 247, 70
   split: 117, 129, 1, 68
   orig: 247, 70
@@ -183,14 +176,14 @@ topborder
   index: -1
 transparent
   rotate: false
-  xy: 1, 1
+  xy: 875, 381
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 twitter
   rotate: false
-  xy: 924, 804
+  xy: 1111, 447
   size: 70, 64
   orig: 70, 64
   offset: 0, 0

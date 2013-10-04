@@ -38,7 +38,8 @@ public class FourInALine extends Game implements ApplicationListener {
   public MatchOptionsScreen matchOptionsScreen;
   public OptionsScreen optionsScreen;
 
-  public Texture wood;
+  public Texture wood, mask, btntxt;
+
   public Board board;
 
   public FSM fsm;
@@ -61,6 +62,7 @@ public class FourInALine extends Game implements ApplicationListener {
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
     wood = new Texture(Gdx.files.internal(resname[ss] + "/texture.jpg"));
     mask = new Texture(Gdx.files.internal(resname[ss] + "/mask.png"));
+    btntxt = new Texture(Gdx.files.internal(resname[ss] + "/btn_texture.jpg"));
 
     transitionTimer = new Timer();
 

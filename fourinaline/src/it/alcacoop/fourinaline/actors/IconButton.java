@@ -18,6 +18,8 @@ package it.alcacoop.fourinaline.actors;
 
 import it.alcacoop.fourinaline.FourInALine;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -33,6 +35,7 @@ public class IconButton extends Button {
   private final Label label;
   private TextButtonStyle style;
   private TextureRegion reg;
+  private Random rnd;
 
   public IconButton(String text, TextureRegion icon, TextButtonStyle tl) {
     super(tl);
@@ -54,8 +57,7 @@ public class IconButton extends Button {
 
     setWidth(getPrefWidth());
     setHeight(getPrefHeight());
-
-    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
+    rnd = new Random();
   }
 
   public void setStyle(ButtonStyle style) {
@@ -70,6 +72,17 @@ public class IconButton extends Button {
       labelStyle.fontColor = textButtonStyle.fontColor;
       label.setStyle(labelStyle);
     }
+  }
+
+
+  @Override
+  public void layout() {
+    super.layout();
+    System.out.println("ICON BTN LAYOUT");
+    System.out.println(getWidth() + ":" + getHeight());
+    int x = rnd.nextInt((int)(FourInALine.Instance.btntxt.getWidth() - getWidth()));
+    int y = rnd.nextInt((int)(FourInALine.Instance.btntxt.getHeight() - getHeight()));
+    reg = new TextureRegion(FourInALine.Instance.btntxt, x, y, Math.round(getWidth()), Math.round(getHeight()));
   }
 
   public TextButtonStyle getStyle() {
@@ -99,23 +112,12 @@ public class IconButton extends Button {
     }
 
     // HERE TEXTURE!
-    batch.setColor(1, 1, 1, 0.35f);
+    batch.setColor(1, 1, 1, 0.45f);
     batch.draw(reg, 0 + getX(), 0 + getY(), getWidth(), getHeight());
     batch.setColor(1, 1, 1, 1);
     drawChildren(batch, parentAlpha);
   }
 
-  @Override
-  public void setWidth(float width) {
-    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
-    super.setWidth(width);
-  }
-
-  @Override
-  public void setHeight(float height) {
-    reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
-    super.setHeight(height);
-  }
 
   public void draw(SpriteBatch batch, float parentAlpha) {
     Color fontColor;
