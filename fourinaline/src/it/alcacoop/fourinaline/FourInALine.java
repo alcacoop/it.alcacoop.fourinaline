@@ -39,7 +39,6 @@ public class FourInALine extends Game implements ApplicationListener {
   public OptionsScreen optionsScreen;
 
   public Texture wood;
-
   public Board board;
 
   public FSM fsm;
@@ -60,7 +59,7 @@ public class FourInALine extends Game implements ApplicationListener {
     atlas = new TextureAtlas(Gdx.files.internal(resname[ss] + "/pack.atlas"));
     skin = new Skin(Gdx.files.internal(resname[ss] + "/myskin.json"));
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
-    wood = new Texture(Gdx.files.internal("mdpi/texture.jpg"));
+    wood = new Texture(Gdx.files.internal(resname[ss] + "/texture.jpg"));
 
     transitionTimer = new Timer();
 
