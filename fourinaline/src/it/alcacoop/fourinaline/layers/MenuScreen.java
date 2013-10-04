@@ -2,11 +2,14 @@ package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.actors.IconButton;
+import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -89,6 +92,16 @@ public class MenuScreen extends BaseScreen {
     table.add().colspan(2).fill().expand();
 
     stage.addActor(table);
+
+    stage.addListener(new InputListener() {
+      @Override
+      public boolean keyDown(InputEvent event, int keycode) {
+        if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+          UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Row?");
+        }
+        return super.keyDown(event, keycode);
+      }
+    });
   }
 
   @Override

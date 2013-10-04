@@ -32,7 +32,7 @@ interface State {
 public class FSM implements Context {
 
   public enum Events {
-    NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME
+    NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME, LEAVE_GAME, LEAVE_MATCH
   }
 
   public enum States implements State {
@@ -46,6 +46,10 @@ public class FSM implements Context {
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
+          case LEAVE_GAME:
+            if ((Boolean)params)
+              Gdx.app.exit();
+            break;
           case BUTTON_CLICKED:
             String btn = ((String)params);
             if (btn.equals("SINGLE PLAYER")) {
@@ -217,7 +221,6 @@ public class FSM implements Context {
 
         return true;
       }
-
     },
 
     REMOTE_TURN {
