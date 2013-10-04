@@ -83,8 +83,6 @@ public class OptionsScreen extends BaseScreen {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-          // if (UIDialog.isOpened())
-          // return false;
           savePrefs();
           FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, "BACK");
         }
