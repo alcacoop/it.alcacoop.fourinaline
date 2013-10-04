@@ -8,21 +8,20 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class ParticleEffectActor extends Actor {
 
   ParticleEffect effect;
-  
+
   public ParticleEffectActor() {
     effect = new ParticleEffect();
-    System.out.println(Gdx.files.internal("effects/fire.p"));
     effect.load(Gdx.files.internal("effects/fire.p"), Gdx.files.internal("effects"));
   }
 
   public void draw(SpriteBatch batch, float parentAlpha) {
-     effect.draw(batch);
+    effect.draw(batch);
   }
 
   public void act(float delta) {
-     super.act(delta);
-     effect.update(delta);
-     effect.start();
+    super.act(delta);
+    effect.update(delta);
+    effect.start();
   }
 
   @Override
@@ -30,8 +29,8 @@ public class ParticleEffectActor extends Actor {
     effect.reset();
     effect.setPosition(x, y);
   }
-  
+
   public ParticleEffect getEffect() {
-     return effect;
+    return effect;
   }
 }
