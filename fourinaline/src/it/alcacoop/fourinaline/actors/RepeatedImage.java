@@ -18,9 +18,15 @@ package it.alcacoop.fourinaline.actors;
 
 import it.alcacoop.fourinaline.FourInALine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -35,7 +41,9 @@ public class RepeatedImage extends Widget {
   private float imageX, imageY, imageWidth, imageHeight;
   private Drawable drawable;
   private int nx, ny;
-  private TextureRegion tile, wood;// , mask;
+  private TextureRegion tile;
+  private Texture mask, wood;
+  private ShaderProgram shader;
 
 
   public RepeatedImage(TextureRegion region, final float imageWidth, final float imageHeight, final int nx, final int ny) {
@@ -48,15 +56,12 @@ public class RepeatedImage extends Widget {
     setHeight(imageHeight);
     tile = region;
 
-    wood = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(imageWidth), Math.round(imageHeight));
-    /*
-    wood = FourInALine.Instance.atlas.findRegion("texture");
-    Texture t = new Texture(128, 128, Format.RGBA8888);
-    t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-    Pixmap p = new Pixmap(Gdx.files.internal("mdpi/hole.png"));
-    t.draw(p, 0, 0);
-    mask = new TextureRegion(t);
-    */
+    wood = FourInALine.Instance.wood;
+    mask = new Texture(Gdx.files.internal("mdpi/hole.png"));
+
+    shader = new ShaderProgram(Gdx.files.internal("shaders/vertex.s"), Gdx.files.internal("shaders/fragment.s"));
+    System.out.println(shader.isCompiled());
+    System.out.println(shader.getLog());
   }
 
 
@@ -95,11 +100,6 @@ public class RepeatedImage extends Widget {
     float xdim = imageWidth / nx;
     float ydim = imageHeight / ny;
 
-    /*
-    // SAVE ORIG Fns
-    int s = batch.getBlendSrcFunc();
-    int d = batch.getBlendDstFunc();
-    */
 
     // BG
     if (drawable != null) {
@@ -108,31 +108,57 @@ public class RepeatedImage extends Widget {
           batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
         }
     }
-    batch.setColor(1, 1, 1, 0.3f);
-    batch.draw(wood, getX(), getY());
-    batch.setColor(1, 1, 1, 1);
-    /*
-    batch.flush();
-    // MASK
-    Gdx.gl20.glColorMask(true, true, true, true);
-    batch.setBlendFunction(GL20.GL_ONE, GL20.GL_ZERO);
+    // batch.draw(wood, getX(), getY(), getWidth(), getHeight());
+
+
+    batch.end();
+
+    FrameBuffer fbo = new FrameBuffer(Format.RGBA4444, nx * tile.getRegionWidth(), ny * tile.getRegionHeight(), false);
+    fbo.begin();
+    batch.begin();
     if (drawable != null) {
       for (int x = 0; x < nx; x++)
         for (int y = 0; y < ny; y++) {
-          batch.draw(mask, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
+          batch.draw(tile, x * tile.getRegionWidth(), y * tile.getRegionHeight());
         }
     }
-    batch.flush();
+    batch.end();
+    fbo.end();
 
-    // TEXTURE
-    Gdx.gl20.glColorMask(true, true, true, true);
-    batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_DST_ALPHA);
-    batch.draw(wood, 0 + getX(), 0 + getY(), getWidth(), getHeight());
-    batch.flush();
 
-    // RESTORE ORIG Fns
-    batch.setBlendFunction(s, d);
+    batch.setShader(shader);
+    shader.begin();
+
+
+    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+    wood.bind();
+    shader.setUniformi("u_wood", 0);
+
+    // shader.setUniformi("u_mask", 0);
+    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
+    wood.bind();
+    shader.setUniformi("u_wood", 1);
+
+
+    batch.begin();
+    batch.draw(fbo.getColorBufferTexture(), getX(), getY(), getWidth(), getHeight());
+    /*
+    if (drawable != null) {
+      for (int x = 0; x < nx; x++)
+        for (int y = 0; y < ny; y++) {
+          batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
+        }
+    }
     */
+    batch.end();
+    shader.end();
+
+    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+
+    batch.setShader(null);
+    batch.begin();
+
+
   }
 
   @Override

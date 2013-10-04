@@ -7,7 +7,7 @@ public class FourInALineDesktop {
   public static void main(String[] args) {
     LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
     cfg.title = "fourinaline";
-    cfg.useGL20 = false;
+    cfg.useGL20 = true;
     cfg.width = 800;
     cfg.height = 480;
 
