@@ -96,13 +96,10 @@ public class BoardImage extends Widget {
       imageY = 0;
     else imageY = (int)(height / 2 - imageHeight / 2);
 
-    System.out.println("LAYOUT");
-
     if (fbo1 == null) {
       fbo1 = new FrameBuffer(Format.RGBA8888, (int)getWidth(), (int)getHeight(), false);
       fbo2 = new FrameBuffer(Format.RGBA8888, (int)getWidth(), (int)getHeight(), false);
     }
-
 
     SpriteBatch sb = new SpriteBatch();
     Matrix4 matrix = new Matrix4();
