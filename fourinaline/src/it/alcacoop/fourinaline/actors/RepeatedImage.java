@@ -123,6 +123,7 @@ public class RepeatedImage extends Widget {
     sb.end();
     fbo1.end();
 
+    Texture none = new Texture(1024, 1024, Format.RGBA4444);
 
     fbo2.begin();
     sb.setShader(shader);
@@ -130,15 +131,17 @@ public class RepeatedImage extends Widget {
     Gdx.gl.glClearColor(1, 1, 1, 0);
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
+
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
     wood.bind();
     shader.setUniformi("u_wood", 0);
 
-    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
-    wood.bind();
-    shader.setUniformi("u_wood", 1);
 
+    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
+    none.bind();
+    shader.setUniformi("u_wood", 1);
     sb.draw(fbo1.getColorBufferTexture(), 0, 0, getWidth(), getHeight());
+
 
     sb.end();
     shader.end();

@@ -17,9 +17,9 @@ void main(void) {
   vec4 texColor1 = texture2D(u_wood, v_texCoords0);
 
   vec4 pixel = vec4(1.0);
-  pixel.r = texColor0.r*texColor1.r;
-  pixel.b = texColor0.g;
-  pixel.g = texColor0.b;
+  pixel.r = texColor0.r;
+  pixel.b = texColor0.b;
+  pixel.g = texColor0.g;
   pixel.a = texColor1.a;
 
   gl_FragColor = pixel;
