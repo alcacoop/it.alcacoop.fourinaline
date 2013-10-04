@@ -30,7 +30,7 @@ public class Board extends Group {
 
   private int dim;
   private Image bbg;
-  private RepeatedImage boardImage;
+  private BoardImage boardImage;
   private Group checkersLayer;
 
   private GameModel gameModel;
@@ -80,7 +80,7 @@ public class Board extends Group {
     checkersLayer.setPosition(splits[0], splits[3]);
     addActor(checkersLayer);
 
-    boardImage = new RepeatedImage(FourInALine.Instance.atlas.findRegion("hole"), wx * dim, wy * dim, wx, wy);
+    boardImage = new BoardImage(wx * dim, wy * dim, wx, wy);
     addActor(boardImage);
     boardImage.setPosition((getWidth() - boardImage.getWidth()) / 2, (getHeight() - boardImage.getHeight()) / 2);
 

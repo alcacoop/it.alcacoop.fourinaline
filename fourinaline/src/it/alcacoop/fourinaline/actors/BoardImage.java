@@ -37,7 +37,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
 
 
-public class RepeatedImage extends Widget {
+public class BoardImage extends Widget {
   private Scaling scaling;
   private int align = Align.center;
   private float imageX, imageY, imageWidth, imageHeight;
@@ -51,8 +51,8 @@ public class RepeatedImage extends Widget {
   private FrameBuffer fbo1, fbo2;
 
 
-  public RepeatedImage(TextureRegion region, final float imageWidth, final float imageHeight, final int nx, final int ny) {
-    setDrawable(new TextureRegionDrawable(region));
+  public BoardImage(final float imageWidth, final float imageHeight, final int nx, final int ny) {
+    setDrawable(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("hole")));
     this.scaling = Scaling.stretch;
     this.align = Align.center;
     this.nx = nx;
@@ -61,7 +61,7 @@ public class RepeatedImage extends Widget {
     ydim = (int)imageHeight / ny;
     setWidth((int)imageWidth);
     setHeight((int)imageHeight);
-    tile = region;
+    tile = FourInALine.Instance.atlas.findRegion("hole");
 
     wood = FourInALine.Instance.wood;
     mask = new TextureRegion(FourInALine.Instance.mask);
@@ -70,7 +70,6 @@ public class RepeatedImage extends Widget {
     System.out.println(shader.isCompiled());
     System.out.println(shader.getLog());
   }
-
 
   public void layout() {
     if (drawable == null)
@@ -130,22 +129,17 @@ public class RepeatedImage extends Widget {
     sb.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
     wood.bind();
     shader.setUniformi("u_wood", 0);
-
-
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
     none.bind();
     shader.setUniformi("u_wood", 1);
     sb.draw(fbo1.getColorBufferTexture(), 0, 0, getWidth(), getHeight());
-
-
     sb.end();
     shader.end();
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+    sb.setShader(null);
     fbo2.end();
   }
 
@@ -162,7 +156,7 @@ public class RepeatedImage extends Widget {
           batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
         }
     }
-    // batch.setColor(1, 1, 1, 0.3f);
+    batch.setColor(1, 1, 1, 0.7f);
     batch.draw(fbo2.getColorBufferTexture(), getX(), getY());
     batch.setColor(1, 1, 1, 1);
   }
