@@ -1,3 +1,22 @@
+/**
+@startuml
+null --> MAIN_MENU
+MAIN_MENU --> MAIN_MENU : BUTTON_CLICKED
+MAIN_MENU --> INIT_GAME
+INIT_GAME --> LOCAL_TURN
+LOCAL_TURN --> LOCAL_TURN : CLICKED_COL
+LOCAL_TURN --> LOCAL_TURN : MOVE_END
+LOCAL_TURN --> AI_TURN
+AI_TURN --> AI_TURN : AI_EVALUETED
+AI_TURN --> AI_TURN : MOVE_END
+AI_TURN --> LOCAL_TURN
+LOCAL_TURN --> CHECK_END_MATCH
+CHECK_END_MATCH --> CHECK_END_MATCH : GAME_TERMINATED
+CHECK_END_MATCH --> CHECK_END_MATCH : BOARD_RESETTED
+CHECK_END_MATCH --> MAIN_MENU
+@enduml
+ */
+
 // SIMULATED GAME STATE MACHINE
 // From: http://vanillajava.blogspot.com/2011/06/java-secret-using-enum-as-state-machine.html
 
@@ -300,6 +319,7 @@ public class FSM implements Context {
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
     // System.out.println("PROCESS " + evt + " ON " + state());
+    // System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
     Gdx.app.postRunnable(new Runnable() {
       @Override
       public void run() {
@@ -318,6 +338,7 @@ public class FSM implements Context {
   }
 
   public void state(State state) {
+    // System.out.println("PLANTUML:" + currentState + " --> " + state);
     if (currentState != null)
       currentState.exitState(this);
     previousState = currentState;

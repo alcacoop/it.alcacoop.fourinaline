@@ -96,7 +96,7 @@ public class Board extends Group {
       public void clicked(InputEvent event, float x, float y) {
         if (MatchState.winner >= 0) {
           FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
-          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, MatchState.winner);
+          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 0);
         } else {
           if (!locked) {
             int cx = (int)Math.ceil((x / dim)) - 1;

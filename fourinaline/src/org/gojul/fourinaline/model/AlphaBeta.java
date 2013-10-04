@@ -6,8 +6,12 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.WeakHashMap;
 
@@ -126,6 +130,8 @@ public class AlphaBeta implements Serializable
     List<Integer> iterationOrder = new ArrayList<Integer>(playOrder);
     iterationOrder.retainAll(possiblePlays);
     
+    HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();
+    List<Integer> scoresList = new ArrayList<Integer>(playOrder);
     for (Integer colIndex: iterationOrder)
     {
       tempModel.play(colIndex.intValue(), playerMark);
@@ -146,6 +152,9 @@ public class AlphaBeta implements Serializable
         scoreCache.put(key, Integer.valueOf(currentScore));
       } 
       
+
+      m.put(colIndex, currentScore);
+
       System.out.println("SCORE "+colIndex+": "+currentScore);
       
       tempModel.cancelLastPlay();
@@ -162,6 +171,32 @@ public class AlphaBeta implements Serializable
       }
     }
     System.out.println("BEST COLUMN: "+bestColumn+"\n");
+
+    // Taglio via i piu bassi
+    Iterator it = m.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry pairs = (Map.Entry)it.next();
+      if ((Integer)pairs.getValue() < -1000)
+        it.remove();
+      else scoresList.add((Integer)pairs.getValue());
+    }
+
+    // Ordinamento
+    Collections.sort(scoresList);
+    for (Entry<Integer, Integer> entry : m.entrySet()) {
+      System.out.println("MAP SCORE RIDOTTA: " + entry.getKey() + " -> " + entry.getValue());
+    }
+
+    // Max/min
+    int max = scoresList.get(scoresList.size() - 1);
+    int min = scoresList.get(0);
+    System.out.println("MAX: " + max);
+    System.out.println("MIN: " + min);
+
+    int window = Math.abs(max - min);
+    float unit = window / m.size();
+    System.out.println("WINDOW: " + window + "UNIT: " + unit);
+
     return bestColumn;
   }
   
