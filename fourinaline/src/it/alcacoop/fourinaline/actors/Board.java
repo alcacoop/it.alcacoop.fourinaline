@@ -183,24 +183,28 @@ public class Board extends Group {
 
 
   public void reset() {
-    Iterator<Entry<CellCoord, Checker>> iter = usedCheckers.entrySet().iterator();
-    while (iter.hasNext()) {
-      Entry<CellCoord, Checker> entry = iter.next();
-      final Checker c = entry.getValue();
-      final boolean hasNext = iter.hasNext();
-      c.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.run(new Runnable() {
-        @Override
-        public void run() {
-          c.remove();
-          checkers.free(c);
-          if ((usedCheckers.size() == 0) && (!hasNext))
-            FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
-        }
-      })));
-      iter.remove();
+    if (usedCheckers.size() == 0) {
+      FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
+    } else {
+      Iterator<Entry<CellCoord, Checker>> iter = usedCheckers.entrySet().iterator();
+      while (iter.hasNext()) {
+        Entry<CellCoord, Checker> entry = iter.next();
+        final Checker c = entry.getValue();
+        final boolean hasNext = iter.hasNext();
+        c.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.run(new Runnable() {
+          @Override
+          public void run() {
+            c.remove();
+            checkers.free(c);
+            if ((usedCheckers.size() == 0) && (!hasNext))
+              FourInALine.Instance.fsm.processEvent(Events.BOARD_RESETTED, 0);
+          }
+        })));
+        iter.remove();
+      }
+      for (int i = 0; i < 4; i++)
+        effects[i].setVisible(false);
     }
-    for (int i = 0; i < 4; i++)
-      effects[i].setVisible(false);
   }
 
 

@@ -175,6 +175,14 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
+          case LEAVE_MATCH:
+            if ((Boolean)params) {
+              // LEAVE MATCH
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+            }
+
           default:
             return false;
         }

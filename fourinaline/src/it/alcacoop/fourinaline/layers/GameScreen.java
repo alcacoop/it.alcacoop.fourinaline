@@ -1,16 +1,31 @@
 package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 
 public class GameScreen extends BaseScreen {
 
   public GameScreen() {
+    stage.addListener(new InputListener() {
+      @Override
+      public boolean keyDown(InputEvent event, int keycode) {
+        if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+          if (UIDialog.isOpened())
+            return false;
+          UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leve current match?");
+        }
+        return super.keyDown(event, keycode);
+      }
+    });
   }
 
   @Override
