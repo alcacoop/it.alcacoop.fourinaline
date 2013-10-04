@@ -60,6 +60,7 @@ public class FourInALine extends Game implements ApplicationListener {
     skin = new Skin(Gdx.files.internal(resname[ss] + "/myskin.json"));
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
     wood = new Texture(Gdx.files.internal(resname[ss] + "/texture.jpg"));
+    mask = new Texture(Gdx.files.internal(resname[ss] + "/mask.png"));
 
     transitionTimer = new Timer();
 
