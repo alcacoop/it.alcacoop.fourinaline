@@ -107,7 +107,6 @@ public class IconButton extends Button {
 
   @Override
   public void setWidth(float width) {
-    System.out.println("SETWOIDTH");
     reg = new TextureRegion(FourInALine.Instance.wood, 0, 0, Math.round(getWidth()), Math.round(getHeight()));
     super.setWidth(width);
   }
