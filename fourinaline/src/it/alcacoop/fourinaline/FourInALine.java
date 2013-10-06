@@ -38,6 +38,8 @@ public class FourInALine extends Game implements ApplicationListener {
   public MatchOptionsScreen matchOptionsScreen;
   public OptionsScreen optionsScreen;
 
+  public SoundManager snd;
+
   public Texture wood, mask, btntxt;
 
   public Board board;
@@ -76,6 +78,8 @@ public class FourInALine extends Game implements ApplicationListener {
     board = new Board(7, 6, 4, gameScreen.getStage().getHeight() * 0.8f);
     board.setPosition(-gameScreen.getStage().getWidth(), (gameScreen.getStage().getHeight() - board.getHeight()) / 2);
     gameScreen.getStage().addActor(board);
+
+    snd = new SoundManager();
 
     fsm = new FSM();
     fsm.start();
