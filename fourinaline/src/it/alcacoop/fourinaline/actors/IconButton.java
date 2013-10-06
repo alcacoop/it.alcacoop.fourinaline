@@ -84,7 +84,8 @@ public class IconButton extends Button {
         background = (isOver() && style.checkedOver != null) ? style.checkedOver : style.checked;
       else if (isOver() && style.over != null)
         background = style.over;
-      else background = style.up;
+      else
+        background = style.up;
     }
 
     if (background != null) {
@@ -94,7 +95,7 @@ public class IconButton extends Button {
     }
 
     // HERE TEXTURE!
-    batch.setColor(1, 1, 1, 0.45f);
+    batch.setColor(1, 1, 1, 0.25f);
     batch.draw(reg, 0 + getX(), 0 + getY(), getWidth(), getHeight());
     batch.setColor(1, 1, 1, 1);
     drawChildren(batch, parentAlpha);
@@ -111,7 +112,8 @@ public class IconButton extends Button {
       fontColor = (isOver() && style.checkedOverFontColor != null) ? style.checkedOverFontColor : style.checkedFontColor;
     else if (isOver() && style.overFontColor != null)
       fontColor = style.overFontColor;
-    else fontColor = style.fontColor;
+    else
+      fontColor = style.fontColor;
     if (fontColor != null)
       label.getStyle().fontColor = fontColor;
     baseDraw(batch, parentAlpha);

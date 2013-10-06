@@ -88,13 +88,15 @@ public class BoardImage extends Widget {
       imageX = 0;
     else if ((align & Align.right) != 0)
       imageX = (int)(width - imageWidth);
-    else imageX = (int)(width / 2 - imageWidth / 2);
+    else
+      imageX = (int)(width / 2 - imageWidth / 2);
 
     if ((align & Align.top) != 0)
       imageY = (int)(height - imageHeight);
     else if ((align & Align.bottom) != 0)
       imageY = 0;
-    else imageY = (int)(height / 2 - imageHeight / 2);
+    else
+      imageY = (int)(height / 2 - imageHeight / 2);
 
     if (fbo1 == null) {
       fbo1 = new FrameBuffer(Format.RGBA8888, (int)getWidth(), (int)getHeight(), false);
@@ -142,7 +144,6 @@ public class BoardImage extends Widget {
     Color color = getColor();
     batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 
-
     // BG
     if (drawable != null) {
       for (int x = 0; x < nx; x++)
@@ -150,7 +151,7 @@ public class BoardImage extends Widget {
           batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
         }
     }
-    batch.setColor(1, 1, 1, 0.6f);
+    batch.setColor(1, 1, 1, 1);
     batch.draw(fbo2.getColorBufferTexture(), getX(), getY());
     batch.setColor(1, 1, 1, 1);
   }

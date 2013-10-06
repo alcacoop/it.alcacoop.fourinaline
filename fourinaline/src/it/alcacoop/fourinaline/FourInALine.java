@@ -55,11 +55,13 @@ public class FourInALine extends Game implements ApplicationListener {
       ss = 2;
     else if (pWidth <= 800)
       ss = 1;
-    else ss = 0;
+    else
+      ss = 0;
     resolution = resolutions[ss];
     atlas = new TextureAtlas(Gdx.files.internal(resname[ss] + "/pack.atlas"));
     skin = new Skin(Gdx.files.internal(resname[ss] + "/myskin.json"));
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
+
     wood = new Texture(Gdx.files.internal(resname[ss] + "/texture.jpg"));
     mask = new Texture(Gdx.files.internal(resname[ss] + "/mask.png"));
     btntxt = new Texture(Gdx.files.internal(resname[ss] + "/btn_texture.jpg"));
@@ -93,7 +95,8 @@ public class FourInALine extends Game implements ApplicationListener {
         }
       };
       transitionTimer.schedule(task, (long)(currentScreen.animationTime * 1000));
-    } else super.setScreen(screen);
+    } else
+      super.setScreen(screen);
     currentScreen = (BaseScreen)screen;
   }
 

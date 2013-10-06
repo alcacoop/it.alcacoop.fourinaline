@@ -61,7 +61,7 @@ public class Checker extends Actor implements Poolable {
     else
       batch.draw(r2, getX(), getY(), 0, 0, getWidth(), getHeight(), 1, 1, 0);
 
-    batch.setColor(1, 1, 1, 0.4f);
+    batch.setColor(1, 1, 1, 0.25f);
     batch.draw(reg, getX(), getY(), 0, 0, getWidth(), getHeight(), 1, 1, 0);
 
     batch.setColor(c.r, c.g, c.b, c.a * parentAlpha);
