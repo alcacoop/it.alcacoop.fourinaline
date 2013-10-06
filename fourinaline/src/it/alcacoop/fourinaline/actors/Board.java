@@ -139,6 +139,7 @@ public class Board extends Group {
 
 
   public void moveEnd() {
+    FourInALine.Instance.snd.playMove();
     if (MatchState.currentPlayer == 1)
       MatchState.currentPlayer = 2;
     else
