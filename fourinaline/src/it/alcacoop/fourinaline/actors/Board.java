@@ -68,17 +68,17 @@ public class Board extends Group {
 
     dim = Math.round((height - splits[2] - splits[3]) / wy);
 
-    bbg = new Image(patch);
-    bbg.setWidth(dim * wx + splits[0] + splits[1]);
-    bbg.setHeight(dim * wy + splits[2] + splits[3]);
-    bbg.setPosition(0, 0);
-    addActor(bbg);
-
     checkersLayer = new Group();
     checkersLayer.setWidth(dim * wx);
     checkersLayer.setHeight(dim * (wy + 1));
     checkersLayer.setPosition(splits[0], splits[3]);
     addActor(checkersLayer);
+
+    bbg = new Image(patch);
+    bbg.setWidth(dim * wx + splits[0] + splits[1]);
+    bbg.setHeight(dim * wy + splits[2] + splits[3]);
+    bbg.setPosition(0, 0);
+    addActor(bbg);
 
     boardImage = new BoardImage(wx * dim, wy * dim, wx, wy);
     addActor(boardImage);
@@ -141,7 +141,8 @@ public class Board extends Group {
   public void moveEnd() {
     if (MatchState.currentPlayer == 1)
       MatchState.currentPlayer = 2;
-    else MatchState.currentPlayer = 1;
+    else
+      MatchState.currentPlayer = 1;
     System.out.println("Livello: " + MatchState.currentAILevel);
     locked = false;
     // -1=CONTINUE, 0=TIE, 1=WON1, 2=WON2
