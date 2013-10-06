@@ -119,23 +119,20 @@ public class BoardImage extends Widget {
     sb.end();
     fbo1.end();
 
-    Texture none = new Texture(1024, 1024, Format.RGBA4444);
-
     fbo2.begin();
     sb.setShader(shader);
     sb.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
-    wood.bind();
-    shader.setUniformi("u_wood", 0);
+
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
-    none.bind();
+    wood.bind();
     shader.setUniformi("u_wood", 1);
+
+    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
     sb.draw(fbo1.getColorBufferTexture(), 0, 0, getWidth(), getHeight());
     sb.end();
     shader.end();
-    Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
     sb.setShader(null);
     fbo2.end();
   }
@@ -153,7 +150,7 @@ public class BoardImage extends Widget {
           batch.draw(tile, x * xdim + getX(), y * ydim + getY(), 0, 0, xdim, ydim, 1, 1, 0);
         }
     }
-    batch.setColor(1, 1, 1, 0.7f);
+    batch.setColor(1, 1, 1, 0.6f);
     batch.draw(fbo2.getColorBufferTexture(), getX(), getY());
     batch.setColor(1, 1, 1, 1);
   }
