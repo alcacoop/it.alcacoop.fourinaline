@@ -27,7 +27,7 @@ public class Checker extends Actor implements Poolable {
   private Random rnd;
   private float rotation;
   private SpriteBatch sb;
-  private FrameBuffer fbo, fbot;
+  private FrameBuffer fbo;
   private TextureRegion reg;
   int color;
 
@@ -36,15 +36,13 @@ public class Checker extends Actor implements Poolable {
     r1 = FourInALine.Instance.atlas.findRegion("CSW");
     r2 = FourInALine.Instance.atlas.findRegion("CSB");
 
-    shader = new ShaderProgram(Gdx.files.internal("shaders/vertex.s"), Gdx.files.internal("shaders/fragment.s"));
+    shader = new ShaderProgram(Gdx.files.internal("shaders/vertex.s"), Gdx.files.internal("shaders/fragment2.s"));
     System.out.println(shader.isCompiled());
     System.out.println(shader.getLog());
     wood = FourInALine.Instance.wood;
     rnd = new Random();
 
-    fbo = new FrameBuffer(Format.RGBA8888, r1.getRegionWidth(), r1.getRegionHeight(), true);
-    fbot = new FrameBuffer(Format.RGBA8888, r1.getRegionWidth(), r1.getRegionHeight(), true);
-
+    fbo = new FrameBuffer(Format.RGBA4444, r1.getRegionWidth(), r1.getRegionHeight(), true);
     sb = new SpriteBatch();
     Matrix4 matrix = new Matrix4();
     matrix.setToOrtho2D(0, 0, r1.getRegionWidth(), r1.getRegionHeight());
@@ -61,35 +59,24 @@ public class Checker extends Actor implements Poolable {
     else
       batch.draw(r2, getX(), getY(), 0, 0, getWidth(), getHeight(), 1, 1, 0);
 
-    batch.setColor(1, 1, 1, 0.25f);
+    batch.setColor(1, 1, 1, 0.45f);
     batch.draw(reg, getX(), getY(), 0, 0, getWidth(), getHeight(), 1, 1, 0);
-
     batch.setColor(c.r, c.g, c.b, c.a * parentAlpha);
   }
 
   public void setColor(int color) {
     this.color = color;
     rotation = rnd.nextFloat() * 360;
-    Sprite s;
-    if (color == 1)
-      s = new Sprite(r1);
-    else
-      s = new Sprite(r2);
-    s.setRotation(rotation);
+    Sprite sprite;
+    sprite = new Sprite(r1);
+    sprite.setRotation(rotation);
 
+    double a = (double)r1.getRegionWidth();
+    double b = (double)wood.getWidth();
+    float d = (float)(a / b);
 
-    fbot.begin();
-    sb.begin();
-    Gdx.gl.glClearColor(1, 1, 1, 0);
-    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    int x = rnd.nextInt(wood.getWidth() - r1.getRegionWidth());
-    int y = rnd.nextInt(wood.getHeight() - r1.getRegionHeight());
-    TextureRegion rg = new TextureRegion(wood, x, y, r1.getRegionWidth(), r1.getRegionHeight());
-    sb.setColor(1, 1, 1, 1);
-    sb.draw(rg, 0, 0);
-    sb.end();
-    fbot.end();
-
+    float x = (rnd.nextFloat() * d);
+    float y = (rnd.nextFloat() * d);
 
     fbo.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
@@ -97,12 +84,13 @@ public class Checker extends Actor implements Poolable {
     sb.setShader(shader);
     shader.begin();
     sb.begin();
+    shader.setUniformf("u_sx", x);
+    shader.setUniformf("u_sy", y);
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
-    fbot.getColorBufferTexture().bind();
     wood.bind();
     shader.setUniformi("u_wood", 1);
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
-    s.draw(sb);
+    sprite.draw(sb);
     sb.end();
     shader.end();
     sb.setShader(null);
