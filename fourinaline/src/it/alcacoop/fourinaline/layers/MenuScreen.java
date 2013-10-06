@@ -97,6 +97,8 @@ public class MenuScreen extends BaseScreen {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+          if (UIDialog.isOpened())
+            return false;
           UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Row?");
         }
         return super.keyDown(event, keycode);
