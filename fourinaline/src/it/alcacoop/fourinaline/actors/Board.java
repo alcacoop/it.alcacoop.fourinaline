@@ -128,7 +128,12 @@ public class Board extends Group {
 
     CellCoord cc = new CellCoord(col, row);
     usedCheckers.put(cc, checker);
-    checker.addAction(Actions.sequence(Actions.moveTo(dim * col, dim * (wy - row - 1), 0.3f), Actions.run(new Runnable() {
+
+    float to = dim * (wy - row - 1);
+    float delta = checker.getY() - to; // delta/time = v; => delta/v = time;
+    float time = delta / (getY() * 25f);
+
+    checker.addAction(Actions.sequence(Actions.moveTo(checker.getX(), to, time), Actions.run(new Runnable() {
       @Override
       public void run() {
         moveEnd();
@@ -136,7 +141,6 @@ public class Board extends Group {
     })));
     return true;
   }
-
 
   public void moveEnd() {
     FourInALine.Instance.snd.playMove();
