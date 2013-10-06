@@ -47,7 +47,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -57,13 +56,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 public final class UIDialog extends Table {
 
   private Table t1, t2, t3;
-  private TextButton bContinue;
-  private TextButton bYes;
-  private TextButton bNo;
-  private TextButton bCancel;
-  private TextButton bExport;
-  private TextButton bAccept;
-  private TextButton bReject;
+  private IconButton bContinue;
+  private IconButton bYes;
+  private IconButton bNo;
+  private IconButton bCancel;
+  private IconButton bExport;
 
   private Label label;
   private Drawable background;
@@ -74,11 +71,9 @@ public final class UIDialog extends Table {
 
   private FSM.Events evt;
   private boolean quitWindow = false;
-  private boolean optionsWindow = false;
   private boolean leaveWindow = false;
-  private boolean dicesWindow = false;
   private boolean visible = false;
-  private static float alpha = 0.9f;
+  private static float alpha = 0.95f;
 
   static {
     instance = new UIDialog();
@@ -93,7 +88,7 @@ public final class UIDialog extends Table {
         if (event.getTarget() instanceof Label) {
           s = ((Label)event.getTarget()).getText().toString().toUpperCase();
         } else {
-          s = ((TextButton)event.getTarget()).getText().toString().toUpperCase();
+          s = ((IconButton)event.getTarget()).getText().toString().toUpperCase();
         }
         instance.addAction(Actions.sequence(Actions.fadeOut(0.3f), Actions.run(new Runnable() {
           @Override
@@ -119,13 +114,13 @@ public final class UIDialog extends Table {
 
     TextButtonStyle tl = FourInALine.Instance.skin.get("button", TextButtonStyle.class);
 
-    bYes = new TextButton("Yes", tl);
+    bYes = new IconButton("Yes", null, tl);
     bYes.addListener(cl);
-    bNo = new TextButton("No", tl);
+    bNo = new IconButton("No", null, tl);
     bNo.addListener(cl);
-    bContinue = new TextButton("Ok", tl);
+    bContinue = new IconButton("Ok", null, tl);
     bContinue.addListener(cl);
-    bCancel = new TextButton("Cancel", tl);
+    bCancel = new IconButton("Cancel", null, tl);
     bCancel.addListener(cl);
 
     background = FourInALine.Instance.skin.getDrawable("default-window");
@@ -162,9 +157,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;
-    instance.optionsWindow = false;
     instance.leaveWindow = false;
-    instance.dicesWindow = false;
     instance.evt = evt;
     instance.remove();
     instance.setText(text);
@@ -199,9 +192,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;
-    instance.optionsWindow = false;
     instance.leaveWindow = false;
-    instance.dicesWindow = false;
     instance.evt = evt;
     instance.remove();
     instance.setText(text);
@@ -234,9 +225,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;
-    instance.optionsWindow = false;
     instance.leaveWindow = false;
-    instance.dicesWindow = false;
     instance.evt = evt;
     instance.remove();
 
@@ -291,9 +280,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;
-    instance.optionsWindow = false;
     instance.leaveWindow = false;
-    instance.dicesWindow = false;
     instance.evt = evt;
     instance.remove();
     instance.setText(text);
@@ -324,9 +311,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = true;
-    instance.optionsWindow = false;
     instance.leaveWindow = false;
-    instance.dicesWindow = false;
     instance.remove();
     instance.setText("Really quit the game?");
 
@@ -360,9 +345,7 @@ public final class UIDialog extends Table {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;
-    instance.optionsWindow = false;
     instance.leaveWindow = true;
-    instance.dicesWindow = false;
     instance.evt = evt;
     instance.remove();
 
@@ -408,8 +391,6 @@ public final class UIDialog extends Table {
     instance.evt = Events.NOOP;
     instance.quitWindow = false;
     instance.leaveWindow = false;
-    instance.optionsWindow = false;
-    instance.dicesWindow = false;
     instance.remove();
 
     final String gnuBgLink = "http://www.gnubg.org";
