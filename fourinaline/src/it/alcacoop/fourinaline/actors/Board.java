@@ -166,7 +166,7 @@ public class Board extends Group {
     } else {
       locked = false;
       if ((MatchState.mCount > 5) && (MatchState.currentAILevel != MatchState.AILevel)) {
-        alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.AILevel, 0.5f);
+        alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.AILevel, 0.5f, MatchState.AILevel);
         MatchState.currentAILevel = MatchState.AILevel;
       }
     }
@@ -181,7 +181,7 @@ public class Board extends Group {
   public void initMatch(int who) {
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: " + gameModel.getCurrentPlayer());
-    alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentAILevel, 0.5f);
+    alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentAILevel, 0.5f, MatchState.AILevel);
     MatchState.winner = -1;
     locked = false;
     MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();

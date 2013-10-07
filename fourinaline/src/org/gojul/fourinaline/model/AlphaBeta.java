@@ -57,6 +57,12 @@ public class AlphaBeta implements Serializable
   private int deepness;
   
   /**
+   * AI noise, one per level
+   */
+  private float[] aiNoise = { 2f, 1.7f, 1.2f, 0.5f, 0f };
+  private int aiLevel;
+
+  /**
    * The random factor.
    */
   private float randFactor;
@@ -78,7 +84,7 @@ public class AlphaBeta implements Serializable
    * inferior or equal to 0, or if <code>randomFactor</code> is not in the
    * [0, 1] range.
    */
-  public AlphaBeta(final EvalScore evalScoreFunction, final int deepnessSearch, final float randomFactor)
+  public AlphaBeta(final EvalScore evalScoreFunction, final int deepnessSearch, final float randomFactor, final int aiNoiseLevel)
     throws NullPointerException, IllegalArgumentException
   {
     if (evalScoreFunction == null)
@@ -92,7 +98,8 @@ public class AlphaBeta implements Serializable
     
     evalScore = evalScoreFunction;
     deepness = deepnessSearch;
-    randFactor = randomFactor; 
+    randFactor = randomFactor;
+    aiLevel = aiNoiseLevel;
     scoreCache = new WeakHashMap<String, Integer>(CACHE_INITIAL_CAPACITY);
   }
   
@@ -131,7 +138,7 @@ public class AlphaBeta implements Serializable
     iterationOrder.retainAll(possiblePlays);
     
     HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();
-    List<Integer> scoresList = new ArrayList<Integer>(playOrder);
+    List<Integer> scoresList = new ArrayList<Integer>();
     for (Integer colIndex: iterationOrder)
     {
       tempModel.play(colIndex.intValue(), playerMark);
@@ -152,11 +159,8 @@ public class AlphaBeta implements Serializable
         scoreCache.put(key, Integer.valueOf(currentScore));
       } 
       
-
       m.put(colIndex, currentScore);
-
-      System.out.println("SCORE "+colIndex+": "+currentScore);
-      
+      System.out.println("SCORE " + colIndex + ": " + currentScore);
       tempModel.cancelLastPlay();
       
       if (currentScore > bestScore)
@@ -170,7 +174,7 @@ public class AlphaBeta implements Serializable
         }
       }
     }
-    System.out.println("BEST COLUMN: "+bestColumn+"\n");
+    System.out.println("OLD BEST COLUMN: " + bestColumn);
 
     // Taglio via i piu bassi
     Iterator it = m.entrySet().iterator();
@@ -181,21 +185,45 @@ public class AlphaBeta implements Serializable
       else scoresList.add((Integer)pairs.getValue());
     }
 
+    if (m.size() == 0) return bestColumn;
+
     // Ordinamento
     Collections.sort(scoresList);
-    for (Entry<Integer, Integer> entry : m.entrySet()) {
-      System.out.println("MAP SCORE RIDOTTA: " + entry.getKey() + " -> " + entry.getValue());
-    }
 
     // Max/min
     int max = scoresList.get(scoresList.size() - 1);
     int min = scoresList.get(0);
-    System.out.println("MAX: " + max);
-    System.out.println("MIN: " + min);
 
-    int window = Math.abs(max - min);
+    float window = Math.abs(max - min);
     float unit = window / m.size();
-    System.out.println("WINDOW: " + window + "UNIT: " + unit);
+
+    // Soglia al di sotto della quale scartare i valori
+    float threshold = aiNoise[aiLevel - 1] * unit;
+
+    float minToPick = max - threshold;
+    // System.out.println("MINTOPICK:" + minToPick);
+
+    // Elimino i valori al di sotto di minToPick
+    for (Iterator iter = scoresList.iterator(); iter.hasNext();) {
+      Integer score = (Integer)iter.next();
+      if (score < minToPick) {
+        iter.remove();
+      }
+    }
+
+    // Scelgo random tra quelli rimasti
+    Integer value = scoresList.get(random.nextInt(scoresList.size()));
+
+    // Prendo colIndex dalla mappa
+    Entry<Integer, Integer> item = null;
+    for (Entry<Integer, Integer> entry : m.entrySet()) {
+      if (entry.getValue() == value) {
+        item = entry;
+        break;
+      }
+    }
+    bestColumn = item.getKey();
+    System.out.println("NEW BEST COLUMN:" + bestColumn);
 
     return bestColumn;
   }
