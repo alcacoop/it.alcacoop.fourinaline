@@ -148,7 +148,8 @@ public class FSM implements Context {
             case 0: // SINGLE PLAYER
               if (MatchState.whoStart == 1)
                 FourInALine.Instance.fsm.state(LOCAL_TURN);
-              else FourInALine.Instance.fsm.state(AI_TURN);
+              else
+                FourInALine.Instance.fsm.state(AI_TURN);
               break;
             case 1: // TWO PLAYER
               FourInALine.Instance.fsm.state(LOCAL_TURN);
@@ -164,6 +165,11 @@ public class FSM implements Context {
 
 
     LOCAL_TURN {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
+      }
+
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
@@ -198,6 +204,7 @@ public class FSM implements Context {
     AI_TURN {
       @Override
       public void enterState(Context ctx) {
+        FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
         if (MatchState.winner == -1)
           FourInALine.Instance.board.playAI();
       }
@@ -212,7 +219,8 @@ public class FSM implements Context {
           case MOVE_END:
             if (MatchState.matchType == -1)
               FourInALine.Instance.fsm.state(AI_TURN);
-            else FourInALine.Instance.fsm.state(LOCAL_TURN);
+            else
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           default:
