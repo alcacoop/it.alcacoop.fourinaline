@@ -96,7 +96,7 @@ public class Board extends Group {
       public void clicked(InputEvent event, float x, float y) {
         if (MatchState.winner >= 0) {
           FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
-          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, 0);
+          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, MatchState.winner);
         } else {
           if (!locked) {
             int cx = (int)Math.ceil((x / dim)) - 1;
@@ -159,6 +159,7 @@ public class Board extends Group {
         highlightWinLine();
         MatchState.winner = gameModel.getCurrentPlayer().hashCode();
         System.out.println("THE WINNER IS: " + MatchState.winner);
+        FourInALine.Instance.gameScreen.incScore(MatchState.winner);
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
         MatchState.winner = 0;
@@ -223,6 +224,7 @@ public class Board extends Group {
       effects[c].setPosition(x, y);
       effects[c].setVisible(true);
     }
+    FourInALine.Instance.gameScreen.highlightPlayer(0);
   }
 
 

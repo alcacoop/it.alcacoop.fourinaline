@@ -25,11 +25,11 @@ public class GameScreen extends BaseScreen {
   public GameScreen() {
     players = new PlayerBlock[2];
     players[0] = new PlayerBlock();
-    players[0].setName("CPU (L" + MatchState.AILevel + ")");
-    players[0].setColor(2);
+    players[0].setName("You");
+    players[0].setColor(1);
     players[1] = new PlayerBlock();
-    players[1].setName("You");
-    players[1].setColor(1);
+    players[1].setName("CPU (L" + MatchState.AILevel + ")");
+    players[1].setColor(2);
     nMatchTo = new Label("", FourInALine.Instance.skin);
 
     table = new Table();
@@ -66,12 +66,14 @@ public class GameScreen extends BaseScreen {
     FourInALine.Instance.board.remove();
     nMatchTo.setText("Match to: " + MatchState.nMatchTo);
 
-    players[0].setName("CPU (L" + MatchState.AILevel + ")");
-    players[1].setName("You");
+    players[0].setName("You");
+    players[0].setScore(0);
+    players[1].setName("CPU (L" + MatchState.AILevel + ")");
+    players[1].setScore(0);
 
     Table tp = new Table();
     tp.setFillParent(false);
-    tp.add(nMatchTo).expandX().left();
+    tp.add(nMatchTo).expandX();
     tp.row();
     tp.add(players[0]).left().fill().expandX();
     tp.row();
@@ -105,16 +107,19 @@ public class GameScreen extends BaseScreen {
 
   public void highlightPlayer(int player) {
     if (player == 1) {
+      players[0].highlight(true);
+      players[1].highlight(false);
+    } else if (player == 2) {
       players[0].highlight(false);
       players[1].highlight(true);
     } else {
-      players[0].highlight(true);
+      players[0].highlight(false);
       players[1].highlight(false);
     }
   }
 
-  public void setScore(int player, int score) {
-    MatchState.anScore[player - 1] = score;
-    players[player - 1].setScore(score);
+  public void incScore(int player) {
+    MatchState.anScore[player - 1]++;
+    players[player - 1].setScore(MatchState.anScore[player - 1]);
   }
 }

@@ -186,7 +186,9 @@ public class FSM implements Context {
     LOCAL_TURN {
       @Override
       public void enterState(Context ctx) {
-        FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
+        if (MatchState.winner == -1) {
+          FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
+        }
       }
 
       @Override
@@ -197,7 +199,6 @@ public class FSM implements Context {
             break;
 
           case MOVE_END:
-            // int gameState = (Integer)params;
             if (MatchState.matchType == 0)
               FourInALine.Instance.fsm.state(AI_TURN);
             else if (MatchState.matchType == 1)
@@ -223,9 +224,10 @@ public class FSM implements Context {
     AI_TURN {
       @Override
       public void enterState(Context ctx) {
-        FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
-        if (MatchState.winner == -1)
+        if (MatchState.winner == -1) {
+          FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
           FourInALine.Instance.board.playAI();
+        }
       }
 
       @Override
@@ -318,7 +320,7 @@ public class FSM implements Context {
 
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
-    // System.out.println("PROCESS " + evt + " ON " + state());
+    System.out.println("PROCESS " + evt + " ON " + state());
     // System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
     Gdx.app.postRunnable(new Runnable() {
       @Override
