@@ -69,7 +69,7 @@ default-window
   rotate: false
   xy: 1, 47
   size: 107, 80
-  split: 21, 24, 20, 19
+  split: 15, 15, 16, 15
   orig: 107, 80
   offset: 0, 0
   index: -1
@@ -92,7 +92,7 @@ list
   index: -1
 odd
   rotate: false
-  xy: 56, 3
+  xy: 230, 61
   size: 4, 4
   split: 0, 0, 0, 0
   orig: 4, 4
@@ -112,6 +112,13 @@ scroll
   xy: 230, 67
   size: 6, 22
   orig: 6, 22
+  offset: 0, 0
+  index: -1
+sep
+  rotate: false
+  xy: 56, 2
+  size: 6, 5
+  orig: 6, 5
   offset: 0, 0
   index: -1
 separator

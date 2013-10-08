@@ -25,7 +25,7 @@ public class GameScreen extends BaseScreen {
   public GameScreen() {
     players = new PlayerBlock[2];
     players[0] = new PlayerBlock();
-    players[0].setName("You");
+    players[0].setName("YOU");
     players[0].setColor(1);
     players[1] = new PlayerBlock();
     players[1].setName("CPU (L" + MatchState.AILevel + ")");
@@ -62,26 +62,44 @@ public class GameScreen extends BaseScreen {
 
   @Override
   public void initialize() {
-    table.setPosition(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
-    FourInALine.Instance.board.remove();
-    nMatchTo.setText("Match to: " + MatchState.nMatchTo);
+    table.clear();
 
-    players[0].setName("You");
+    nMatchTo.setText("MATCH TO: " + MatchState.nMatchTo);
+    nMatchTo.setColor(136f / 255f, 74f / 255f, 36f / 255f, 1f);
+
+    System.out.println(nMatchTo.getHeight());
+
+    players[0].setName("YOU");
     players[0].setScore(0);
     players[1].setName("CPU (L" + MatchState.AILevel + ")");
     players[1].setScore(0);
 
+
     Table tp = new Table();
+    tp.debug();
     tp.setFillParent(false);
     tp.add(nMatchTo).expandX();
+
+    tp.row();
+    tp.add().height(table.getHeight() / 40);
+
     tp.row();
     tp.add(players[0]).left().fill().expandX();
-    tp.row();
-    tp.debug();
-    tp.add(players[1]).fill().left().expandX();
 
-    table.add(tp).expandX().fill().left();
+    tp.row();
+    tp.add().height(table.getHeight() / 22);
+
+    tp.row();
+    tp.add(players[1]).fill().left().expandX();
+    tp.row();
+    tp.add().expand();
+
+    tp.setBackground(FourInALine.Instance.skin.getDrawable("default-window"));
+
+    table.add(tp).expand().fill().left();
     table.add(FourInALine.Instance.board);
+
+    table.setPosition(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
   }
 
   @Override

@@ -19,19 +19,22 @@ public class PlayerBlock extends Table {
   public PlayerBlock() {
     super();
     skin = FourInALine.Instance.skin;
-    setBackground(skin.getDrawable("default-window"));
+    setBackground(FourInALine.Instance.skin.getDrawable("sep"));
     lName = new Label("", skin);
     lScore = new Label("Score: 0", skin);
     checker = new Checker();
     checker.setColor(1, 1, 1, 1);
-    float dim = lScore.getHeight() * 0.7f;
+    float dim = lScore.getHeight() * 0.8f;
     checker.setWidth(dim);
     checker.setHeight(dim);
 
-    add(checker).left().padRight(10);
-    add(lName).expandX().left();
-    row();
-    add(lScore).colspan(2).expandX().left();
+    Table t = new Table();
+    t.add(lName).expandX().left();
+    t.row();
+    t.add(lScore).expandX().left();
+
+    add(checker).left().padRight(checker.getWidth() / 16).pad(4);
+    add(t).expandX().left().padRight(4);
   }
 
   public void setName(String name) {
@@ -50,9 +53,12 @@ public class PlayerBlock extends Table {
     if (status) {
       high = Actions.forever(Actions.sequence(Actions.fadeOut(0.3f), Actions.fadeIn(0.3f)));
       lName.addAction(high);
+      checker.addAction(high);
     } else {
       lName.removeAction(high);
+      checker.removeAction(high);
       lName.setColor(1, 1, 1, 1);
+      checker.setColor(1, 1, 1, 1);
     }
   }
 }
