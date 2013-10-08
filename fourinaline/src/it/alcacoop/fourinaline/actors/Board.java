@@ -71,6 +71,12 @@ public class Board extends Group {
     splits = ((AtlasRegion)r).splits;
     patch = new NinePatch(r, splits[0], splits[1], splits[2], splits[3]);
 
+    effects = new ParticleEffectActor[6];
+    for (int i = 0; i < 6; i++) {
+      effects[i] = new ParticleEffectActor();
+      effects[i].setVisible(false);
+    }
+
     setBoardDim(wx, wy, winLength);
   }
 
@@ -94,6 +100,9 @@ public class Board extends Group {
     if (checkersLayer != null)
       checkersLayer.remove();
 
+    for (int i = 0; i < 6; i++)
+      effects[i].remove();
+
     this.wx = wx;
     this.wy = wy;
     this.winLength = winLength;
@@ -116,12 +125,8 @@ public class Board extends Group {
     addActor(boardImage);
     boardImage.setPosition((getWidth() - boardImage.getWidth()) / 2, (getHeight() - boardImage.getHeight()) / 2);
 
-    effects = new ParticleEffectActor[winLength];
-    for (int i = 0; i < winLength; i++) {
-      effects[i] = new ParticleEffectActor();
-      effects[i].setVisible(false);
+    for (int i = 0; i < winLength; i++)
       addActor(effects[i]);
-    }
 
     boardImage.addListener(new ClickListener() {
       @Override
@@ -242,7 +247,7 @@ public class Board extends Group {
         })));
         iter.remove();
       }
-      for (int i = 0; i < 4; i++)
+      for (int i = 0; i < winLength; i++)
         effects[i].setVisible(false);
     }
   }
