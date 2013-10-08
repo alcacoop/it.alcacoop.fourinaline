@@ -185,7 +185,7 @@ public class AlphaBeta implements Serializable
       else scoresList.add((Integer)pairs.getValue());
     }
 
-    if (m.size() == 0) return bestColumn;
+    if ((m.size() == 0) || aiLevel == 5) return bestColumn;
 
     // Ordinamento
     Collections.sort(scoresList);

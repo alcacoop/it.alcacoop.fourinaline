@@ -2,7 +2,10 @@
 @startuml
 null --> MAIN_MENU
 MAIN_MENU --> MAIN_MENU : BUTTON_CLICKED
-MAIN_MENU --> INIT_GAME
+MAIN_MENU --> MATCH_OPTIONS
+MATCH_OPTIONS --> MATCH_OPTIONS : BUTTON_CLICKED
+MATCH_OPTIONS --> INIT_GAME
+INIT_GAME --> INIT_GAME : START_GAME
 INIT_GAME --> LOCAL_TURN
 LOCAL_TURN --> LOCAL_TURN : CLICKED_COL
 LOCAL_TURN --> LOCAL_TURN : MOVE_END
@@ -15,6 +18,10 @@ CHECK_END_MATCH --> CHECK_END_MATCH : GAME_TERMINATED
 CHECK_END_MATCH --> CHECK_END_MATCH : BOARD_RESETTED
 CHECK_END_MATCH --> MAIN_MENU
 @enduml
+ *
+ * Result of:
+ * $> grep -i "PLANTUML" fsm_single | sed 's/PLANTUML://'
+ * on the output
  */
 
 // SIMULATED GAME STATE MACHINE
@@ -320,7 +327,7 @@ public class FSM implements Context {
 
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
-    System.out.println("PROCESS " + evt + " ON " + state());
+    // System.out.println("PROCESS " + evt + " ON " + state());
     // System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
     Gdx.app.postRunnable(new Runnable() {
       @Override
