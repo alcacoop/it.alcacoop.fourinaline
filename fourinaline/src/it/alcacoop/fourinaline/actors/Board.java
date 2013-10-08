@@ -16,6 +16,7 @@ import org.gojul.fourinaline.model.GameModel;
 import org.gojul.fourinaline.model.GameModel.CellCoord;
 import org.gojul.fourinaline.model.GameModel.GameStatus;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,6 +32,7 @@ public class Board extends Group {
   private int dim;
   private Image bbg;
   private BoardImage boardImage;
+  private NinePatch patch;
   private Group checkersLayer;
 
   private GameModel gameModel;
@@ -42,15 +44,19 @@ public class Board extends Group {
   private boolean locked;
   private HashMap<CellCoord, Checker> usedCheckers;
 
+  private int splits[];
+
   private int wx;
   private int wy;
   private int winLength;
+  private float height;
 
   public Board(final int wx, final int wy, final int winLength, final float height) {
     super();
     this.wx = wx;
     this.wy = wy;
     this.winLength = winLength;
+    this.height = height;
 
     checkers = new Pool<Checker>(wx * wy) {
       @Override
@@ -61,10 +67,36 @@ public class Board extends Group {
 
     usedCheckers = new HashMap<GameModel.CellCoord, Checker>();
 
-    NinePatch patch = null;
     TextureRegion r = FourInALine.Instance.atlas.findRegion("bbg");
-    int[] splits = ((AtlasRegion)r).splits;
+    splits = ((AtlasRegion)r).splits;
     patch = new NinePatch(r, splits[0], splits[1], splits[2], splits[3]);
+
+    setBoardDim(wx, wy, winLength);
+  }
+
+  private void setVariant() {
+    String variant = Gdx.app.getPreferences("MatchOptions").getString("VARIANT", "7x6x4 (Standard)");
+    if (variant.equals("7x6x4 (Standard)") && (wx != 7)) {
+      setBoardDim(7, 6, 4);
+      System.out.println("STANDARD!!!");
+    } else if (variant.equals("9x7x5 (Bigger)") && (wx != 9)) {
+      setBoardDim(9, 7, 5);
+      System.out.println("BIGGER!!!");
+    }
+
+  }
+
+  private void setBoardDim(int wx, int wy, int winLength) {
+    if (bbg != null)
+      bbg.remove();
+    if (boardImage != null)
+      boardImage.remove();
+    if (checkersLayer != null)
+      checkersLayer.remove();
+
+    this.wx = wx;
+    this.wy = wy;
+    this.winLength = winLength;
 
     dim = Math.round((height - splits[2] - splits[3]) / wy);
 
@@ -105,7 +137,6 @@ public class Board extends Group {
         }
       }
     });
-
   }
 
 
@@ -181,6 +212,7 @@ public class Board extends Group {
   }
 
   public void initMatch(int who) {
+    setVariant();
     gameModel = new GameModel(wy, wx, winLength, who);
     System.out.println("START GAME: " + gameModel.getCurrentPlayer());
     alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentAILevel, 0.5f, MatchState.AILevel);
