@@ -42,7 +42,7 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
           if (UIDialog.isOpened())
             return false;
-          UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leve current match?");
+          UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
         }
         return super.keyDown(event, keycode);
       }
