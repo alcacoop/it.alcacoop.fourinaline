@@ -131,7 +131,8 @@ public class Board extends Group {
 
     float to = dim * (wy - row - 1);
     float delta = checker.getY() - to; // delta/time = v; => delta/v = time;
-    float time = delta / (getY() * 25f);
+    float time = delta / (getHeight() * 4f);
+    System.out.println("GETY: " + boardImage.getHeight());
 
     checker.addAction(Actions.sequence(Actions.moveTo(checker.getX(), to, time), Actions.run(new Runnable() {
       @Override
