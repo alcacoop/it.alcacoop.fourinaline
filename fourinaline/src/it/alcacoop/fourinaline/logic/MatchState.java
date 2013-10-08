@@ -10,7 +10,7 @@ public class MatchState {
   public static int whoStart = 2; // 1=PLAYER1, 2=AI|REMOTE
 
   public static int nMatchTo = 1;
-  public static int gamesIntoMatch = 1; // numero di game giocati in un match
+  public static boolean firstGame = true; // numero di game giocati in un match
 
   public static int currentPlayer = 1; // giocatore corrente 1=self 2=opponent
 

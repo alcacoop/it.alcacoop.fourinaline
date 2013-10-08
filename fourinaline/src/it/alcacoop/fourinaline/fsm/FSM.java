@@ -136,7 +136,7 @@ public class FSM implements Context {
             if (btn.equals("BACK")) {
               FourInALine.Instance.fsm.back();
             } else if (btn.equals("PLAY")) {
-              MatchState.gamesIntoMatch = 1;
+              MatchState.firstGame = true;
               MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
               FourInALine.Instance.fsm.state(States.INIT_GAME);
             }
@@ -153,7 +153,7 @@ public class FSM implements Context {
       @Override
       public void enterState(Context ctx) {
         int[] a = { 1, 2 };
-        if (MatchState.gamesIntoMatch == 1) {
+        if (MatchState.firstGame) {
           FourInALine.Instance.setScreen(FourInALine.Instance.gameScreen);
           MatchState.whoStart = new Random().nextInt(2) + 1;
         } else {
@@ -273,9 +273,8 @@ public class FSM implements Context {
           case BOARD_RESETTED:
             MatchState.mCount = 0;
             MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
-            if (MatchState.gamesIntoMatch < MatchState.nMatchTo) {
-              System.out.println("Games: " + MatchState.gamesIntoMatch + " of " + MatchState.nMatchTo);
-              MatchState.gamesIntoMatch++;
+            if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
+              MatchState.firstGame = false;
               FourInALine.Instance.fsm.state(States.INIT_GAME);
               FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
             } else {
