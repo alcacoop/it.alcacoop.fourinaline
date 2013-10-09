@@ -203,7 +203,7 @@ public class Board extends Group {
       }
     } else {
       locked = false;
-      if ((MatchState.mCount > 5) && (MatchState.currentAILevel != MatchState.AILevel)) {
+      if ((MatchState.mCount > (winLength + 1)) && (MatchState.currentAILevel != MatchState.AILevel)) {
         alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.AILevel, 0.5f, MatchState.AILevel);
         MatchState.currentAILevel = MatchState.AILevel;
       }
