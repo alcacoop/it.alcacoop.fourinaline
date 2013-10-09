@@ -39,14 +39,19 @@ public class FourInALine extends Game implements ApplicationListener {
   public OptionsScreen optionsScreen;
 
   public SoundManager snd;
+  public NativeFunctions nativeFunctions;
 
   public Texture wood, mask, btntxt;
 
   public Board board;
 
-  public FSM fsm;
+  public static FSM fsm;
 
   public static FourInALine Instance;
+
+  public FourInALine(NativeFunctions n) {
+    nativeFunctions = n;
+  }
 
   @Override
   public void create() {
