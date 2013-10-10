@@ -21,6 +21,34 @@ public class IconButton extends Button {
   private TextureRegion reg;
   private Random rnd;
 
+  public void _IconButton() {
+    setWidth(getPrefWidth());
+    setHeight(getPrefHeight());
+    rnd = new Random();
+  }
+
+  public IconButton(String text, TextureRegion icon, TextButtonStyle tl, boolean leftImage, boolean rightImage, boolean centerText) {
+    super(tl);
+    label = new Label(text, new LabelStyle(tl.font, tl.fontColor));
+    label.setAlignment(Align.center);
+    this.style = tl;
+    if (leftImage && icon != null) {
+      Image icon1 = new Image(icon);
+      add(icon1).expandY();
+    }
+
+    if (centerText)
+      add(label).expand().fill();
+
+    if (rightImage && icon != null) {
+      Image icon2 = new Image(icon);
+      add(icon2).expandY();
+    }
+
+
+    _IconButton();
+  }
+
   public IconButton(String text, TextureRegion icon, TextButtonStyle tl) {
     super(tl);
     this.style = tl;
@@ -39,9 +67,7 @@ public class IconButton extends Button {
       add(icon2).expandY();
     }
 
-    setWidth(getPrefWidth());
-    setHeight(getPrefHeight());
-    rnd = new Random();
+    _IconButton();
   }
 
   public void setStyle(ButtonStyle style) {
