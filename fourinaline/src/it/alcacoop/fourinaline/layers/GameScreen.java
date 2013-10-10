@@ -1,6 +1,7 @@
 package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.actors.IconButton;
 import it.alcacoop.fourinaline.actors.PlayerBlock;
 import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
 public class GameScreen extends BaseScreen {
@@ -21,6 +24,7 @@ public class GameScreen extends BaseScreen {
   private Table table;
   private PlayerBlock players[];
   private Label nMatchTo;
+  private IconButton leave, resign;
 
   public GameScreen() {
     players = new PlayerBlock[2];
@@ -31,6 +35,28 @@ public class GameScreen extends BaseScreen {
     players[1].setName("CPU (L" + MatchState.AILevel + ")");
     players[1].setColor(2);
     nMatchTo = new Label("", FourInALine.Instance.skin);
+
+    ClickListener clBack = new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        if (UIDialog.isOpened())
+          return;
+        UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
+      };
+    };
+
+    ClickListener clResign = new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        if (UIDialog.isOpened())
+          return;
+        UIDialog.getYesNoDialog(Events.RESIGN_GAME, "Really resign current game?");
+      };
+    };
+
+    TextButtonStyle st = FourInALine.Instance.skin.get("button", TextButtonStyle.class);
+    leave = new IconButton("", FourInALine.Instance.atlas.findRegion("back"), st, true, false, false);
+    leave.addListener(clBack);
+    resign = new IconButton("", FourInALine.Instance.atlas.findRegion("resign"), st, true, false, false);
+    resign.addListener(clResign);
 
     table = new Table();
     table.setWidth(stage.getWidth() * 0.85f);
@@ -59,7 +85,6 @@ public class GameScreen extends BaseScreen {
     // Table.drawDebug(stage);
   }
 
-
   @Override
   public void initialize() {
     table.clear();
@@ -78,21 +103,25 @@ public class GameScreen extends BaseScreen {
     Table tp = new Table();
     tp.debug();
     tp.setFillParent(false);
-    tp.add(nMatchTo).expandX();
+    tp.add(nMatchTo).expandX().colspan(2);
 
     tp.row();
-    tp.add().height(table.getHeight() / 40);
+    tp.add().height(table.getHeight() / 40).colspan(2);
 
     tp.row();
-    tp.add(players[0]).left().fill().expandX();
+    tp.add(players[0]).left().fill().expandX().colspan(2);
 
     tp.row();
-    tp.add().height(table.getHeight() / 22);
+    tp.add().height(table.getHeight() / 22).colspan(2);
 
     tp.row();
-    tp.add(players[1]).fill().left().expandX();
+    tp.add(players[1]).fill().left().expandX().colspan(2);
     tp.row();
-    tp.add().expand();
+    tp.add().expand().colspan(2);
+
+    tp.row();
+    tp.add(leave).expandX().fill().padLeft(table.getHeight() / 80).padRight(table.getHeight() / 80);
+    tp.add(resign).expandX().fill().padLeft(table.getHeight() / 80).padRight(table.getHeight() / 80);
 
     tp.setBackground(FourInALine.Instance.skin.getDrawable("default-window"));
 

@@ -12,7 +12,14 @@ uniform sampler2D u_texture;
 uniform sampler2D u_wood; 
 
 void main(void) {
-  vec4 pixel_wood = texture2D(u_wood, v_texCoords0);
+  float a = 0.0;//1.5707*3.0/2.3;
+  mat2 r = mat2(
+    cos(a), -sin(a),
+    sin(a), cos(a)
+  );
+
+  vec2 t = vec2(0.5, 0.5);
+  vec4 pixel_wood = texture2D(u_wood, (v_texCoords0-t)*r+t);
   vec4 pixel_mask = texture2D(u_texture, v_texCoords0);
 
   vec4 pixel = vec4(1.0);
