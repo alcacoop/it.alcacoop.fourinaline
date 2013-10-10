@@ -145,7 +145,7 @@ public class Board extends Group {
   }
 
 
-  public boolean play(int col) {
+  public boolean play(final int col) {
     int row = gameModel.getFreeRowIndexForColumn(col);
     if (row == -1)
       return false;
@@ -173,13 +173,13 @@ public class Board extends Group {
     checker.addAction(Actions.sequence(Actions.moveTo(checker.getX(), to, time), Actions.run(new Runnable() {
       @Override
       public void run() {
-        moveEnd();
+        moveEnd(col);
       }
     })));
     return true;
   }
 
-  public void moveEnd() {
+  public void moveEnd(int col) {
     FourInALine.Instance.snd.playMove();
     if (MatchState.currentPlayer == 1)
       MatchState.currentPlayer = 2;
@@ -208,7 +208,7 @@ public class Board extends Group {
         MatchState.currentAILevel = MatchState.AILevel;
       }
     }
-    FourInALine.Instance.fsm.processEvent(Events.MOVE_END, MatchState.winner);
+    FourInALine.Instance.fsm.processEvent(Events.MOVE_END, col);
   }
 
 

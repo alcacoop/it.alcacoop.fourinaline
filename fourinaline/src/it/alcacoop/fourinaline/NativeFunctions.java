@@ -44,7 +44,6 @@ public interface NativeFunctions {
   //
   // public void fibsSignin();
   // public void fibsRegistration();
-  // public boolean isNetworkUp();
   // public void hideChatBox();
   // public void showChatBox();
   // public void showInterstitial();
@@ -55,6 +54,10 @@ public interface NativeFunctions {
   //
   // public void hideProgressDialog();
   
+  public boolean isNetworkUp();
+
+  public int getAppVersionCode();
+
   public void gserviceSignIn();
   public boolean gserviceIsSignedIn();
   public void gserviceStartRoom();

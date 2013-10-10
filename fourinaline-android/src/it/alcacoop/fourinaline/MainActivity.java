@@ -6,14 +6,25 @@ import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.util.GServiceGameHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -27,6 +38,8 @@ import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 
 public class MainActivity extends GServiceApplication implements OnEditorActionListener, SensorEventListener, NativeFunctions {
+  private int appVersionCode;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -35,6 +48,19 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     cfg.useGL20 = true;
 
     initialize(new FourInALine(this), cfg);
+
+    prefs = Gdx.app.getPreferences("GameOptions");
+    gHelper = new GServiceGameHelper(this, false);
+    gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
+    // gserviceSignIn();
+    ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
+    List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
+    for (RunningTaskInfo runningTaskInfo : taskInfos) {
+      if (runningTaskInfo.baseActivity.getPackageName().contains("gms")) {
+        gserviceSignIn();
+        break;
+      }
+    }
   }
 
   @Override
@@ -74,6 +100,7 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     // PrivateDataManager.createBillingData(this);
     // }
     // } else
+    System.out.println("GSERVICE:------ activityResult requestCode:" + requestCode);
     if (requestCode == RC_SELECT_PLAYERS) {
       if (resultCode == RESULT_OK) {
         Bundle autoMatchCriteria = null;
@@ -104,8 +131,6 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
       super.onActivityResult(requestCode, resultCode, data);
       gHelper.onActivityResult(requestCode, resultCode, data);
     }
-    Gdx.graphics.setContinuousRendering(false);
-    Gdx.graphics.requestRendering();
   }
 
   @Override
@@ -127,16 +152,12 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
 
   @Override
   public void openURL(String url) {
-    Gdx.graphics.setContinuousRendering(true);
-    Gdx.graphics.requestRendering();
     Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     startActivityForResult(myIntent, 1000);
   }
 
   @Override
   public void openURL(String url, String fallback) {
-    Gdx.graphics.setContinuousRendering(true);
-    Gdx.graphics.requestRendering();
     try {
       Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
       startActivityForResult(myIntent, 1000);
@@ -296,39 +317,40 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
 
   @Override
   public void gserviceGetSigninDialog(final int from) {
-    // final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    // final LayoutInflater inflater = this.getLayoutInflater();
-    //
-    // runOnUiThread(new Runnable() {
-    // @Override
-    // public void run() {
-    // final View myView = inflater.inflate(R.layout.dialog_gplus, null);
-    // alert.setView(myView).setTitle("Signin").setCancelable(true);
-    // final AlertDialog d = alert.create();
-    // d.setOnShowListener(new DialogInterface.OnShowListener() {
-    // @Override
-    // public void onShow(DialogInterface arg0) {
-    // String msg = "";
-    // TextView v = (TextView)d.findViewById(R.id.login_text);
-    // if (prefs.getBoolean("ALREADY_SIGNEDIN", false)) {
-    // msg = "Please sign in on Google Games Services to enable this feature";
-    // } else {
-    // msg = "Please sign in, Google will ask you to accept requested permissions and configure " + "sharing settings up to two times. This may take few minutes..";
-    // }
-    // v.setText(msg);
-    // com.google.android.gms.common.SignInButton b = (com.google.android.gms.common.SignInButton)d.findViewById(R.id.sign_in_button);
-    // b.setOnClickListener(new View.OnClickListener() {
-    // @Override
-    // public void onClick(View v) {
-    // d.dismiss();
-    // trySignIn(from);
-    // }
-    // });
-    // }
-    // });
-    // d.show();
-    // }
-    // });
+    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    final LayoutInflater inflater = this.getLayoutInflater();
+
+    runOnUiThread(new Runnable() {
+      @SuppressLint("NewApi")
+      @Override
+      public void run() {
+        final View myView = inflater.inflate(R.layout.dialog_gplus, null);
+        alert.setView(myView).setTitle("Signin").setCancelable(true);
+        final AlertDialog d = alert.create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface arg0) {
+            String msg = "";
+            TextView v = (TextView)d.findViewById(R.id.login_text);
+            if (prefs.getBoolean("ALREADY_SIGNEDIN", false)) {
+              msg = "Please sign in on Google Play Game Services to enable this feature";
+            } else {
+              msg = "Please sign in, Google will ask you to accept requested permissions and configure " + "sharing settings up to two times. This may take few minutes..";
+            }
+            v.setText(msg);
+            com.google.android.gms.common.SignInButton b = (com.google.android.gms.common.SignInButton)d.findViewById(R.id.sign_in_button);
+            b.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                d.dismiss();
+                trySignIn(from);
+              }
+            });
+          }
+        });
+        d.show();
+      }
+    });
   }
 
   public void trySignIn(final int from) {
@@ -350,6 +372,18 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
       });
     }
     gserviceSignIn();
+  }
+
+  @Override
+  public boolean isNetworkUp() {
+    ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    return activeNetworkInfo != null;
+  }
+
+  @Override
+  public int getAppVersionCode() {
+    return appVersionCode;
   }
 
 }

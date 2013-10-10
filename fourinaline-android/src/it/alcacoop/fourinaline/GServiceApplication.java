@@ -2,6 +2,7 @@ package it.alcacoop.fourinaline;
 
 import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
 import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.logic.MatchState;
@@ -12,16 +13,24 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.appstate.AppStateClient;
 import com.google.android.gms.appstate.OnStateLoadedListener;
+import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
@@ -59,18 +68,7 @@ public class GServiceApplication extends AndroidApplication
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    // prefs = Gdx.app.getPreferences("GameOptions");
-    // gHelper = new GServiceGameHelper(this, prefs.getBoolean("ALREADY_SIGNEDIN", false));
-    // gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
-    //
-    // ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
-    // List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
-    // for (RunningTaskInfo runningTaskInfo : taskInfos) {
-    // if (runningTaskInfo.baseActivity.getPackageName().contains("gms")) {
-    // FourInALine.Instance.nativeFunctions.gserviceSignIn();
-    // break;
-    // }
-    // }
+
   }
 
   @Override
@@ -124,8 +122,8 @@ public class GServiceApplication extends AndroidApplication
   @Override
   public void onRoomConnected(int arg0, Room room) {
     updateRoom(room);
-    MatchState.matchType = 3;
-    // FourInALine.fsm.state(States.GSERVICE);
+    MatchState.matchType = 2;
+    FourInALine.fsm.state(States.GSERVICE);
     gConnecting = false;
   }
 
@@ -232,7 +230,7 @@ public class GServiceApplication extends AndroidApplication
   public void onRealTimeMessageReceived(RealTimeMessage rtm) {
     byte[] buf = rtm.getMessageData();
     String s = new String(buf);
-    // System.out.println("GSERVICE RECEIVED: "+s);
+    System.out.println("GSERVICE RECEIVED: " + s);
     GServiceClient.getInstance().precessReceivedMessage(s);
   }
 
@@ -248,51 +246,52 @@ public class GServiceApplication extends AndroidApplication
     gHelper.getAppStateClient().loadState(GServiceApplication.this, APP_DATA_KEY);
 
     if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
-      // FourInALine.Instance.invitationId = gHelper.getInvitationId();
+      FourInALine.Instance.invitationId = gHelper.getInvitationId();
     }
   }
 
   public void gserviceInvitationReceived(final Uri imagesrc, final String username, final String invitationId) {
-    // final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    // final LayoutInflater inflater = this.getLayoutInflater();
-    //
-    // runOnUiThread(new Runnable() {
-    // @Override
-    // public void run() {
-    // final View myView = inflater.inflate(R.layout.dialog_invitation, null);
-    // alert.setView(myView).setTitle("Invitation received").setCancelable(false).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-    // @Override
-    // public void onClick(DialogInterface dialog, int which) {
-    // gHelper.getGamesClient().declineRoomInvitation(invitationId);
-    //
-    // }
-    // });
-    // alert.setPositiveButton("Accept", null);
-    //
-    // final AlertDialog d = alert.create();
-    // d.setOnShowListener(new DialogInterface.OnShowListener() {
-    // @Override
-    // public void onShow(DialogInterface arg0) {
-    // ImageManager im = ImageManager.create(GServiceApplication.this);
-    // im.loadImage(((ImageView)myView.findViewById(R.id.image)), imagesrc);
-    // TextView tv = (TextView)myView.findViewById(R.id.text);
-    // tv.setText(username + " wants to play with you...");
-    // tv.setFocusable(true);
-    // tv.setFocusableInTouchMode(true);
-    // tv.requestFocus();
-    // Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
-    // b.setOnClickListener(new View.OnClickListener() {
-    // @Override
-    // public void onClick(View v) {
-    // FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(invitationId);
-    // d.dismiss();
-    // }
-    // });
-    // }
-    // });
-    // d.show();
-    // }
-    // });
+    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    final LayoutInflater inflater = this.getLayoutInflater();
+
+    runOnUiThread(new Runnable() {
+
+      @Override
+      public void run() {
+        final View myView = inflater.inflate(R.layout.dialog_invitation, null);
+        alert.setView(myView).setTitle("Invitation received").setCancelable(false).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            gHelper.getGamesClient().declineRoomInvitation(invitationId);
+
+          }
+        });
+        alert.setPositiveButton("Accept", null);
+
+        final AlertDialog d = alert.create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface arg0) {
+            ImageManager im = ImageManager.create(GServiceApplication.this);
+            im.loadImage(((ImageView)myView.findViewById(R.id.image)), imagesrc);
+            TextView tv = (TextView)myView.findViewById(R.id.text);
+            tv.setText(username + " wants to play with you...");
+            tv.setFocusable(true);
+            tv.setFocusableInTouchMode(true);
+            tv.requestFocus();
+            Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+            b.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(invitationId);
+                d.dismiss();
+              }
+            });
+          }
+        });
+        d.show();
+      }
+    });
   }
 
   private void updateRoom(Room room) {
@@ -322,11 +321,11 @@ public class GServiceApplication extends AndroidApplication
             @Override
             public boolean onKeyDown(int keyCode, KeyEvent event) {
               clickCount++;
-              // if (clickCount == 7) {
-              // FourInALine.Instance.nativeFunctions.gserviceResetRoom();
-              // FourInALine.Instance.setFSM("MENU_FSM");
-              // dismiss();
-              // }
+              if (clickCount == 7) {
+                FourInALine.Instance.nativeFunctions.gserviceResetRoom();
+                FourInALine.fsm.state(States.MAIN_MENU);
+                dismiss();
+              }
               return false;
             }
           };

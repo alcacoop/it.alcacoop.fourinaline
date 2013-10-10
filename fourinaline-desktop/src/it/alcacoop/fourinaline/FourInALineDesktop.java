@@ -117,4 +117,16 @@ public class FourInALineDesktop implements NativeFunctions {
     // TODO Auto-generated method stub
 
   }
+
+  @Override
+  public boolean isNetworkUp() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public int getAppVersionCode() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 }
