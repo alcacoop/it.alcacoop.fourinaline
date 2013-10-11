@@ -60,9 +60,26 @@ interface State {
 public class FSM implements Context {
 
   private static long waitTime;
+
   public enum Events {
+    NOOP,
     RESIGN_GAME,
- NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME, LEAVE_GAME, LEAVE_MATCH, GSERVICE_READY, GSERVICE_INIT_RATING, GSERVICE_HANDSHAKE, GSERVICE_BYE, GSERVICE_MOVES, PERFORMED_MOVE, GSERVICE_ABANDON
+    BUTTON_CLICKED,
+    GAME_TERMINATED,
+    BOARD_RESETTED,
+    MOVE_END,
+    CLICKED_COL,
+    AI_EVALUETED,
+    START_GAME,
+    LEAVE_GAME,
+    LEAVE_MATCH,
+    GSERVICE_READY,
+    GSERVICE_INIT_RATING,
+    GSERVICE_HANDSHAKE,
+    GSERVICE_BYE,
+    GSERVICE_MOVES,
+    PERFORMED_MOVE,
+    GSERVICE_ABANDON
   }
 
   public enum States implements State {
@@ -84,10 +101,10 @@ public class FSM implements Context {
             String btn = ((String)params);
             if (btn.equals("SINGLE PLAYER")) {
               MatchState.matchType = 0;
-              FourInALine.fsm.state(States.MATCH_OPTIONS);
+              FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
             } else if (btn.equals("TWO PLAYERS")) {
               MatchState.matchType = 1;
-              FourInALine.fsm.state(States.MATCH_OPTIONS);
+              FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
             } else if (btn.equals("ONLINE MULTIPLAYER")) {
               if (FourInALine.Instance.nativeFunctions.isNetworkUp()) {
                 MatchState.matchType = 2;
@@ -96,7 +113,7 @@ public class FSM implements Context {
                 UIDialog.getFlashDialog(Events.NOOP, "Network is down - Multiplayer not available");
               }
             } else if (btn.equals("OPTIONS")) {
-              FourInALine.fsm.state(States.GAME_OPTIONS);
+              FourInALine.Instance.fsm.state(States.GAME_OPTIONS);
             } else if (btn.equals("ABOUT..")) {
               UIDialog.getAboutDialog();
             }
@@ -122,7 +139,7 @@ public class FSM implements Context {
           case BUTTON_CLICKED:
             String btn = ((String)params);
             if (btn.equals("BACK")) {
-              FourInALine.fsm.back();
+              FourInALine.Instance.fsm.back();
             }
             break;
           default:
@@ -145,11 +162,11 @@ public class FSM implements Context {
           case BUTTON_CLICKED:
             String btn = ((String)params);
             if (btn.equals("BACK")) {
-              FourInALine.fsm.back();
+              FourInALine.Instance.fsm.back();
             } else if (btn.equals("PLAY")) {
               MatchState.firstGame = true;
               MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
-              FourInALine.fsm.state(States.INIT_GAME);
+              FourInALine.Instance.fsm.state(States.INIT_GAME);
             }
             break;
           default:
@@ -185,22 +202,22 @@ public class FSM implements Context {
           System.out.println("WHO: " + MatchState.whoStart);
           switch (MatchState.matchType) {
             case -1: // SIMULATION
-              FourInALine.fsm.state(AI_TURN);
+              FourInALine.Instance.fsm.state(AI_TURN);
               break;
             case 0: // SINGLE PLAYER
               if (MatchState.whoStart == 1)
-                FourInALine.fsm.state(LOCAL_TURN);
+                FourInALine.Instance.fsm.state(LOCAL_TURN);
               else
-                FourInALine.fsm.state(AI_TURN);
+                FourInALine.Instance.fsm.state(AI_TURN);
               break;
             case 1: // TWO PLAYER
-              FourInALine.fsm.state(LOCAL_TURN);
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
               break;
             case 2: // MULTIPLAYER
               if (MatchState.whoStart == 1)
-                FourInALine.fsm.state(LOCAL_TURN);
+                FourInALine.Instance.fsm.state(LOCAL_TURN);
               else
-                FourInALine.fsm.state(REMOTE_TURN);
+                FourInALine.Instance.fsm.state(REMOTE_TURN);
               break;
             default:
               break;
@@ -229,12 +246,12 @@ public class FSM implements Context {
 
           case MOVE_END:
             if (MatchState.matchType == 0)
-              FourInALine.fsm.state(AI_TURN);
+              FourInALine.Instance.fsm.state(AI_TURN);
             else if (MatchState.matchType == 1)
-              FourInALine.fsm.state(LOCAL_TURN);
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
             else if (MatchState.matchType == 2) {
               int col = (Integer)params;
-              FourInALine.fsm.state(REMOTE_TURN);
+              FourInALine.Instance.fsm.state(REMOTE_TURN);
               GServiceClient.getInstance().sendMessage("6 " + col);
             }
             break;
@@ -250,8 +267,8 @@ public class FSM implements Context {
                 }
               }
               MatchState.nMatchTo = 0; // DIRTY HACK
-              FourInALine.fsm.state(CHECK_END_MATCH);
-              FourInALine.fsm.processEvent(Events.GAME_TERMINATED, null);
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
             }
             break;
           case RESIGN_GAME:
@@ -265,8 +282,8 @@ public class FSM implements Context {
                 }
               } else {
                 MatchState.nMatchTo = 0; // DIRTY HACK
-                FourInALine.fsm.state(CHECK_END_MATCH);
-                FourInALine.fsm.processEvent(Events.GAME_TERMINATED, null);
+                FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
               }
             }
             break;
@@ -305,8 +322,9 @@ public class FSM implements Context {
 
           case MOVE_END:
             if (MatchState.matchType == -1)
-              FourInALine.fsm.state(AI_TURN);
-            else FourInALine.fsm.state(LOCAL_TURN);
+              FourInALine.Instance.fsm.state(AI_TURN);
+            else
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           default:
@@ -335,8 +353,9 @@ public class FSM implements Context {
 
           case MOVE_END:
             if (MatchState.matchType == -1)
-              FourInALine.fsm.state(AI_TURN);
-            else FourInALine.fsm.state(LOCAL_TURN);
+              FourInALine.Instance.fsm.state(AI_TURN);
+            else
+              FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           default:
@@ -388,8 +407,8 @@ public class FSM implements Context {
               MatchState.whoStart = 2;
             }
             System.out.println("GSERVICE: whoStart" + MatchState.whoStart);
-            FourInALine.fsm.state(States.INIT_GAME);
-            FourInALine.fsm.processEvent(Events.START_GAME, null);
+            FourInALine.Instance.fsm.state(States.INIT_GAME);
+            FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
             break;
 
           // case GSERVICE_ABANDON:
@@ -425,17 +444,17 @@ public class FSM implements Context {
               // } else {
               // AchievementsManager.getInstance().checkAchievements(false);
               // }
-              FourInALine.fsm.state(States.MAIN_MENU);
+              FourInALine.Instance.fsm.state(States.MAIN_MENU);
               FourInALine.Instance.nativeFunctions.gserviceResetRoom();
             } else {
               MatchState.mCount = 0;
               MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
               if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
                 MatchState.firstGame = false;
-                FourInALine.fsm.state(States.INIT_GAME);
-                FourInALine.fsm.processEvent(Events.START_GAME, null);
+                FourInALine.Instance.fsm.state(States.INIT_GAME);
+                FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
               } else {
-                FourInALine.fsm.state(States.MAIN_MENU);
+                FourInALine.Instance.fsm.state(States.MAIN_MENU);
               }
             }
             break;

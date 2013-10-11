@@ -84,10 +84,10 @@ public class GServiceNetHandler {
         }
 
         if (evt == null) { // PASSO IL PRIMO DISPONIBILE
-          FourInALine.fsm.processEvent(e.e, e.o);
+          FourInALine.Instance.fsm.processEvent(e.e, e.o);
           found = true;
         } else if (evt == e.e) { // PASSO IL PRIMO RICHIESTO DISPONIBILE
-          FourInALine.fsm.processEvent(e.e, e.o);
+          FourInALine.Instance.fsm.processEvent(e.e, e.o);
           found = true;
         }
       }

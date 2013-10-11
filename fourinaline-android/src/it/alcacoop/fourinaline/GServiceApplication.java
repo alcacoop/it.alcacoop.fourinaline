@@ -122,7 +122,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   public void onRoomConnected(int arg0, Room room) {
     updateRoom(room);
     MatchState.matchType = 2;
-    FourInALine.fsm.state(States.GSERVICE);
+    FourInALine.Instance.fsm.state(States.GSERVICE);
     gConnecting = false;
   }
 
@@ -324,7 +324,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
               clickCount++;
               if (clickCount == 7) {
                 FourInALine.Instance.nativeFunctions.gserviceResetRoom();
-                FourInALine.fsm.state(States.MAIN_MENU);
+                FourInALine.Instance.fsm.state(States.MAIN_MENU);
                 dismiss();
               }
               return false;

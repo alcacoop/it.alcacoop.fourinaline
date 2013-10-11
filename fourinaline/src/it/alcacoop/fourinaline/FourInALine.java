@@ -46,7 +46,7 @@ public class FourInALine extends Game implements ApplicationListener {
 
   public Board board;
 
-  public static FSM fsm;
+  public FSM fsm;
 
   public static FourInALine Instance;
 

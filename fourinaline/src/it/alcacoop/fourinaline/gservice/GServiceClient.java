@@ -9,20 +9,20 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 
 public class GServiceClient implements GServiceMessages {
-  
+
   public static GServiceClient instance;
   public GServiceNetHandler queue;
   public GServiceCookieMonster coockieMonster;
   public ArrayBlockingQueue<String> sendQueue;
   private Thread sendThread;
 
-  
+
   private GServiceClient() {
     queue = new GServiceNetHandler();
     coockieMonster = new GServiceCookieMonster();
     sendQueue = new ArrayBlockingQueue<String>(20);
-    
-    sendThread = new Thread(){
+
+    sendThread = new Thread() {
       @Override
       public void run() {
         while (true) {
@@ -42,21 +42,22 @@ public class GServiceClient implements GServiceMessages {
   }
 
   public static GServiceClient getInstance() {
-    if (instance == null) instance = new GServiceClient();
+    if (instance == null)
+      instance = new GServiceClient();
     return instance;
   }
-  
-  
+
+
   public void connect() {
   }
- 
-  
+
+
   public void precessReceivedMessage(String s) {
     int coockie = coockieMonster.fIBSCookie(s);
     switch (coockie) {
       case GSERVICE_READY:
         queue.post(Events.GSERVICE_READY, null);
-        // FourInALine.fsm.processEvent(Events.GSERVICE_READY, null);
+        // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_READY, null);
         break;
       case GSERVICE_INIT_RATING:
         String chunks[] = s.split(" ");
@@ -73,17 +74,17 @@ public class GServiceClient implements GServiceMessages {
         break;
       case GSERVICE_CHATMSG:
         // s = s.replace("90 ", "");
-        // FourInALine.fsm.processEvent(Events.GSERVICE_CHATMSG, s);
+        // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_CHATMSG, s);
         break;
       case GSERVICE_ABANDON:
         chunks = s.split(" ");
         int abandonOrResign = Integer.parseInt(chunks[1]);
         queue.reset();
-        FourInALine.fsm.state(States.LOCAL_TURN);
+        FourInALine.Instance.fsm.state(States.LOCAL_TURN);
         if (abandonOrResign == 1) {
-          FourInALine.fsm.processEvent(Events.LEAVE_MATCH, abandonOrResign);
+          FourInALine.Instance.fsm.processEvent(Events.LEAVE_MATCH, abandonOrResign);
         } else {
-          FourInALine.fsm.processEvent(Events.RESIGN_GAME, abandonOrResign);
+          FourInALine.Instance.fsm.processEvent(Events.RESIGN_GAME, abandonOrResign);
         }
 
         break;
@@ -91,12 +92,12 @@ public class GServiceClient implements GServiceMessages {
       case GSERVICE_ERROR:
         break;
       case GSERVICE_BYE:
-        FourInALine.fsm.processEvent(Events.GSERVICE_BYE, null);
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_BYE, null);
         break;
     }
   }
-  
-  
+
+
   public synchronized void sendMessage(String msg) {
     try {
       sendQueue.put(msg);
@@ -104,28 +105,28 @@ public class GServiceClient implements GServiceMessages {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   private final static int STATUS_OK = 0;
   private final static int STATUS_NETWORK_ERROR_OPERATION_FAILED = 6;
-  
+
   public void leaveRoom(int code) {
     FourInALine.Instance.nativeFunctions.gserviceResetRoom();
     // switch (code) {
     // case STATUS_OK:
     // // opponent disconnected
-    // FourInALine.fsm.processEvent(Events.GSERVICE_ERROR, 0);
+    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 0);
     // break;
     // case STATUS_NETWORK_ERROR_OPERATION_FAILED:
     // // you disconnected
-    // FourInALine.fsm.processEvent(Events.GSERVICE_ERROR, 1);
+    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 1);
     // break;
     // case 10000:
     // // activity stopped
-    // FourInALine.fsm.processEvent(Events.GSERVICE_ERROR, 2);
+    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 2);
     // break;
     // default:
-    // FourInALine.fsm.processEvent(Events.GSERVICE_BYE, null);
+    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_BYE, null);
     // break;
     // }
   }
