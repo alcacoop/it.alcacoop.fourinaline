@@ -7,6 +7,8 @@ import it.alcacoop.fourinaline.util.GServiceGameHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -15,21 +17,24 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+import com.google.ads.InterstitialAd;
 import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.achievement.OnAchievementUpdatedListener;
 import com.google.android.gms.games.leaderboard.OnScoreSubmittedListener;
@@ -37,8 +42,20 @@ import com.google.android.gms.games.leaderboard.SubmitScoreResult;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 
-public class MainActivity extends GServiceApplication implements OnEditorActionListener, SensorEventListener, NativeFunctions {
+public class MainActivity extends GServiceApplication implements NativeFunctions {
   private int appVersionCode;
+  private AdView adView;
+  private InterstitialAd interstitial;
+  private View gameView;
+  private Timer adsTimer;
+  private TimerTask adsTask;
+
+
+  private class PrivateDataManager {
+    static final String ads_id = "";
+    static final String int_id = "";
+  }
+
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +64,40 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
     cfg.useGL20 = true;
 
-    initialize(new FourInALine(this), cfg);
+    gameView = initializeForView(new FourInALine(this), cfg);
+
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+    RelativeLayout layout = new RelativeLayout(this);
+    // gameView = initializeForView(new GnuBackgammon(this), cfg);
+
+
+    /** ADS INITIALIZATION **/
+    // PrivateDataManager.initData();
+    if (isTablet(this))
+      adView = new AdView(this, AdSize.IAB_BANNER, PrivateDataManager.ads_id);
+    else
+      adView = new AdView(this, AdSize.BANNER, PrivateDataManager.ads_id);
+    adView.setVisibility(View.VISIBLE);
+
+    if (!isProVersion())
+      adView.loadAd(new AdRequest());
+    // Create the interstitial
+    interstitial = new InterstitialAd(this, PrivateDataManager.int_id);
+    // interstitial.setAdListener(this);//TODO: non so se serve...
+    /** ADS INITIALIZATION **/
+
+
+    RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+    adParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+    adParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+    layout.addView(gameView);
+    layout.addView(adView, adParams);
+
+    setContentView(layout);
 
     prefs = Gdx.app.getPreferences("GameOptions");
     gHelper = new GServiceGameHelper(this, false);
@@ -63,23 +113,37 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     }
   }
 
-  @Override
-  public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    // TODO Auto-generated method stub
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if (!isProVersion()) {
+      adsTimer = new Timer();
+      adsTask = new TimerTask() {
+        @Override
+        public void run() {
+          runOnUiThread(new Runnable() {
+            public void run() {
+              if ((!isProVersion()) && (!interstitial.isReady())) {
+                interstitial.loadAd(new AdRequest());
+              }
+            }
+          });
+        }
+      };
+      adsTimer.schedule(adsTask, 0, 15000);
+    }
   }
 
   @Override
-  public void onSensorChanged(SensorEvent event) {
-    // TODO Auto-generated method stub
-
+  protected void onPause() {
+    super.onPause();
+    if (adsTimer != null) {
+      adsTimer.cancel();
+      adsTimer.purge();
+    }
   }
 
-  @Override
-  public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-    // TODO Auto-generated method stub
-    return false;
-  }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -133,21 +197,52 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     }
   }
 
+
+  public boolean isProVersion() {
+    return false;
+  }
+
+  private boolean isTablet(Context context) {
+    boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+    boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+    return (xlarge || large);
+  }
+
   @Override
   public void showAds(final boolean show) {
-    // if (isProVersion())
-    // return;
-    // runOnUiThread(new Runnable() {
-    // @Override
-    // public void run() {
-    // if (show) {
-    // adView.loadAd(new AdRequest());
-    // adView.setVisibility(View.VISIBLE);
-    // } else {
-    // adView.setVisibility(View.GONE);
-    // }
-    // }
-    // });
+    if (isProVersion())
+      return;
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if (show) {
+          adView.loadAd(new AdRequest());
+          adView.setVisibility(View.VISIBLE);
+        } else {
+          adView.setVisibility(View.GONE);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void showInterstitial() {
+    if (isProVersion())
+      return;
+    if (interstitial.isReady()) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          synchronized (this) {
+            try {
+              wait(500);
+            } catch (InterruptedException e) {
+            }
+            interstitial.show();
+          }
+        }
+      });
+    }
   }
 
   @Override
@@ -165,12 +260,6 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
       Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fallback));
       startActivityForResult(myIntent, 1000);
     }
-  }
-
-  @Override
-  public String getDataDir() {
-    // return data_dir;
-    return null;
   }
 
   @Override
@@ -271,8 +360,10 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
 
   @Override
   public void gserviceUpdateAchievement(String achievement_id, int increment) {
-    if (achievement_id == null || achievement_id.equals("") || achievement_id=="") return;
-    if (!prefs.getBoolean("ALREADY_SIGNEDIN", false) || (!gHelper.isSignedIn())) return;
+    if (achievement_id == null || achievement_id.equals("") || achievement_id == "")
+      return;
+    if (!prefs.getBoolean("ALREADY_SIGNEDIN", false) || (!gHelper.isSignedIn()))
+      return;
     gHelper.getGamesClient().incrementAchievementImmediate(new OnAchievementUpdatedListener() {
 
       @Override
@@ -283,8 +374,10 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
 
   @Override
   public void gserviceUnlockAchievement(String achievement_id) {
-    if (achievement_id == null || achievement_id.equals("") || achievement_id=="") return;
-    if (!prefs.getBoolean("ALREADY_SIGNEDIN", false) || (!gHelper.isSignedIn())) return;
+    if (achievement_id == null || achievement_id.equals("") || achievement_id == "")
+      return;
+    if (!prefs.getBoolean("ALREADY_SIGNEDIN", false) || (!gHelper.isSignedIn()))
+      return;
     gHelper.getGamesClient().unlockAchievementImmediate(new OnAchievementUpdatedListener() {
 
       @Override
@@ -301,19 +394,6 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
     // }
   }
 
-  /*  
-  private void deleteAppState() {
-    if (gHelper.isSignedIn()) {
-      gHelper.getAppStateClient().deleteState(new OnStateDeletedListener() {
-
-        @Override
-        public void onStateDeleted(int arg0, int arg1) {
-          System.out.println("GSERVICE STATE DELETED");
-        }
-      }, APP_DATA_KEY);
-    }
-  }
-  */
 
   @Override
   public void gserviceGetSigninDialog(final int from) {
@@ -362,7 +442,8 @@ public class MainActivity extends GServiceApplication implements OnEditorActionL
           MainActivity.this.onSignInSucceeded();
           if (from == FROM_ACHIEVEMENTS)
             startActivityForResult(gHelper.getGamesClient().getAchievementsIntent(), RC_ACHIEVEMENTS);
-          else startActivityForResult(gHelper.getGamesClient().getAllLeaderboardsIntent(), RC_LEADERBOARD);
+          else
+            startActivityForResult(gHelper.getGamesClient().getAllLeaderboardsIntent(), RC_LEADERBOARD);
         }
 
         @Override

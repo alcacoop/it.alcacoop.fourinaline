@@ -42,8 +42,7 @@ import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
-public class GServiceApplication extends AndroidApplication
-  implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
+public class GServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
     RoomUpdateListener, OnInvitationReceivedListener, RealTimeReliableMessageSentListener, OnStateLoadedListener {
 
   protected Preferences prefs;
@@ -156,7 +155,8 @@ public class GServiceApplication extends AndroidApplication
 
       if (mParticipants.get(1).getPlayer() == null)
         opponent_player_id = sRdm;
-      else opponent_player_id = mParticipants.get(1).getPlayer().getPlayerId();
+      else
+        opponent_player_id = mParticipants.get(1).getPlayer().getPlayerId();
 
     } else {
       me = mParticipants.get(1).getDisplayName();
@@ -164,7 +164,8 @@ public class GServiceApplication extends AndroidApplication
 
       if (mParticipants.get(0).getPlayer() == null)
         opponent_player_id = sRdm;
-      else opponent_player_id = mParticipants.get(0).getPlayer().getPlayerId();
+      else
+        opponent_player_id = mParticipants.get(0).getPlayer().getPlayerId();
 
     }
     // FourInALine.Instance.gameScreen.updatePInfo(opponent, me);

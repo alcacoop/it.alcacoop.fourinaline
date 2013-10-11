@@ -36,9 +36,9 @@ package it.alcacoop.fourinaline;
 
 public interface NativeFunctions {
   public void showAds(boolean show);
+  public void showInterstitial();
   public void openURL(String url);
   public void openURL(String url, String fallback);
-  public String getDataDir(); 
 
   // public void injectBGInstance();
   //
@@ -46,7 +46,6 @@ public interface NativeFunctions {
   // public void fibsRegistration();
   // public void hideChatBox();
   // public void showChatBox();
-  // public void showInterstitial();
   // public void initEngine();
   //
   // public boolean isProVersion();
@@ -55,7 +54,6 @@ public interface NativeFunctions {
   // public void hideProgressDialog();
   
   public boolean isNetworkUp();
-
   public int getAppVersionCode();
 
   public void gserviceSignIn();

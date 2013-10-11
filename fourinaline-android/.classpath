@@ -8,6 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="/fourinaline/libs/gdx.jar" sourcepath="/fourinaline/libs/gdx-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/fourinaline/libs/tween-engine-api.jar" sourcepath="/fourinaline/libs/tween-engine-api-sources.jar"/>
+	<classpathentry kind="lib" path="libs/GoogleAdMobAdsSdk-6.4.1.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
