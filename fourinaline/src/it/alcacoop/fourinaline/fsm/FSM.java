@@ -33,6 +33,7 @@ import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.gservice.GServiceMessages;
 import it.alcacoop.fourinaline.logic.MatchState;
 
 import java.util.Random;
@@ -61,7 +62,7 @@ public class FSM implements Context {
   private static long waitTime;
   public enum Events {
     RESIGN_GAME,
-    NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME, LEAVE_GAME, LEAVE_MATCH, GSERVICE_READY, GSERVICE_INIT_RATING, GSERVICE_HANDSHAKE, GSERVICE_BYE, GSERVICE_MOVES, PERFORMED_MOVE
+ NOOP, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME, LEAVE_GAME, LEAVE_MATCH, GSERVICE_READY, GSERVICE_INIT_RATING, GSERVICE_HANDSHAKE, GSERVICE_BYE, GSERVICE_MOVES, PERFORMED_MOVE, GSERVICE_ABANDON
   }
 
   public enum States implements State {
@@ -239,13 +240,36 @@ public class FSM implements Context {
             break;
 
           case LEAVE_MATCH:
+            // LEAVE MATCH
             if ((Boolean)params) {
-              // LEAVE MATCH
+              if (MatchState.matchType == 2) {
+                if (MatchState.currentPlayer == 1) {
+                  GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
+                } else {
+                  UIDialog.getFlashDialog(Events.NOOP, "Opponent abandoned match.");
+                }
+              }
               MatchState.nMatchTo = 0; // DIRTY HACK
               FourInALine.fsm.state(CHECK_END_MATCH);
               FourInALine.fsm.processEvent(Events.GAME_TERMINATED, null);
             }
-
+            break;
+          case RESIGN_GAME:
+            // RESIGN MATCH
+            if ((Boolean)params) {
+              if (MatchState.matchType == 2) {
+                if (MatchState.currentPlayer == 1) {
+                  GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
+                } else {
+                  UIDialog.getFlashDialog(Events.NOOP, "Opponent abandoned match.");
+                }
+              } else {
+                MatchState.nMatchTo = 0; // DIRTY HACK
+                FourInALine.fsm.state(CHECK_END_MATCH);
+                FourInALine.fsm.processEvent(Events.GAME_TERMINATED, null);
+              }
+            }
+            break;
           default:
             return false;
         }
@@ -259,8 +283,9 @@ public class FSM implements Context {
       public void enterState(Context ctx) {
         if (MatchState.winner == -1) {
           FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
-        } else {
-          GServiceClient.getInstance().queue.pull(Events.GSERVICE_MOVES);
+          if (MatchState.matchType == 2) {
+            GServiceClient.getInstance().queue.pull(Events.GSERVICE_MOVES);
+          }
         }
       }
 
@@ -367,6 +392,11 @@ public class FSM implements Context {
             FourInALine.fsm.processEvent(Events.START_GAME, null);
             break;
 
+          // case GSERVICE_ABANDON:
+          // int abandonOrResign = (Integer)params;
+          //
+          // break;
+
           case GSERVICE_BYE:
             ctx.state(MAIN_MENU);
             break;
@@ -386,14 +416,27 @@ public class FSM implements Context {
             FourInALine.Instance.board.reset();
             break;
           case BOARD_RESETTED:
-            MatchState.mCount = 0;
-            MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
-            if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
-              MatchState.firstGame = false;
-              FourInALine.fsm.state(States.INIT_GAME);
-              FourInALine.fsm.processEvent(Events.START_GAME, null);
-            } else {
+            if (MatchState.matchType == 2) {
+              // if ((ctx.board().getPIPS(0) <= 0) || (MatchState.resignValue == 1) ||
+              // (MatchState.resignValue == 2) || (MatchState.resignValue == 3)) {
+              // // YOU WIN
+              // AchievementsManager.getInstance().checkAchievements(true);
+              // ELORatingManager.getInstance().updateRating(true);
+              // } else {
+              // AchievementsManager.getInstance().checkAchievements(false);
+              // }
               FourInALine.fsm.state(States.MAIN_MENU);
+              FourInALine.Instance.nativeFunctions.gserviceResetRoom();
+            } else {
+              MatchState.mCount = 0;
+              MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
+              if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
+                MatchState.firstGame = false;
+                FourInALine.fsm.state(States.INIT_GAME);
+                FourInALine.fsm.processEvent(Events.START_GAME, null);
+              } else {
+                FourInALine.fsm.state(States.MAIN_MENU);
+              }
             }
             break;
           default:
@@ -441,8 +484,8 @@ public class FSM implements Context {
 
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
-    // System.out.println("PROCESS " + evt + " ON " + state());
-    // System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
+    System.out.println("PROCESS " + evt + " ON " + state());
+    System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
     Gdx.app.postRunnable(new Runnable() {
       @Override
       public void run() {
@@ -461,7 +504,7 @@ public class FSM implements Context {
   }
 
   public void state(State state) {
-    // System.out.println("PLANTUML:" + currentState + " --> " + state);
+    System.out.println("PLANTUML:" + currentState + " --> " + state);
     if (currentState != null)
       currentState.exitState(this);
     previousState = currentState;

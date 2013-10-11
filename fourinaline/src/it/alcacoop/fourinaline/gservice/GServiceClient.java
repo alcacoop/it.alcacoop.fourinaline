@@ -3,6 +3,7 @@ package it.alcacoop.fourinaline.gservice;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -75,8 +76,16 @@ public class GServiceClient implements GServiceMessages {
         // FourInALine.fsm.processEvent(Events.GSERVICE_CHATMSG, s);
         break;
       case GSERVICE_ABANDON:
-        // chunks = s.split(" ");
-        // FourInALine.fsm.processEvent(Events.GSERVICE_ABANDON, Integer.parseInt(chunks[1]));
+        chunks = s.split(" ");
+        int abandonOrResign = Integer.parseInt(chunks[1]);
+        queue.reset();
+        FourInALine.fsm.state(States.LOCAL_TURN);
+        if (abandonOrResign == 1) {
+          FourInALine.fsm.processEvent(Events.LEAVE_MATCH, abandonOrResign);
+        } else {
+          FourInALine.fsm.processEvent(Events.RESIGN_GAME, abandonOrResign);
+        }
+
         break;
       case GSERVICE_PING:
       case GSERVICE_ERROR:
