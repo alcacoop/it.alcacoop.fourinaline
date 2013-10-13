@@ -84,7 +84,7 @@ public class FourInALine extends Game implements ApplicationListener {
     matchOptionsScreen = new MatchOptionsScreen();
     optionsScreen = new OptionsScreen();
 
-    board = new Board(7, 6, 4, gameScreen.getStage().getHeight() * 0.8f);
+    board = new Board(7, 6, 4, gameScreen.getStage().getHeight() * 0.76f);
     board.setPosition(-gameScreen.getStage().getWidth(), (gameScreen.getStage().getHeight() - board.getHeight()) / 2);
     gameScreen.getStage().addActor(board);
 

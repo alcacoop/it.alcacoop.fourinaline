@@ -59,8 +59,8 @@ public class GameScreen extends BaseScreen {
     resign.addListener(clResign);
 
     table = new Table();
-    table.setWidth(stage.getWidth() * 0.85f);
-    table.setHeight(stage.getHeight() * 0.8f);
+    table.setWidth(stage.getWidth() * 0.9f);
+    table.setHeight(stage.getHeight() * 0.78f);
     table.debug();
     stage.addListener(new InputListener() {
       @Override
