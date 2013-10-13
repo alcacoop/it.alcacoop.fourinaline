@@ -95,4 +95,16 @@ public class FourInALineDesktop implements NativeFunctions {
   @Override
   public void showInterstitial() {
   }
+
+  @Override
+  public boolean isProVersion() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public void inAppBilling() {
+    // TODO Auto-generated method stub
+
+  }
 }
