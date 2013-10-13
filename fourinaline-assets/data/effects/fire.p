@@ -62,13 +62,17 @@ timeline0: 0.0
 - Scale - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 16.0
-highMax: 16.0
+highMin: 42.0
+highMax: 17.0
 relative: false
-scalingCount: 1
+scalingCount: 3
 scaling0: 1.0
-timelineCount: 1
+scaling1: 0.79591835
+scaling2: 0.5102041
+timelineCount: 3
 timeline0: 0.0
+timeline1: 0.5
+timeline2: 0.8835617
 - Velocity - 
 active: true
 lowMin: 0.0

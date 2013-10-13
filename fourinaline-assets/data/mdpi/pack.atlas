@@ -41,7 +41,7 @@ alca
   index: -1
 back
   rotate: false
-  xy: 1111, 463
+  xy: 1103, 463
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -77,7 +77,7 @@ facebook
   index: -1
 gpl
   rotate: false
-  xy: 1145, 463
+  xy: 1137, 463
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -96,13 +96,6 @@ hole
   orig: 128, 128
   offset: 0, 0
   index: -1
-how
-  rotate: false
-  xy: 69, 1
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
 leaderboards
   rotate: false
   xy: 831, 94
@@ -113,34 +106,34 @@ leaderboards
 logo
   rotate: false
   xy: 630, 440
-  size: 407, 55
-  orig: 407, 55
+  size: 399, 55
+  orig: 399, 55
   offset: 0, 0
   index: -1
 next
   rotate: false
-  xy: 1179, 463
+  xy: 69, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 opt
   rotate: false
-  xy: 103, 1
+  xy: 1171, 463
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 pro
   rotate: false
-  xy: 1213, 463
+  xy: 103, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 resign
   rotate: false
-  xy: 137, 1
+  xy: 1205, 463
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -154,14 +147,14 @@ sep
   index: -1
 sp
   rotate: false
-  xy: 1247, 463
+  xy: 137, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 str
   rotate: false
-  xy: 171, 1
+  xy: 1239, 463
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -183,7 +176,7 @@ transparent
   index: -1
 twitter
   rotate: false
-  xy: 1039, 431
+  xy: 1031, 431
   size: 70, 64
   orig: 70, 64
   offset: 0, 0

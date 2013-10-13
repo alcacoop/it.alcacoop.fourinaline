@@ -16,6 +16,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -24,7 +25,7 @@ public class FourInALine extends Game implements ApplicationListener {
 
   private Timer transitionTimer;
   private int resolutions[][] = { { 1280, 740 }, { 800, 480 }, { 480, 320 } };
-  private String[] resname = { "mdpi", "mdpi", "mdpi" };
+  private String[] resname = { "hdpi", "mdpi", "ldpi" };
   public int resolution[];
   public int ss;
   public String invitationId = "";
@@ -69,6 +70,8 @@ public class FourInALine extends Game implements ApplicationListener {
     atlas = new TextureAtlas(Gdx.files.internal(resname[ss] + "/pack.atlas"));
     skin = new Skin(Gdx.files.internal(resname[ss] + "/myskin.json"));
     font = new BitmapFont(Gdx.files.internal(resname[ss] + "/checker.fnt"), false);
+    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 
     wood = new Texture(Gdx.files.internal(resname[ss] + "/texture.jpg"));
     mask = new Texture(Gdx.files.internal(resname[ss] + "/mask.png"));
