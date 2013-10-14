@@ -78,15 +78,9 @@ public class GServiceClient implements GServiceMessages {
         break;
       case GSERVICE_ABANDON:
         chunks = s.split(" ");
-        int abandonOrResign = Integer.parseInt(chunks[1]);
         queue.reset();
         FourInALine.Instance.fsm.state(States.LOCAL_TURN);
-        if (abandonOrResign == 1) {
-          FourInALine.Instance.fsm.processEvent(Events.LEAVE_MATCH, abandonOrResign);
-        } else {
-          FourInALine.Instance.fsm.processEvent(Events.RESIGN_GAME, abandonOrResign);
-        }
-
+        FourInALine.Instance.fsm.processEvent(Events.OPPONENT_LEAVE_OR_RESIGN, Integer.parseInt(chunks[1]));
         break;
       case GSERVICE_PING:
       case GSERVICE_ERROR:

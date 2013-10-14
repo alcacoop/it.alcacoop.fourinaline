@@ -164,7 +164,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     // PrivateDataManager.createBillingData(this);
     // }
     // } else
-    System.out.println("GSERVICE:------ activityResult requestCode:" + requestCode);
+    System.out.println("GSERVICE:------ onActivityResult requestCode:" + requestCode + " resultCode:" + resultCode);
     if (requestCode == RC_SELECT_PLAYERS) {
       if (resultCode == RESULT_OK) {
         Bundle autoMatchCriteria = null;

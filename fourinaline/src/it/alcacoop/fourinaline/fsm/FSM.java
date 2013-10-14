@@ -79,7 +79,9 @@ public class FSM implements Context {
     GSERVICE_BYE,
     GSERVICE_MOVES,
     PERFORMED_MOVE,
-    GSERVICE_ABANDON
+    GSERVICE_ABANDON,
+    OPPONENT_LEAVE_OR_RESIGN,
+    GSERVICE_ERROR
   }
 
   public enum States implements State {
@@ -259,34 +261,42 @@ public class FSM implements Context {
           case LEAVE_MATCH:
             // LEAVE MATCH
             if ((Boolean)params) {
-              if (MatchState.matchType == 2) {
-                if (MatchState.currentPlayer == 1) {
-                  GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
-                } else {
-                  UIDialog.getFlashDialog(Events.NOOP, "Opponent abandoned match.");
-                }
-              }
               MatchState.nMatchTo = 0; // DIRTY HACK
               FourInALine.Instance.fsm.state(CHECK_END_MATCH);
-              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+
+              if (MatchState.matchType == 2) {
+                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              } else {
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              }
             }
             break;
           case RESIGN_GAME:
             // RESIGN MATCH
             if ((Boolean)params) {
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+
               if (MatchState.matchType == 2) {
-                if (MatchState.currentPlayer == 1) {
-                  GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
-                } else {
-                  UIDialog.getFlashDialog(Events.NOOP, "Opponent abandoned match.");
-                }
+                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 2");
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
               } else {
-                MatchState.nMatchTo = 0; // DIRTY HACK
-                FourInALine.Instance.fsm.state(CHECK_END_MATCH);
                 FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
               }
             }
             break;
+          case OPPONENT_LEAVE_OR_RESIGN:
+            int abandonOrResign = (Integer)params;
+            MatchState.nMatchTo = 0; // DIRTY HACK
+            FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+            if (abandonOrResign == 1) {
+              UIDialog.getFlashDialog(Events.GAME_TERMINATED, "Opponent abandoned match");
+            } else {
+              UIDialog.getFlashDialog(Events.GAME_TERMINATED, "Opponent resigned a game");
+            }
+            break;
+
           default:
             return false;
         }
@@ -311,7 +321,6 @@ public class FSM implements Context {
         switch (evt) {
           case GSERVICE_MOVES:
             int col = (Integer)params;
-            System.out.println("GSERVICE: process" + col);
             FourInALine.Instance.board.play((Integer)col);
             break;
 
@@ -325,6 +334,35 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(AI_TURN);
             else
               FourInALine.Instance.fsm.state(LOCAL_TURN);
+            break;
+
+          case LEAVE_MATCH:
+            // LEAVE MATCH
+            if ((Boolean)params) {
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+
+              if (MatchState.matchType == 2) {
+                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              } else {
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              }
+            }
+            break;
+          case RESIGN_GAME:
+            // RESIGN MATCH
+            if ((Boolean)params) {
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+
+              if (MatchState.matchType == 2) {
+                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 2");
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              } else {
+                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+              }
+            }
             break;
 
           default:
@@ -388,7 +426,7 @@ public class FSM implements Context {
             break;
 
           case GSERVICE_INIT_RATING:
-            double opponentRating = (Double)params;
+            // double opponentRating = (Double)params;
             // ELORatingManager.getInstance().setRatings(opponentRating);
 
             Random gen = new Random();
@@ -399,25 +437,14 @@ public class FSM implements Context {
 
           case GSERVICE_HANDSHAKE:
             long remoteWaitTime = (Long)params;
-            System.out.println("GSERVICE: waitTime=" + waitTime + " remoteWaitTime=" + remoteWaitTime);
             if (waitTime < remoteWaitTime) {
               // Tocca a Local Turn
               MatchState.whoStart = 1;
             } else {
               MatchState.whoStart = 2;
             }
-            System.out.println("GSERVICE: whoStart" + MatchState.whoStart);
             FourInALine.Instance.fsm.state(States.INIT_GAME);
             FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
-            break;
-
-          // case GSERVICE_ABANDON:
-          // int abandonOrResign = (Integer)params;
-          //
-          // break;
-
-          case GSERVICE_BYE:
-            ctx.state(MAIN_MENU);
             break;
 
           default:
@@ -503,12 +530,37 @@ public class FSM implements Context {
 
   public void processEvent(final Events evt, final Object params) {
     final FSM ctx = this;
-    System.out.println("PROCESS " + evt + " ON " + state());
+    // System.out.println("PROCESS " + evt + " ON " + state());
     System.out.println("PLANTUML:" + currentState + " --> " + state() + " : " + evt);
     Gdx.app.postRunnable(new Runnable() {
       @Override
       public void run() {
-        state().processEvent(ctx, evt, params);
+        switch (evt) {
+          case GSERVICE_ERROR:
+            int errorCode = (Integer)params;
+            String message = "";
+            switch (errorCode) {
+              case 0:
+                message = "Network error: opponent disconnected!";
+                break;
+              case 1:
+                message = "Network Error: you disconnected!";
+                break;
+              case 2:
+                message = "Match stopped. You have to reinvite!";
+                break;
+            }
+            ctx.state(States.CHECK_END_MATCH);
+            UIDialog.getFlashDialog(Events.GAME_TERMINATED, message);
+            break;
+          case GSERVICE_BYE:
+            // ctx.state(States.MAIN_MENU);
+            break;
+
+          default:
+            state().processEvent(ctx, evt, params);
+            break;
+        }
       }
     });
   }

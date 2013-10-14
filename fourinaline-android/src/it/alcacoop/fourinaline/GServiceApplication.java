@@ -120,6 +120,8 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
 
   @Override
   public void onRoomConnected(int arg0, Room room) {
+    System.out.println("GSERVICE onRoomConnected");
+    hideProgressDialog();
     updateRoom(room);
     MatchState.matchType = 2;
     FourInALine.Instance.fsm.state(States.GSERVICE);
