@@ -100,7 +100,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     setContentView(layout);
 
     prefs = Gdx.app.getPreferences("GameOptions");
-    gHelper = new GServiceGameHelper(this, false);
+    gHelper = new GServiceGameHelper(this, prefs.getBoolean("ALREADY_SIGNEDIN", false));
     gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
     // gserviceSignIn();
     ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
@@ -465,6 +465,21 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   @Override
   public int getAppVersionCode() {
     return appVersionCode;
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    gHelper.onStart(this);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    if (mRoomId != null) {
+      GServiceClient.getInstance().leaveRoom(10000);
+    }
+    gHelper.onStop();
   }
 
 }
