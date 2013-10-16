@@ -215,7 +215,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   @Override
   public void onPeersDisconnected(Room room, List<String> arg1) {
     System.out.println("---> P2P PEER DISCONNECTED");
-    GServiceClient.getInstance().leaveRoom(0);
+    // GServiceClient.getInstance().leaveRoom(0);
     updateRoom(room);
   }
 
@@ -245,8 +245,8 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   public void onSignInSucceeded() {
     prefs.putBoolean("ALREADY_SIGNEDIN", true);
     prefs.flush();
-    gHelper.getGamesClient().registerInvitationListener(GServiceApplication.this);
-    gHelper.getAppStateClient().loadState(GServiceApplication.this, APP_DATA_KEY);
+    gHelper.getGamesClient().registerInvitationListener(this);
+    gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
 
     if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
       FourInALine.Instance.invitationId = gHelper.getInvitationId();
@@ -275,7 +275,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
         d.setOnShowListener(new DialogInterface.OnShowListener() {
           @Override
           public void onShow(DialogInterface arg0) {
-            ImageManager im = ImageManager.create(GServiceApplication.this);
+            ImageManager im = ImageManager.create(getApplicationContext());
             im.loadImage(((ImageView)myView.findViewById(R.id.image)), imagesrc);
             TextView tv = (TextView)myView.findViewById(R.id.text);
             tv.setText(username + " wants to play with you...");

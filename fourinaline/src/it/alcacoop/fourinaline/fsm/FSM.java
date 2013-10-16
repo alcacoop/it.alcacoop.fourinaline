@@ -289,6 +289,7 @@ public class FSM implements Context {
           case OPPONENT_LEAVE_OR_RESIGN:
             int abandonOrResign = (Integer)params;
             MatchState.nMatchTo = 0; // DIRTY HACK
+            FourInALine.Instance.gameScreen.highlightPlayer(0);
             FourInALine.Instance.fsm.state(CHECK_END_MATCH);
             if (abandonOrResign == 1) {
               UIDialog.getFlashDialog(Events.GAME_TERMINATED, "Opponent abandoned match");
@@ -310,9 +311,7 @@ public class FSM implements Context {
       public void enterState(Context ctx) {
         if (MatchState.winner == -1) {
           FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
-          if (MatchState.matchType == 2) {
-            GServiceClient.getInstance().queue.pull(Events.GSERVICE_MOVES);
-          }
+          GServiceClient.getInstance().queue.pull(Events.GSERVICE_MOVES);
         }
       }
 
@@ -330,10 +329,7 @@ public class FSM implements Context {
             break;
 
           case MOVE_END:
-            if (MatchState.matchType == -1)
-              FourInALine.Instance.fsm.state(AI_TURN);
-            else
-              FourInALine.Instance.fsm.state(LOCAL_TURN);
+            FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
           case LEAVE_MATCH:
@@ -341,13 +337,8 @@ public class FSM implements Context {
             if ((Boolean)params) {
               MatchState.nMatchTo = 0; // DIRTY HACK
               FourInALine.Instance.fsm.state(CHECK_END_MATCH);
-
-              if (MatchState.matchType == 2) {
-                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
-                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
-              } else {
-                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
-              }
+              GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 1");
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
             }
             break;
           case RESIGN_GAME:
@@ -355,13 +346,8 @@ public class FSM implements Context {
             if ((Boolean)params) {
               MatchState.nMatchTo = 0; // DIRTY HACK
               FourInALine.Instance.fsm.state(CHECK_END_MATCH);
-
-              if (MatchState.matchType == 2) {
-                GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 2");
-                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
-              } else {
-                FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
-              }
+              GServiceClient.getInstance().sendMessage(GServiceMessages.GSERVICE_ABANDON + " 2");
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
             }
             break;
 
@@ -440,8 +426,10 @@ public class FSM implements Context {
             if (waitTime < remoteWaitTime) {
               // Tocca a Local Turn
               MatchState.whoStart = 1;
+              MatchState.currentPlayer = 1;
             } else {
               MatchState.whoStart = 2;
+              MatchState.currentPlayer = 2;
             }
             FourInALine.Instance.fsm.state(States.INIT_GAME);
             FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
