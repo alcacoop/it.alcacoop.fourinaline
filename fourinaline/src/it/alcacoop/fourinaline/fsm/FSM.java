@@ -34,6 +34,7 @@ import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.gservice.GServiceMessages;
+import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.logic.MatchState;
 
 import java.util.Random;
@@ -296,6 +297,7 @@ public class FSM implements Context {
             } else {
               UIDialog.getFlashDialog(Events.GAME_TERMINATED, "Opponent resigned a game");
             }
+            FourInALine.Instance.nativeFunctions.gserviceResetRoom();
             break;
 
           default:
@@ -382,6 +384,23 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(LOCAL_TURN);
             break;
 
+          case LEAVE_MATCH:
+            // LEAVE MATCH
+            if ((Boolean)params) {
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+            }
+            break;
+          case RESIGN_GAME:
+            // RESIGN MATCH
+            if ((Boolean)params) {
+              MatchState.nMatchTo = 0; // DIRTY HACK
+              FourInALine.Instance.fsm.state(CHECK_END_MATCH);
+              FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, null);
+            }
+            break;
+
           default:
             return false;
         }
@@ -460,7 +479,6 @@ public class FSM implements Context {
               // AchievementsManager.getInstance().checkAchievements(false);
               // }
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
-              FourInALine.Instance.nativeFunctions.gserviceResetRoom();
             } else {
               MatchState.mCount = 0;
               MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
@@ -538,8 +556,10 @@ public class FSM implements Context {
                 message = "Match stopped. You have to reinvite!";
                 break;
             }
-            ctx.state(States.CHECK_END_MATCH);
-            UIDialog.getFlashDialog(Events.GAME_TERMINATED, message);
+            if (FourInALine.Instance.currentScreen instanceof GameScreen) {
+              ctx.state(States.CHECK_END_MATCH);
+              UIDialog.getFlashDialog(Events.GAME_TERMINATED, message);
+            }
             break;
           case GSERVICE_BYE:
             // ctx.state(States.MAIN_MENU);
