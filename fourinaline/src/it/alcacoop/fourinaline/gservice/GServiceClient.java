@@ -105,23 +105,23 @@ public class GServiceClient implements GServiceMessages {
   private final static int STATUS_NETWORK_ERROR_OPERATION_FAILED = 6;
 
   public void leaveRoom(int code) {
-    FourInALine.Instance.nativeFunctions.gserviceResetRoom();
-    // switch (code) {
-    // case STATUS_OK:
-    // // opponent disconnected
-    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 0);
-    // break;
-    // case STATUS_NETWORK_ERROR_OPERATION_FAILED:
-    // // you disconnected
-    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 1);
-    // break;
-    // case 10000:
-    // // activity stopped
-    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 2);
-    // break;
-    // default:
-    // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_BYE, null);
-    // break;
-    // }
+    // FourInALine.Instance.nativeFunctions.gserviceResetRoom();
+    switch (code) {
+      case STATUS_OK:
+        // opponent disconnected
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 0);
+        break;
+      case STATUS_NETWORK_ERROR_OPERATION_FAILED:
+        // you disconnected
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 1);
+        break;
+      case 10000:
+        // activity stopped
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 2);
+        break;
+      default:
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_BYE, null);
+        break;
+    }
   }
 }

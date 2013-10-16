@@ -2,8 +2,8 @@ package it.alcacoop.fourinaline.actors;
 
 import it.alcacoop.fourinaline.FourInALine;
 
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -14,7 +14,7 @@ public class PlayerBlock extends Table {
   private Label lScore;
   private Skin skin;
   private Checker checker;
-  private Action high;
+  private AlphaAction fadeOut;
 
   public PlayerBlock() {
     super();
@@ -35,6 +35,9 @@ public class PlayerBlock extends Table {
 
     add(checker).left().padRight(checker.getWidth() / 16).pad(4);
     add(t).expandX().left().padRight(4);
+
+    fadeOut = Actions.fadeOut(0.3f);
+    lName.addAction(Actions.forever(Actions.sequence(fadeOut, Actions.fadeIn(0.3f))));
   }
 
   public void setName(String name) {
@@ -51,14 +54,10 @@ public class PlayerBlock extends Table {
 
   public void highlight(boolean status) {
     if (status) {
-      high = Actions.forever(Actions.sequence(Actions.fadeOut(0.3f), Actions.fadeIn(0.3f)));
-      lName.addAction(high);
-      checker.addAction(high);
+      fadeOut.setAlpha(0.0f);
     } else {
-      lName.removeAction(high);
-      checker.removeAction(high);
+      fadeOut.setAlpha(1.0f);
       lName.setColor(1, 1, 1, 1);
-      checker.setColor(1, 1, 1, 1);
     }
   }
 }

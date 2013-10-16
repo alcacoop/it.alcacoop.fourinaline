@@ -215,7 +215,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   @Override
   public void onPeersDisconnected(Room room, List<String> arg1) {
     System.out.println("---> P2P PEER DISCONNECTED");
-    // GServiceClient.getInstance().leaveRoom(0);
+    GServiceClient.getInstance().leaveRoom(0);
     updateRoom(room);
   }
 
