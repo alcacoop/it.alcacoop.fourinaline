@@ -223,7 +223,6 @@ public class Board extends Group {
     alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.currentAILevel, 0.5f, MatchState.AILevel);
     MatchState.winner = -1;
     locked = false;
-    FourInALine.Instance.gameScreen.highlightPlayer(0);
     MatchState.currentPlayer = gameModel.getCurrentPlayer().hashCode();
   }
 

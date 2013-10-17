@@ -182,6 +182,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
         if (autoMatchCriteria != null) {
           rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         }
+        gserviceResetRoom();
         gHelper.getGamesClient().createRoom(rtmConfigBuilder.build());
       } else {
         hideProgressDialog();
@@ -294,6 +295,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     roomConfigBuilder.setInvitationIdToAccept(invitationId);
     roomConfigBuilder.setMessageReceivedListener(MainActivity.this);
     roomConfigBuilder.setRoomStatusUpdateListener(MainActivity.this);
+    gserviceResetRoom();
     gHelper.getGamesClient().joinRoom(roomConfigBuilder.build());
     showProgressDialog();
   }

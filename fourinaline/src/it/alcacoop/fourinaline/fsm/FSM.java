@@ -466,6 +466,9 @@ public class FSM implements Context {
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case GAME_TERMINATED:
+            if (MatchState.winner >= 0) {
+              UIDialog.getFlashDialog(Events.NOOP, "The winner is " + MatchState.winner);
+            }
             FourInALine.Instance.board.reset();
             break;
           case BOARD_RESETTED:
@@ -478,6 +481,7 @@ public class FSM implements Context {
               // } else {
               // AchievementsManager.getInstance().checkAchievements(false);
               // }
+              FourInALine.Instance.nativeFunctions.gserviceResetRoom();
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
             } else {
               MatchState.mCount = 0;
@@ -543,22 +547,25 @@ public class FSM implements Context {
       public void run() {
         switch (evt) {
           case GSERVICE_ERROR:
-            int errorCode = (Integer)params;
-            String message = "";
-            switch (errorCode) {
-              case 0:
-                message = "Network error: opponent disconnected!";
-                break;
-              case 1:
-                message = "Network Error: you disconnected!";
-                break;
-              case 2:
-                message = "Match stopped. You have to reinvite!";
-                break;
-            }
-            if (FourInALine.Instance.currentScreen instanceof GameScreen) {
-              ctx.state(States.CHECK_END_MATCH);
-              UIDialog.getFlashDialog(Events.GAME_TERMINATED, message);
+            // Se la partita in corso
+            if (MatchState.winner == -1) {
+              int errorCode = (Integer)params;
+              String message = "";
+              switch (errorCode) {
+                case 0:
+                  message = "Network error: opponent disconnected!";
+                  break;
+                case 1:
+                  message = "Network Error: you disconnected!";
+                  break;
+                case 2:
+                  message = "Match stopped. You have to reinvite!";
+                  break;
+              }
+              if (FourInALine.Instance.currentScreen instanceof GameScreen) {
+                ctx.state(States.CHECK_END_MATCH);
+                UIDialog.getFlashDialog(Events.GAME_TERMINATED, message);
+              }
             }
             break;
           case GSERVICE_BYE:
