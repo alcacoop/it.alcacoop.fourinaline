@@ -34,7 +34,7 @@
 package it.alcacoop.fourinaline;
 
 
-public interface NativeFunctions {
+public interface NativeFunctions extends GServiceInterface {
   public void showAds(boolean show);
   public void showInterstitial();
   public void openURL(String url);
@@ -52,19 +52,7 @@ public interface NativeFunctions {
   // public void inAppBilling();
   //
   // public void hideProgressDialog();
-  
+
   public boolean isNetworkUp();
   public int getAppVersionCode();
-
-  public boolean gserviceIsSignedIn();
-  public void gserviceStartRoom();
-  public void gserviceAcceptInvitation(String invitationId);
-  public void gserviceSendReliableRealTimeMessage(String msg);
-  public void gserviceResetRoom();
-  public void gserviceOpenLeaderboards();
-  public void gserviceOpenAchievements();
-  public void gserviceSubmitRating(long score, String board_id);
-  public void gserviceUpdateAchievement(String achievement_id, int increment);
-  public void gserviceUnlockAchievement(String achiev_id);
-  public void gserviceUpdateState();
 }
