@@ -63,26 +63,7 @@ public class FSM implements Context {
   private static long waitTime;
 
   public enum Events {
-    NOOP,
-    RESIGN_GAME,
-    BUTTON_CLICKED,
-    GAME_TERMINATED,
-    BOARD_RESETTED,
-    MOVE_END,
-    CLICKED_COL,
-    AI_EVALUETED,
-    START_GAME,
-    LEAVE_GAME,
-    LEAVE_MATCH,
-    GSERVICE_READY,
-    GSERVICE_INIT_RATING,
-    GSERVICE_HANDSHAKE,
-    GSERVICE_BYE,
-    GSERVICE_MOVES,
-    PERFORMED_MOVE,
-    GSERVICE_ABANDON,
-    OPPONENT_LEAVE_OR_RESIGN,
-    GSERVICE_ERROR
+    NOOP, RESIGN_GAME, BUTTON_CLICKED, GAME_TERMINATED, BOARD_RESETTED, MOVE_END, CLICKED_COL, AI_EVALUETED, START_GAME, LEAVE_GAME, LEAVE_MATCH, GSERVICE_READY, GSERVICE_INIT_RATING, GSERVICE_HANDSHAKE, GSERVICE_BYE, GSERVICE_MOVES, PERFORMED_MOVE, GSERVICE_ABANDON, OPPONENT_LEAVE_OR_RESIGN, GSERVICE_ERROR
   }
 
   public enum States implements State {
@@ -91,6 +72,10 @@ public class FSM implements Context {
       @Override
       public void enterState(Context ctx) {
         FourInALine.Instance.setScreen(FourInALine.Instance.menuScreen);
+        if (!FourInALine.Instance.invitationId.equals("")) {
+          FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(FourInALine.Instance.invitationId);
+          FourInALine.Instance.invitationId = "";
+        }
       }
 
       @Override
