@@ -1,35 +1,22 @@
 package it.alcacoop.fourinaline;
 
-import it.alcacoop.fourinaline.actors.UIDialog;
-import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.gservice.GServiceClient;
-import it.alcacoop.fourinaline.util.GServiceGameHelper;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;
@@ -60,10 +47,8 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
     cfg.useGL20 = true;
-
     gameView = initializeForView(new FourInALine(this), cfg);
 
     requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -72,8 +57,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     RelativeLayout layout = new RelativeLayout(this);
-    // gameView = initializeForView(new GnuBackgammon(this), cfg);
-
 
     /** ADS INITIALIZATION **/
     // PrivateDataManager.initData();
@@ -85,11 +68,8 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
     if (!isProVersion())
       adView.loadAd(new AdRequest());
-    // Create the interstitial
     interstitial = new InterstitialAd(this, PrivateDataManager.int_id);
-    // interstitial.setAdListener(this);//TODO: non so se serve...
     /** ADS INITIALIZATION **/
-
 
     RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
     adParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -98,19 +78,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     layout.addView(adView, adParams);
 
     setContentView(layout);
-
-    prefs = Gdx.app.getPreferences("GameOptions");
-    gHelper = new GServiceGameHelper(this, prefs.getBoolean("ALREADY_SIGNEDIN", false));
-    gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
-    // gserviceSignIn();
-    ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
-    List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
-    for (RunningTaskInfo runningTaskInfo : taskInfos) {
-      if (runningTaskInfo.baseActivity.getPackageName().contains("gms")) {
-        gserviceSignIn();
-        break;
-      }
-    }
   }
 
 
@@ -145,6 +112,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   }
 
 
+  /*
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // if (requestCode == PrivateDataManager.RC_REQUEST) {
@@ -164,39 +132,9 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     // PrivateDataManager.createBillingData(this);
     // }
     // } else
-    System.out.println("GSERVICE:------ onActivityResult requestCode:" + requestCode + " resultCode:" + resultCode);
-    if (requestCode == RC_SELECT_PLAYERS) {
-      if (resultCode == RESULT_OK) {
-        Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
-          autoMatchCriteria = RoomConfig.createAutoMatchCriteria(minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-        }
-        final ArrayList<String> invitees = data.getStringArrayListExtra(GamesClient.EXTRA_PLAYERS);
-        // create the room
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
-        rtmConfigBuilder.addPlayersToInvite(invitees);
-        rtmConfigBuilder.setMessageReceivedListener(this);
-        rtmConfigBuilder.setRoomStatusUpdateListener(this);
-        if (autoMatchCriteria != null) {
-          rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-        }
-        gserviceResetRoom();
-        gHelper.getGamesClient().createRoom(rtmConfigBuilder.build());
-      } else {
-        hideProgressDialog();
-      }
-    } else if (requestCode == RC_WAITING_ROOM) {
-      if (resultCode != RESULT_OK) {
-        gserviceResetRoom();
-        hideProgressDialog();
-      }
-    } else {
-      super.onActivityResult(requestCode, resultCode, data);
-      gHelper.onActivityResult(requestCode, resultCode, data);
-    }
+    
   }
+  */
 
 
   public boolean isProVersion() {
@@ -263,15 +201,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     }
   }
 
-  @Override
-  public void gserviceSignIn() {
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        gHelper.beginUserInitiatedSignIn();
-      }
-    });
-  }
 
   @Override
   public boolean gserviceIsSignedIn() {
@@ -320,13 +249,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
   @Override
   public void gserviceResetRoom() {
-    // FourInALine.Instance.gameScreen.chatBox.hardHide();
-    gConnecting = false;
-    meSentInvitation = false;
-    if (mRoomId != null) {
-      gHelper.getGamesClient().leaveRoom(this, mRoomId);
-      mRoomId = null;
-    }
+    _gserviceResetRoom();
   }
 
   @Override
@@ -398,66 +321,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
 
   @Override
-  public void gserviceGetSigninDialog(final int from) {
-    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    final LayoutInflater inflater = this.getLayoutInflater();
-
-    runOnUiThread(new Runnable() {
-      @SuppressLint("NewApi")
-      @Override
-      public void run() {
-        final View myView = inflater.inflate(R.layout.dialog_gplus, null);
-        alert.setView(myView).setTitle("Signin").setCancelable(true);
-        final AlertDialog d = alert.create();
-        d.setOnShowListener(new DialogInterface.OnShowListener() {
-          @Override
-          public void onShow(DialogInterface arg0) {
-            String msg = "";
-            TextView v = (TextView)d.findViewById(R.id.login_text);
-            if (prefs.getBoolean("ALREADY_SIGNEDIN", false)) {
-              msg = "Please sign in on Google Play Game Services to enable this feature";
-            } else {
-              msg = "Please sign in, Google will ask you to accept requested permissions and configure " + "sharing settings up to two times. This may take few minutes..";
-            }
-            v.setText(msg);
-            com.google.android.gms.common.SignInButton b = (com.google.android.gms.common.SignInButton)d.findViewById(R.id.sign_in_button);
-            b.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                d.dismiss();
-                trySignIn(from);
-              }
-            });
-          }
-        });
-        d.show();
-      }
-    });
-  }
-
-  public void trySignIn(final int from) {
-    if ((from == FROM_ACHIEVEMENTS) || (from == FROM_SCOREBOARDS)) {
-      gHelper.setListener(new GServiceGameHelper.GameHelperListener() {
-        @Override
-        public void onSignInSucceeded() {
-          gHelper.setListener(MainActivity.this);
-          MainActivity.this.onSignInSucceeded();
-          if (from == FROM_ACHIEVEMENTS)
-            startActivityForResult(gHelper.getGamesClient().getAchievementsIntent(), RC_ACHIEVEMENTS);
-          else
-            startActivityForResult(gHelper.getGamesClient().getAllLeaderboardsIntent(), RC_LEADERBOARD);
-        }
-
-        @Override
-        public void onSignInFailed() {
-          UIDialog.getFlashDialog(Events.NOOP, "Login error");
-        }
-      });
-    }
-    gserviceSignIn();
-  }
-
-  @Override
   public boolean isNetworkUp() {
     ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -467,21 +330,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   @Override
   public int getAppVersionCode() {
     return appVersionCode;
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-    gHelper.onStart(this);
-  }
-
-  @Override
-  protected void onStop() {
-    super.onStop();
-    if (mRoomId != null) {
-      GServiceClient.getInstance().leaveRoom(10000);
-    }
-    gHelper.onStop();
   }
 
 }

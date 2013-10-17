@@ -56,7 +56,6 @@ public interface NativeFunctions {
   public boolean isNetworkUp();
   public int getAppVersionCode();
 
-  public void gserviceSignIn();
   public boolean gserviceIsSignedIn();
   public void gserviceStartRoom();
   public void gserviceAcceptInvitation(String invitationId);
@@ -68,5 +67,4 @@ public interface NativeFunctions {
   public void gserviceUpdateAchievement(String achievement_id, int increment);
   public void gserviceUnlockAchievement(String achiev_id);
   public void gserviceUpdateState();
-  public void gserviceGetSigninDialog(int from);
 }

@@ -13,6 +13,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -26,6 +29,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.appstate.AppStateClient;
@@ -39,10 +43,11 @@ import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeReliableMessageSentListener;
 import com.google.android.gms.games.multiplayer.realtime.Room;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
-public class GServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
+public abstract class GServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
     RoomUpdateListener, OnInvitationReceivedListener, RealTimeReliableMessageSentListener, OnStateLoadedListener {
 
   protected Preferences prefs;
@@ -64,11 +69,6 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   protected static int FROM_ACHIEVEMENTS = 1;
   protected static int FROM_SCOREBOARDS = 2;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-  }
 
   @Override
   public void onStateConflict(int stateKey, String ver, byte[] localData, byte[] serverData) {
@@ -201,7 +201,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
     System.out.println("---> P2P PEER LEFT");
     if (gConnecting) {
       hideProgressDialog();
-      FourInALine.Instance.nativeFunctions.gserviceResetRoom();
+      _gserviceResetRoom();
       // UIDialog.getFlashDialog(Events.NOOP, "Error: peer left the room");
       updateRoom(room);
     }
@@ -211,6 +211,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   public void onPeersConnected(Room room, List<String> arg1) {
     updateRoom(room);
   }
+
 
   @Override
   public void onPeersDisconnected(Room room, List<String> arg1) {
@@ -246,7 +247,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
     prefs.putBoolean("ALREADY_SIGNEDIN", true);
     prefs.flush();
     gHelper.getGamesClient().registerInvitationListener(this);
-    gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
+    // gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
 
     if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
       FourInALine.Instance.invitationId = gHelper.getInvitationId();
@@ -325,7 +326,7 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
             public boolean onKeyDown(int keyCode, KeyEvent event) {
               clickCount++;
               if (clickCount == 7) {
-                FourInALine.Instance.nativeFunctions.gserviceResetRoom();
+                _gserviceResetRoom();
                 FourInALine.Instance.fsm.state(States.MAIN_MENU);
                 dismiss();
               }
@@ -362,6 +363,148 @@ public class GServiceApplication extends AndroidApplication implements GServiceG
   @Override
   public void onP2PDisconnected(String arg0) {
     System.out.println("---> P2P DISCONNECTED");
+  }
+
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    prefs = Gdx.app.getPreferences("GameOptions");
+    gHelper = new GServiceGameHelper(this, prefs.getBoolean("ALREADY_SIGNEDIN", false));
+    gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
+    ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
+    List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
+    for (RunningTaskInfo runningTaskInfo : taskInfos) {
+      if (runningTaskInfo.baseActivity.getPackageName().contains("gms")) {
+        gserviceSignIn();
+        break;
+      }
+    }
+    gHelper.onStart(this);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    if (mRoomId != null) {
+      GServiceClient.getInstance().leaveRoom(10000);
+    }
+    gHelper.onStop();
+  }
+
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == RC_SELECT_PLAYERS) {
+      if (resultCode == RESULT_OK) {
+        Bundle autoMatchCriteria = null;
+        int minAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+        int maxAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
+          autoMatchCriteria = RoomConfig.createAutoMatchCriteria(minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+        }
+        final ArrayList<String> invitees = data.getStringArrayListExtra(GamesClient.EXTRA_PLAYERS);
+        // create the room
+        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
+        rtmConfigBuilder.addPlayersToInvite(invitees);
+        rtmConfigBuilder.setMessageReceivedListener(this);
+        rtmConfigBuilder.setRoomStatusUpdateListener(this);
+        if (autoMatchCriteria != null) {
+          rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
+        }
+        _gserviceResetRoom();
+        gHelper.getGamesClient().createRoom(rtmConfigBuilder.build());
+      } else {
+        hideProgressDialog();
+      }
+    } else if (requestCode == RC_WAITING_ROOM) {
+      if (resultCode != RESULT_OK) {
+        _gserviceResetRoom();
+        hideProgressDialog();
+      }
+    } else {
+      super.onActivityResult(requestCode, resultCode, data);
+      gHelper.onActivityResult(requestCode, resultCode, data);
+    }
+  }
+
+  public void _gserviceResetRoom() {
+    // FourInALine.Instance.gameScreen.chatBox.hardHide();
+    gConnecting = false;
+    meSentInvitation = false;
+    if (mRoomId != null) {
+      gHelper.getGamesClient().leaveRoom(this, mRoomId);
+      mRoomId = null;
+    }
+  }
+
+
+  protected void gserviceSignIn() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        gHelper.beginUserInitiatedSignIn();
+      }
+    });
+  }
+
+  public void gserviceGetSigninDialog(final int from) {
+    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    final LayoutInflater inflater = this.getLayoutInflater();
+
+    runOnUiThread(new Runnable() {
+      @SuppressLint("NewApi")
+      @Override
+      public void run() {
+        final View myView = inflater.inflate(R.layout.dialog_gplus, null);
+        alert.setView(myView).setTitle("Signin").setCancelable(true);
+        final AlertDialog d = alert.create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+          @Override
+          public void onShow(DialogInterface arg0) {
+            String msg = "";
+            TextView v = (TextView)d.findViewById(R.id.login_text);
+            if (prefs.getBoolean("ALREADY_SIGNEDIN", false)) {
+              msg = "Please sign in on Google Play Game Services to enable this feature";
+            } else {
+              msg = "Please sign in, Google will ask you to accept requested permissions and configure " + "sharing settings up to two times. This may take few minutes..";
+            }
+            v.setText(msg);
+            com.google.android.gms.common.SignInButton b = (com.google.android.gms.common.SignInButton)d.findViewById(R.id.sign_in_button);
+            b.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                d.dismiss();
+                trySignIn(from);
+              }
+            });
+          }
+        });
+        d.show();
+      }
+    });
+  }
+
+  protected void trySignIn(final int from) {
+    if ((from == FROM_ACHIEVEMENTS) || (from == FROM_SCOREBOARDS)) {
+      gHelper.setListener(new GServiceGameHelper.GameHelperListener() {
+        @Override
+        public void onSignInSucceeded() {
+          gHelper.setListener(this);
+          // MainActivity.this.onSignInSucceeded();
+          if (from == FROM_ACHIEVEMENTS)
+            startActivityForResult(gHelper.getGamesClient().getAchievementsIntent(), RC_ACHIEVEMENTS);
+          else
+            startActivityForResult(gHelper.getGamesClient().getAllLeaderboardsIntent(), RC_LEADERBOARD);
+        }
+
+        @Override
+        public void onSignInFailed() {
+          UIDialog.getFlashDialog(Events.NOOP, "Login error");
+        }
+      });
+    }
+    gserviceSignIn();
   }
 
 }
