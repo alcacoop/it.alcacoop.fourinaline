@@ -8,9 +8,15 @@ import com.google.android.gms.games.achievement.OnAchievementUpdatedListener;
 import com.google.android.gms.games.leaderboard.OnScoreSubmittedListener;
 import com.google.android.gms.games.leaderboard.SubmitScoreResult;
 import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 
-public class GServiceApplication extends BaseGServiceApplication implements GServiceInterface {
+public abstract class GServiceApplication extends BaseGServiceApplication implements GServiceInterface {
+
+  @Override
+  public String gservicePendingNotificationAreaInvitation() {
+    String tmp = invitationId;
+    invitationId = "";
+    return tmp;
+  };
 
   @Override
   public boolean gserviceIsSignedIn() {
@@ -30,13 +36,7 @@ public class GServiceApplication extends BaseGServiceApplication implements GSer
 
   @Override
   public void gserviceAcceptInvitation(String invitationId) {
-    RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this);
-    roomConfigBuilder.setInvitationIdToAccept(invitationId);
-    roomConfigBuilder.setMessageReceivedListener(this);
-    roomConfigBuilder.setRoomStatusUpdateListener(this);
-    gserviceResetRoom();
-    gHelper.getGamesClient().joinRoom(roomConfigBuilder.build());
-    showProgressDialog();
+    _gserviceAcceptInvitation(invitationId);
   }
 
   @Override

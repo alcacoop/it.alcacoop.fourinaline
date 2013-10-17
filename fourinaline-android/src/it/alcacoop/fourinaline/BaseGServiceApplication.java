@@ -1,11 +1,5 @@
 package it.alcacoop.fourinaline;
 
-import it.alcacoop.fourinaline.actors.UIDialog;
-import it.alcacoop.fourinaline.fsm.FSM.Events;
-import it.alcacoop.fourinaline.fsm.FSM.States;
-import it.alcacoop.fourinaline.gservice.GServiceClient;
-import it.alcacoop.fourinaline.layers.GameScreen;
-import it.alcacoop.fourinaline.logic.MatchState;
 import it.alcacoop.fourinaline.util.GServiceGameHelper;
 
 import java.math.BigInteger;
@@ -47,8 +41,8 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
-public abstract class BaseGServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
-    RoomUpdateListener, OnInvitationReceivedListener, RealTimeReliableMessageSentListener, OnStateLoadedListener {
+public abstract class BaseGServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener,
+    RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener, RealTimeReliableMessageSentListener, OnStateLoadedListener {
 
   protected Preferences prefs;
   protected GServiceGameHelper gHelper;
@@ -68,6 +62,18 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
   protected static int FROM_ACHIEVEMENTS = 1;
   protected static int FROM_SCOREBOARDS = 2;
+
+  protected String invitationId = "";
+
+  abstract boolean shouldShowInvitationDialog();
+
+  abstract void onRoomConnectedBehaviour();
+
+  abstract void onLeaveRoomBehaviour(int reason);
+
+  abstract void onRTMessageReceivedBehaviour(String msg);
+
+  abstract void onErrorBehaviour(String msg);
 
 
   @Override
@@ -89,24 +95,26 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   @Override
   public void onRealTimeMessageSent(int statusCode, int token, String recipientParticipantId) {
     if (statusCode != GamesClient.STATUS_OK) {
-      GServiceClient.getInstance().leaveRoom(GamesClient.STATUS_NETWORK_ERROR_OPERATION_FAILED);
+      onLeaveRoomBehaviour(GamesClient.STATUS_NETWORK_ERROR_OPERATION_FAILED);
     }
   }
 
+
   @Override
   public void onInvitationReceived(Invitation invitation) {
-    if (FourInALine.Instance.currentScreen instanceof GameScreen) {
+    if (shouldShowInvitationDialog()) {
       gHelper.getGamesClient().declineRoomInvitation(invitation.getInvitationId());
       return;
     }
     gserviceInvitationReceived(invitation.getInviter().getIconImageUri(), invitation.getInviter().getDisplayName(), invitation.getInvitationId());
   }
 
+
   @Override
   public void onJoinedRoom(int arg0, Room room) {
     if (room == null) {
       hideProgressDialog();
-      UIDialog.getFlashDialog(Events.NOOP, "Invalid invitation");
+      onErrorBehaviour("Invalid invitation");
     } else {
       updateRoom(room);
       gConnecting = true;
@@ -123,8 +131,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     System.out.println("GSERVICE onRoomConnected");
     hideProgressDialog();
     updateRoom(room);
-    MatchState.matchType = 2;
-    FourInALine.Instance.fsm.state(States.GSERVICE);
+    onRoomConnectedBehaviour();
     gConnecting = false;
   }
 
@@ -132,7 +139,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   public void onRoomCreated(int statusCode, Room room) {
     if (statusCode != GamesClient.STATUS_OK) {
       hideProgressDialog();
-      UIDialog.getFlashDialog(Events.NOOP, "Unknown error");
+      onErrorBehaviour("Unknown error");
       return;
     }
     mRoomId = room.getRoomId();
@@ -216,7 +223,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   @Override
   public void onPeersDisconnected(Room room, List<String> arg1) {
     System.out.println("---> P2P PEER DISCONNECTED");
-    GServiceClient.getInstance().leaveRoom(0);
+    onLeaveRoomBehaviour(GamesClient.STATUS_OK);
     updateRoom(room);
   }
 
@@ -235,7 +242,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     byte[] buf = rtm.getMessageData();
     String s = new String(buf);
     System.out.println("GSERVICE RECEIVED: " + s);
-    GServiceClient.getInstance().precessReceivedMessage(s);
+    onRTMessageReceivedBehaviour(s);
   }
 
   @Override
@@ -250,7 +257,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     // gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
 
     if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
-      FourInALine.Instance.invitationId = gHelper.getInvitationId();
+      invitationId = gHelper.getInvitationId();
     }
   }
 
@@ -287,7 +294,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
             b.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(invitationId);
+                _gserviceAcceptInvitation(invitationId);
                 d.dismiss();
               }
             });
@@ -297,6 +304,18 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
       }
     });
   }
+
+
+  public void _gserviceAcceptInvitation(String invitationId) {
+    RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this);
+    roomConfigBuilder.setInvitationIdToAccept(invitationId);
+    roomConfigBuilder.setMessageReceivedListener(this);
+    roomConfigBuilder.setRoomStatusUpdateListener(this);
+    _gserviceResetRoom();
+    gHelper.getGamesClient().joinRoom(roomConfigBuilder.build());
+    showProgressDialog();
+  }
+
 
   private void updateRoom(Room room) {
     System.out.println("---> P2P UPDATE ROOM");
@@ -327,7 +346,8 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
               clickCount++;
               if (clickCount == 7) {
                 _gserviceResetRoom();
-                FourInALine.Instance.fsm.state(States.MAIN_MENU);
+                // TODO: SevenTimesCancelBehaviour for future use
+                // FourInALine.Instance.fsm.state(States.MAIN_MENU);
                 dismiss();
               }
               return false;
@@ -387,7 +407,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   protected void onStop() {
     super.onStop();
     if (mRoomId != null) {
-      GServiceClient.getInstance().leaveRoom(10000);
+      onLeaveRoomBehaviour(GamesClient.STATUS_REAL_TIME_INACTIVE_ROOM);
     }
     gHelper.onStop();
   }
@@ -500,7 +520,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
         @Override
         public void onSignInFailed() {
-          UIDialog.getFlashDialog(Events.NOOP, "Login error");
+          onErrorBehaviour("Login error");
         }
       });
     }

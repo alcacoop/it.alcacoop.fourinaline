@@ -72,9 +72,9 @@ public class FSM implements Context {
       @Override
       public void enterState(Context ctx) {
         FourInALine.Instance.setScreen(FourInALine.Instance.menuScreen);
-        if (!FourInALine.Instance.invitationId.equals("")) {
-          FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(FourInALine.Instance.invitationId);
-          FourInALine.Instance.invitationId = "";
+        String invitationId = FourInALine.Instance.nativeFunctions.gservicePendingNotificationAreaInvitation();
+        if (!invitationId.equals("")) {
+          FourInALine.Instance.nativeFunctions.gserviceAcceptInvitation(invitationId);
         }
       }
 

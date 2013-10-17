@@ -52,7 +52,7 @@ public class GServiceClient implements GServiceMessages {
   }
 
 
-  public void precessReceivedMessage(String s) {
+  public void processReceivedMessage(String s) {
     int coockie = coockieMonster.fIBSCookie(s);
     switch (coockie) {
       case GSERVICE_READY:
@@ -103,6 +103,7 @@ public class GServiceClient implements GServiceMessages {
 
   private final static int STATUS_OK = 0;
   private final static int STATUS_NETWORK_ERROR_OPERATION_FAILED = 6;
+  private final static int STATUS_REAL_TIME_INACTIVE_ROOM = 7005;
 
   public void leaveRoom(int code) {
     // FourInALine.Instance.nativeFunctions.gserviceResetRoom();
@@ -115,7 +116,7 @@ public class GServiceClient implements GServiceMessages {
         // you disconnected
         FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 1);
         break;
-      case 10000:
+      case STATUS_REAL_TIME_INACTIVE_ROOM:
         // activity stopped
         FourInALine.Instance.fsm.processEvent(Events.GSERVICE_ERROR, 2);
         break;

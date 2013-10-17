@@ -28,7 +28,6 @@ public class FourInALine extends Game implements ApplicationListener {
   private String[] resname = { "hdpi", "mdpi", "ldpi" };
   public int resolution[];
   public int ss;
-  public String invitationId = "";
 
   public TextureAtlas atlas;
   public Skin skin;

@@ -1,5 +1,12 @@
 package it.alcacoop.fourinaline;
 
+import it.alcacoop.fourinaline.actors.UIDialog;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
+import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.layers.GameScreen;
+import it.alcacoop.fourinaline.logic.MatchState;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -206,4 +213,34 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     return appVersionCode;
   }
 
+
+  @Override
+  boolean shouldShowInvitationDialog() {
+    return (FourInALine.Instance.currentScreen instanceof GameScreen);
+  }
+
+
+  @Override
+  void onRoomConnectedBehaviour() {
+    MatchState.matchType = 2;
+    FourInALine.Instance.fsm.state(States.GSERVICE);
+  }
+
+
+  @Override
+  void onRTMessageReceivedBehaviour(String msg) {
+    GServiceClient.getInstance().processReceivedMessage(msg);
+  }
+
+
+  @Override
+  void onLeaveRoomBehaviour(int reason) {
+    GServiceClient.getInstance().leaveRoom(reason);
+  }
+
+
+  @Override
+  void onErrorBehaviour(String msg) {
+    UIDialog.getFlashDialog(Events.NOOP, msg);
+  }
 }
