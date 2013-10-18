@@ -135,10 +135,7 @@ public class Board extends Group {
     boardImage.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
-        if (MatchState.winner >= 0) {
-          FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
-          FourInALine.Instance.fsm.processEvent(Events.GAME_TERMINATED, MatchState.winner);
-        } else {
+        if (MatchState.winner == -1) {
           if (!locked) {
             int cx = (int)Math.ceil((x / dim)) - 1;
             FourInALine.Instance.fsm.processEvent(Events.CLICKED_COL, cx);
@@ -195,15 +192,18 @@ public class Board extends Group {
 
     if (gameModel.getGameStatus() != GameStatus.CONTINUE_STATUS) {
       locked = true;
+      FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
       if (gameModel.getGameStatus() == GameStatus.WON_STATUS) {
         System.out.println("PARTITA VINTA!");
         highlightWinLine();
         MatchState.winner = gameModel.getCurrentPlayer().hashCode();
         System.out.println("THE WINNER IS: " + MatchState.winner);
         FourInALine.Instance.gameScreen.incScore(MatchState.winner);
+        UIDialog.getContinueDialog(Events.GAME_TERMINATED, "The winner is " + FourInALine.Instance.gameScreen.getPlayerName(MatchState.winner) + "!", 0.8f);
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
         MatchState.winner = 0;
+        UIDialog.getContinueDialog(Events.GAME_TERMINATED, "Game tied!", 0.8f);
       }
     } else {
       locked = false;

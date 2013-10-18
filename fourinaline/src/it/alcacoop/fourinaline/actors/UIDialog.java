@@ -187,8 +187,11 @@ public final class UIDialog extends Table {
         Actions.moveTo((stage.getWidth() - width) / 2, (stage.getHeight() - height) / 2, 0.2f))));
   }
 
-
   public static void getContinueDialog(FSM.Events evt, String text) {
+    getContinueDialog(evt, text, UIDialog.alpha);
+  }
+
+  public static void getContinueDialog(FSM.Events evt, String text, float alpha) {
     Stage stage = FourInALine.Instance.currentScreen.getStage();
     instance.visible = true;
     instance.quitWindow = false;

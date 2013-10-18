@@ -178,4 +178,8 @@ public class GameScreen extends BaseScreen {
     MatchState.anScore[player - 1]++;
     players[player - 1].setScore(MatchState.anScore[player - 1]);
   }
+
+  public String getPlayerName(int id) {
+    return players[id - 1].getName();
+  }
 }

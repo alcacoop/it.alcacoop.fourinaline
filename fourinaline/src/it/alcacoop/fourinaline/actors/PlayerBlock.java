@@ -44,6 +44,10 @@ public class PlayerBlock extends Table {
     lName.setText(name);
   }
 
+  public String getName() {
+    return lName.getText().toString();
+  }
+
   public void setScore(int score) {
     lScore.setText("Score: " + score);
   }

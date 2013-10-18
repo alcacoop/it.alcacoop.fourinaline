@@ -451,9 +451,6 @@ public class FSM implements Context {
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case GAME_TERMINATED:
-            if (MatchState.winner >= 0) {
-              UIDialog.getFlashDialog(Events.NOOP, "The winner is " + MatchState.winner);
-            }
             FourInALine.Instance.board.reset();
             break;
           case BOARD_RESETTED:
