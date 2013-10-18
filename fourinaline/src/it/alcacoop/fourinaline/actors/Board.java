@@ -81,7 +81,11 @@ public class Board extends Group {
   }
 
   private void setVariant() {
-    String variant = Gdx.app.getPreferences("MatchOptions").getString("VARIANT", "7x6x4 (Standard)");
+    String variant = "";
+    if (MatchState.matchType != 2)
+      variant = Gdx.app.getPreferences("MatchOptions").getString("VARIANT", "7x6x4 (Standard)");
+    else
+      variant = "7x6x4 (Standard)";
     if (variant.equals("7x6x4 (Standard)") && (wx != 7)) {
       setBoardDim(7, 6, 4);
       System.out.println("STANDARD!!!");
