@@ -94,10 +94,19 @@ public class GameScreen extends BaseScreen {
 
     System.out.println(nMatchTo.getHeight());
 
-    players[0].setName("YOU");
     players[0].setScore(0);
-    players[1].setName("CPU (L" + MatchState.AILevel + ")");
     players[1].setScore(0);
+
+    if (MatchState.matchType == 0) {
+      players[0].setName("YOU");
+      players[1].setName("CPU (L" + MatchState.AILevel + ")");
+    } else if (MatchState.matchType == 1) {
+      players[0].setName("PLAYER1");
+      players[1].setName("PLAYER2");
+    } else {
+      players[0].setName("YOU");
+      players[1].setName("OPPONENT");
+    }
 
 
     Table tp = new Table();
