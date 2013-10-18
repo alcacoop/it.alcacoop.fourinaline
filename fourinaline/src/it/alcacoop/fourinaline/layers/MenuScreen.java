@@ -132,7 +132,7 @@ public class MenuScreen extends BaseScreen {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
           if (UIDialog.isOpened())
             return false;
-          UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Row?");
+          UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Line Mobile?");
         }
         return super.keyDown(event, keycode);
       }

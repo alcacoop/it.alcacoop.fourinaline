@@ -407,7 +407,7 @@ public final class UIDialog extends Table {
     t.row();
     t.add(new Label(" ", FourInALine.Instance.skin)).fill().expand();
     t.row();
-    t.add(new Label("\"Four in a Row!\" is based on FourInALine (gnubg)", FourInALine.Instance.skin));
+    t.add(new Label("\"Four in a Line Mobile!\" is based on FourInALine", FourInALine.Instance.skin));
     Label link1 = new Label(gnuBgLink, FourInALine.Instance.skin);
     link1.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
