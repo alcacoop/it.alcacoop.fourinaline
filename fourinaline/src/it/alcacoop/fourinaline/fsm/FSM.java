@@ -137,6 +137,8 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(States.GAME_OPTIONS);
             } else if (btn.equals("ABOUT..")) {
               UIDialog.getAboutDialog();
+            } else if (btn.equals("REMOVE ADS")) {
+              FourInALine.Instance.nativeFunctions.inAppBilling();
             }
 
             break;

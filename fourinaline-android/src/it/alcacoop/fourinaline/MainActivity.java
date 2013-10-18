@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline;
 
@@ -70,12 +70,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   private TimerTask adsTask;
 
 
-  private class PrivateDataManager {
-    static final String ads_id = "";
-    static final String int_id = "";
-  }
-
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -91,7 +85,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     RelativeLayout layout = new RelativeLayout(this);
 
     /** ADS INITIALIZATION **/
-    // PrivateDataManager.initData();
+    PrivateDataManager.initData();
     if (isTablet(this))
       adView = new AdView(this, AdSize.IAB_BANNER, PrivateDataManager.ads_id);
     else
@@ -110,6 +104,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     layout.addView(adView, adParams);
 
     setContentView(layout);
+    PrivateDataManager.createBillingData(this);
   }
 
 
@@ -143,34 +138,42 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     }
   }
 
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    PrivateDataManager.destroyBillingData();
+  }
 
-  /*
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // if (requestCode == PrivateDataManager.RC_REQUEST) {
-    // if (resultCode != 10000) {
-    // if (isProVersion()) {
-    // adView.setVisibility(View.GONE);
-    // if (adsTimer != null) {
-    // adsTimer.cancel();
-    // adsTimer.purge();
-    // PrivateDataManager.destroyBillingData(); // Memory Optimization!
-    // }
-    // GnuBackgammon.Instance.menuScreen.redraw();
-    // }
-    // } else { // ERROR!
-    // System.out.println("BILLING: 10000");
-    // PrivateDataManager.destroyBillingData();
-    // PrivateDataManager.createBillingData(this);
-    // }
-    // } else
-    
+    if (requestCode == PrivateDataManager.RC_REQUEST) {
+      if (resultCode != 10000) {
+        if (isProVersion()) {
+          adView.setVisibility(View.GONE);
+          if (adsTimer != null) {
+            adsTimer.cancel();
+            adsTimer.purge();
+            PrivateDataManager.destroyBillingData(); // Memory Optimization!
+          }
+        }
+      } else { // ERROR!
+        PrivateDataManager.destroyBillingData();
+        PrivateDataManager.createBillingData(this);
+      }
+    } else
+      super.onActivityResult(requestCode, resultCode, data);
   }
-  */
 
 
+  @Override
   public boolean isProVersion() {
-    return false;
+    return PrivateDataManager.msIsPremium;
+  }
+
+  @Override
+  public void inAppBilling() {
+    Intent myIntent = new Intent(this, PurchaseActivity.class);
+    startActivityForResult(myIntent, PrivateDataManager.RC_REQUEST);
   }
 
   private boolean isTablet(Context context) {

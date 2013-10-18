@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline;
 
@@ -62,9 +62,6 @@ public class FourInALineDesktop implements NativeFunctions {
   public void openURL(String url, String fallback) {
   }
 
-  @Override
-  public void gserviceSignIn() {
-  }
 
   @Override
   public boolean gserviceIsSignedIn() {
@@ -112,10 +109,6 @@ public class FourInALineDesktop implements NativeFunctions {
   }
 
   @Override
-  public void gserviceGetSigninDialog(int from) {
-  }
-
-  @Override
   public boolean isNetworkUp() {
     return false;
   }
@@ -131,13 +124,16 @@ public class FourInALineDesktop implements NativeFunctions {
 
   @Override
   public boolean isProVersion() {
-    // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Override
   public void inAppBilling() {
-    // TODO Auto-generated method stub
-
   }
+
+  @Override
+  public String gservicePendingNotificationAreaInvitation() {
+    return null;
+  }
+
 }
