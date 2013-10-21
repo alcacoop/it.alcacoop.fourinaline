@@ -295,6 +295,7 @@ public class Board extends Group {
 
 
   public void highlightWinLine() {
+    FourInALine.Instance.snd.playGameEnd();
     for (int c = 0; c < gameModel.getWinLine().size(); c++) {
       int row = wy - gameModel.getWinLine().get(c).getRowIndex() - 1;
       int col = gameModel.getWinLine().get(c).getColIndex();

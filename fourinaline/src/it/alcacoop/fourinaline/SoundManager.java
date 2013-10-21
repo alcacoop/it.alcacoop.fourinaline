@@ -46,7 +46,7 @@ public class SoundManager {
     move = Gdx.audio.newSound(Gdx.files.internal("sounds/move1.wav"));
     click = Gdx.audio.newSound(Gdx.files.internal("sounds/move2.wav"));
     newMessage = Gdx.audio.newSound(Gdx.files.internal("sounds/newmessage.wav"));
-    gameEnd = Gdx.audio.newSound(Gdx.files.internal("sounds/move1.wav"));
+    gameEnd = Gdx.audio.newSound(Gdx.files.internal("sounds/win.wav"));
 
     bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bg.mp3"));
     bgMusic.setVolume(0.25f);
@@ -75,7 +75,7 @@ public class SoundManager {
       move.play();
   }
 
-  public void playCameEnd() {
+  public void playGameEnd() {
     if (FourInALine.Instance.optionPrefs.getString("SOUND", "Yes").equals("Yes"))
       gameEnd.play();
   }
