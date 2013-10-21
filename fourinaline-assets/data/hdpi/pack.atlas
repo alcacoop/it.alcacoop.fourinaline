@@ -5,35 +5,35 @@ filter: Linear,Linear
 repeat: none
 CSB
   rotate: false
-  xy: 928, 230
-  size: 196, 196
-  orig: 196, 196
+  xy: 828, 114
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
 CSW
   rotate: false
-  xy: 1126, 215
-  size: 196, 196
-  orig: 196, 196
+  xy: 947, 298
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
 abt
   rotate: false
-  xy: 1, 1
+  xy: 1155, 463
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 achievements
   rotate: false
-  xy: 1788, 413
+  xy: 958, 206
   size: 89, 90
   orig: 89, 90
   offset: 0, 0
   index: -1
 alca
   rotate: false
-  xy: 1472, 413
+  xy: 630, 244
   size: 314, 90
   split: 155, 158, 88, 1
   orig: 314, 90
@@ -41,14 +41,14 @@ alca
   index: -1
 back
   rotate: false
-  xy: 1019, 188
+  xy: 1, 1
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 bbg
   rotate: false
-  xy: 1324, 215
+  xy: 630, 46
   size: 196, 196
   split: 23, 23, 23, 23
   orig: 196, 196
@@ -63,42 +63,42 @@ bg
   index: -1
 dp
   rotate: false
-  xy: 722, 88
+  xy: 920, 72
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 facebook
   rotate: false
-  xy: 1879, 423
+  xy: 828, 32
   size: 90, 80
   orig: 90, 80
   offset: 0, 0
   index: -1
 gpl
   rotate: false
-  xy: 1522, 288
+  xy: 1141, 256
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 gplus
   rotate: false
-  xy: 1522, 330
+  xy: 1049, 131
   size: 90, 81
   orig: 90, 81
   offset: 0, 0
   index: -1
 hole
   rotate: false
-  xy: 630, 130
-  size: 296, 296
-  orig: 296, 296
+  xy: 1077, 298
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
 leaderboards
   rotate: false
-  xy: 928, 138
+  xy: 958, 114
   size: 89, 90
   orig: 89, 90
   offset: 0, 0
@@ -112,49 +112,49 @@ logo
   index: -1
 next
   rotate: false
-  xy: 1614, 371
+  xy: 1197, 463
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 opt
   rotate: false
-  xy: 1971, 463
+  xy: 43, 1
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 pro
   rotate: false
-  xy: 43, 1
+  xy: 962, 72
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 resign
   rotate: false
-  xy: 1019, 146
+  xy: 1141, 214
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 sp
   rotate: false
-  xy: 1061, 188
+  xy: 1239, 463
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 str
   rotate: false
-  xy: 722, 46
+  xy: 85, 1
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 topborder
   rotate: false
-  xy: 1155, 413
+  xy: 630, 336
   size: 315, 90
   split: 158, 156, 1, 88
   orig: 315, 90
@@ -162,7 +162,7 @@ topborder
   index: -1
 twitter
   rotate: false
-  xy: 630, 46
+  xy: 1049, 214
   size: 90, 82
   orig: 90, 82
   offset: 0, 0
