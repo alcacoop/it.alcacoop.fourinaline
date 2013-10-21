@@ -41,7 +41,6 @@ import it.alcacoop.fourinaline.fsm.FSM.Events;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -53,8 +52,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
 public class OptionsScreen extends BaseScreen {
-
-  private Preferences prefs;
 
   private final FixedButtonGroup sound;
   private final FixedButtonGroup music;
@@ -76,8 +73,6 @@ public class OptionsScreen extends BaseScreen {
   // private Group g;
 
   public OptionsScreen() {
-
-    prefs = Gdx.app.getPreferences("Options");
 
     stage.addListener(new InputListener() {
       @Override
@@ -145,23 +140,24 @@ public class OptionsScreen extends BaseScreen {
 
 
   public void initFromPrefs() {
-    String sSound = prefs.getString("SOUND", "Yes");
+    String sSound = FourInALine.Instance.optionPrefs.getString("SOUND", "Yes");
     sound.setChecked(sSound);
-    String sMusic = prefs.getString("MUSIC", "Yes");
+    String sMusic = FourInALine.Instance.optionPrefs.getString("MUSIC", "Yes");
     music.setChecked(sMusic);
-    String sVibration = prefs.getString("VIBRATION", "Yes");
+    String sVibration = FourInALine.Instance.optionPrefs.getString("VIBRATION", "Yes");
     vibration.setChecked(sVibration);
   }
 
 
   public void savePrefs() {
     String sSound = ((IconButton)sound.getChecked()).getText().toString();
-    prefs.putString("SOUND", sSound);
+    FourInALine.Instance.optionPrefs.putString("SOUND", sSound);
     String sMusic = ((IconButton)music.getChecked()).getText().toString();
-    prefs.putString("MUSIC", sMusic);
+    FourInALine.Instance.optionPrefs.putString("MUSIC", sMusic);
     String sVibration = ((IconButton)vibration.getChecked()).getText().toString();
-    prefs.putString("VIBRATION", sVibration);
-    prefs.flush();
+    FourInALine.Instance.optionPrefs.putString("VIBRATION", sVibration);
+    FourInALine.Instance.optionPrefs.flush();
+    FourInALine.Instance.nativeFunctions.gserviceUpdateState();
   }
 
   @Override

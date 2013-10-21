@@ -42,7 +42,6 @@ import it.alcacoop.fourinaline.logic.MatchState;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -54,8 +53,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
 public class MatchOptionsScreen extends BaseScreen {
-
-  private Preferences prefs;
 
   private final FixedButtonGroup level;
   private final FixedButtonGroup matchTo;
@@ -83,8 +80,6 @@ public class MatchOptionsScreen extends BaseScreen {
   // private Group g;
 
   public MatchOptionsScreen() {
-
-    prefs = Gdx.app.getPreferences("MatchOptions");
 
     stage.addListener(new InputListener() {
       @Override
@@ -154,24 +149,25 @@ public class MatchOptionsScreen extends BaseScreen {
 
 
   public void initFromPrefs() {
-    String sLevel = prefs.getString("LEVEL", "Beginner");
+    String sLevel = FourInALine.Instance.matchOptionPrefs.getString("LEVEL", "Beginner");
     level.setChecked(sLevel);
-    String sMatchTo = prefs.getString("MATCHTO", "1");
+    String sMatchTo = FourInALine.Instance.matchOptionPrefs.getString("MATCHTO", "1");
     matchTo.setChecked(sMatchTo);
-    String sVariant = prefs.getString("VARIANT", "7x6x4 (Standard)");
+    String sVariant = FourInALine.Instance.matchOptionPrefs.getString("VARIANT", "7x6x4 (Standard)");
     gametype.setChecked(sVariant);
   }
 
 
   public void savePrefs() {
     String sLevel = ((IconButton)level.getChecked()).getText().toString();
-    prefs.putString("LEVEL", sLevel);
+    FourInALine.Instance.matchOptionPrefs.putString("LEVEL", sLevel);
     String sMatchTo = ((IconButton)matchTo.getChecked()).getText().toString();
-    prefs.putString("MATCHTO", sMatchTo);
+    FourInALine.Instance.matchOptionPrefs.putString("MATCHTO", sMatchTo);
     String sGameType = ((IconButton)gametype.getChecked()).getText().toString();
-    prefs.putString("VARIANT", sGameType);
+    FourInALine.Instance.matchOptionPrefs.putString("VARIANT", sGameType);
 
-    prefs.flush();
+    FourInALine.Instance.matchOptionPrefs.flush();
+    FourInALine.Instance.nativeFunctions.gserviceUpdateState();
 
     for (int i = 0; i < _levels.length; i++) {
       if (_levels[i].equals(sLevel))

@@ -27,16 +27,13 @@ public class AppDataManager {
     app_data.put("singleboard", FourInALine.Instance.gameOptionPrefs.getString("SINGLEBOARD", "0"));
     app_data.put("multiboard", FourInALine.Instance.gameOptionPrefs.getString("MULTIBOARD", "0"));
 
-    // app_data.put("sound", GnuBackgammon.Instance.optionPrefs.getString("SOUND", "Yes"));
-    // app_data.put("speed", GnuBackgammon.Instance.optionPrefs.getString("SPEED", "Fast"));
-    // app_data.put("amoves", GnuBackgammon.Instance.optionPrefs.getString("AMOVES", "Tap"));
-    // app_data.put("lmoves", GnuBackgammon.Instance.optionPrefs.getString("LMOVES", "Yes"));
-    // app_data.put("mdices", GnuBackgammon.Instance.optionPrefs.getString("MDICES", "No"));
-    //
-    // app_data.put("board", GnuBackgammon.Instance.appearancePrefs.getString("BOARD", "B1"));
-    // app_data.put("checkers", GnuBackgammon.Instance.appearancePrefs.getString("CHECKERS", "CS1"));
-    // app_data.put("direction", GnuBackgammon.Instance.appearancePrefs.getString("DIRECTION", "AntiClockwise"));
-    // app_data.put("numberedp", GnuBackgammon.Instance.appearancePrefs.getString("NPOINTS", "Yes"));
+    app_data.put("sound", FourInALine.Instance.optionPrefs.getString("SOUND", "Yes"));
+    app_data.put("sound", FourInALine.Instance.optionPrefs.getString("MUSIC", "Yes"));
+    app_data.put("sound", FourInALine.Instance.optionPrefs.getString("VIBRATION", "Yes"));
+
+    app_data.put("sound", FourInALine.Instance.matchOptionPrefs.getString("LEVEL", "Yes"));
+    app_data.put("sound", FourInALine.Instance.matchOptionPrefs.getString("MATCHTO", "Yes"));
+    app_data.put("sound", FourInALine.Instance.matchOptionPrefs.getString("VARIANT", "Yes"));
 
     app_data.put("opponents", AchievementsManager.getInstance().prefs.getString("OPPONENTS", "{}"));
     Json json = new Json();
@@ -65,21 +62,17 @@ public class AppDataManager {
 
     double single = Math.max(Double.parseDouble(hLocal.get("singleboard")), Double.parseDouble(hRemote.get("singleboard")));
     double multi = Math.max(Double.parseDouble(hLocal.get("multiboard")), Double.parseDouble(hRemote.get("multiboard")));
-    //
-    //
+
     app_data.put("singleboard", single + "");
     app_data.put("multiboard", multi + "");
-    //
-    // app_data.put("sound", hRemote.get("sound"));
-    // app_data.put("speed", hRemote.get("speed"));
-    // app_data.put("amoves", hRemote.get("amoves"));
-    // app_data.put("lmoves", hRemote.get("lmoves"));
-    // app_data.put("mdices", hRemote.get("mdices"));
-    //
-    // app_data.put("board", hRemote.get("board"));
-    // app_data.put("checkers", hRemote.get("checkers"));
-    // app_data.put("direction", hRemote.get("direction"));
-    // app_data.put("numberedp", hRemote.get("numberedp"));
+
+    app_data.put("sound", hRemote.get("sound"));
+    app_data.put("music", hRemote.get("music"));
+    app_data.put("vibration", hRemote.get("vibration"));
+
+    app_data.put("level", hRemote.get("level"));
+    app_data.put("matchTo", hRemote.get("matchTo"));
+    app_data.put("variant", hRemote.get("variant"));
 
     ArrayList<String> local_played_list = jLocal.fromJson(ArrayList.class, hLocal.get("opponents"));
     ArrayList<String> remote_played_list = jRemote.fromJson(ArrayList.class, hRemote.get("opponents"));
@@ -93,25 +86,23 @@ public class AppDataManager {
 
 
   private void savePrefs() {
+    System.out.println("APPSTATE: savePrefs");
     FourInALine.Instance.gameOptionPrefs.putString("SINGLEBOARD", app_data.get("singleboard"));
     FourInALine.Instance.gameOptionPrefs.putString("MULTIBOARD", app_data.get("multiboard"));
 
-    // GnuBackgammon.Instance.optionPrefs.putString("SOUND", app_data.get("sound"));
-    // GnuBackgammon.Instance.optionPrefs.putString("SPEED", app_data.get("speed"));
-    // GnuBackgammon.Instance.optionPrefs.putString("AMOVES", app_data.get("amoves"));
-    // GnuBackgammon.Instance.optionPrefs.putString("LMOVES", app_data.get("lmoves"));
-    // GnuBackgammon.Instance.optionPrefs.putString("MDICES", app_data.get("mdices"));
-    //
-    // GnuBackgammon.Instance.appearancePrefs.putString("BOARD", app_data.get("board"));
-    // GnuBackgammon.Instance.appearancePrefs.putString("CHECKERS", app_data.get("checkers"));
-    // GnuBackgammon.Instance.appearancePrefs.putString("DIRECTION", app_data.get("direction"));
-    // GnuBackgammon.Instance.appearancePrefs.putString("NPOINTS", app_data.get("numberedp"));
+    FourInALine.Instance.optionPrefs.putString("SOUND", app_data.get("sound"));
+    FourInALine.Instance.optionPrefs.putString("MUSIC", app_data.get("music"));
+    FourInALine.Instance.optionPrefs.putString("VIBRATION", app_data.get("vibration"));
+
+    FourInALine.Instance.matchOptionPrefs.putString("LEVEL", app_data.get("level"));
+    FourInALine.Instance.matchOptionPrefs.putString("MATCHTO", app_data.get("matchTo"));
+    FourInALine.Instance.matchOptionPrefs.putString("VARIANT", app_data.get("variant"));
 
     AchievementsManager.getInstance().prefs.putString("OPPONENTS", app_data.get("opponents"));
 
-    // GnuBackgammon.Instance.optionPrefs.flush();
-    // GnuBackgammon.Instance.appearancePrefs.flush();
     FourInALine.Instance.gameOptionPrefs.flush();
+    FourInALine.Instance.matchOptionPrefs.flush();
+    FourInALine.Instance.optionPrefs.flush();
     AchievementsManager.getInstance().prefs.flush();
   }
 }
