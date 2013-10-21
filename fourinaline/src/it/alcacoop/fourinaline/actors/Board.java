@@ -36,6 +36,7 @@ package it.alcacoop.fourinaline.actors;
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
 import it.alcacoop.fourinaline.fsm.FSM.States;
+import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.logic.AIExecutor;
 import it.alcacoop.fourinaline.logic.MatchState;
 
@@ -224,6 +225,7 @@ public class Board extends Group {
     // -1=CONTINUE, 0=TIE, 1=WON1, 2=WON2
 
     if (gameModel.getGameStatus() != GameStatus.CONTINUE_STATUS) {
+      if ((MatchState.currentPlayer == 2) && (MatchState.matchType == 2)) GServiceClient.getInstance().sendMessage("6 " + col);
       locked = true;
       FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
       if (gameModel.getGameStatus() == GameStatus.WON_STATUS) {
@@ -244,8 +246,8 @@ public class Board extends Group {
         alphaBeta = new AlphaBeta(new DefaultEvalScore(), MatchState.AILevel, 0.5f, MatchState.AILevel);
         MatchState.currentAILevel = MatchState.AILevel;
       }
+      FourInALine.Instance.fsm.processEvent(Events.MOVE_END, col);
     }
-    FourInALine.Instance.fsm.processEvent(Events.MOVE_END, col);
   }
 
 
