@@ -88,6 +88,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
     /** ADS INITIALIZATION **/
     PrivateDataManager.initData();
+    PrivateDataManager.createBillingData(this);
     if (isTablet(this))
       adView = new AdView(this, AdSize.IAB_BANNER, PrivateDataManager.ads_id);
     else
@@ -106,7 +107,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     layout.addView(adView, adParams);
 
     setContentView(layout);
-    PrivateDataManager.createBillingData(this);
   }
 
 
