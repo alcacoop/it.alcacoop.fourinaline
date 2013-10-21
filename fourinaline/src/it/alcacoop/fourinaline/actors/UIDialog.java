@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.actors;
 
@@ -90,6 +90,10 @@ public final class UIDialog extends Table {
         } else {
           s = ((IconButton)event.getTarget()).getText().toString().toUpperCase();
         }
+
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
+
         instance.addAction(Actions.sequence(Actions.fadeOut(0.3f), Actions.run(new Runnable() {
           @Override
           public void run() {

@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.layers;
 
@@ -78,6 +78,8 @@ public class OptionsScreen extends BaseScreen {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+          FourInALine.Instance.snd.playButton();
+          FourInALine.Instance.vibrate(80);
           savePrefs();
           FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, "BACK");
         }
@@ -87,7 +89,8 @@ public class OptionsScreen extends BaseScreen {
 
     ClickListener cls = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        // GnuBackgammon.Instance.snd.playMoveStart();
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
       };
     };
 
@@ -125,6 +128,8 @@ public class OptionsScreen extends BaseScreen {
 
     ClickListener cl = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         savePrefs();
         FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, ((IconButton)event.getListenerActor()).getText().toString().toUpperCase());
       };

@@ -29,28 +29,28 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 /**
-@startuml
-null --> MAIN_MENU
-MAIN_MENU --> MAIN_MENU : BUTTON_CLICKED
-MAIN_MENU --> MATCH_OPTIONS
-MATCH_OPTIONS --> MATCH_OPTIONS : BUTTON_CLICKED
-MATCH_OPTIONS --> INIT_GAME
-INIT_GAME --> INIT_GAME : START_GAME
-INIT_GAME --> LOCAL_TURN
-LOCAL_TURN --> LOCAL_TURN : CLICKED_COL
-LOCAL_TURN --> LOCAL_TURN : MOVE_END
-LOCAL_TURN --> AI_TURN
-AI_TURN --> AI_TURN : AI_EVALUETED
-AI_TURN --> AI_TURN : MOVE_END
-AI_TURN --> LOCAL_TURN
-LOCAL_TURN --> CHECK_END_MATCH
-CHECK_END_MATCH --> CHECK_END_MATCH : GAME_TERMINATED
-CHECK_END_MATCH --> CHECK_END_MATCH : BOARD_RESETTED
-CHECK_END_MATCH --> MAIN_MENU
-@enduml
+ @startuml
+ null --> MAIN_MENU
+ MAIN_MENU --> MAIN_MENU : BUTTON_CLICKED
+ MAIN_MENU --> MATCH_OPTIONS
+ MATCH_OPTIONS --> MATCH_OPTIONS : BUTTON_CLICKED
+ MATCH_OPTIONS --> INIT_GAME
+ INIT_GAME --> INIT_GAME : START_GAME
+ INIT_GAME --> LOCAL_TURN
+ LOCAL_TURN --> LOCAL_TURN : CLICKED_COL
+ LOCAL_TURN --> LOCAL_TURN : MOVE_END
+ LOCAL_TURN --> AI_TURN
+ AI_TURN --> AI_TURN : AI_EVALUETED
+ AI_TURN --> AI_TURN : MOVE_END
+ AI_TURN --> LOCAL_TURN
+ LOCAL_TURN --> CHECK_END_MATCH
+ CHECK_END_MATCH --> CHECK_END_MATCH : GAME_TERMINATED
+ CHECK_END_MATCH --> CHECK_END_MATCH : BOARD_RESETTED
+ CHECK_END_MATCH --> MAIN_MENU
+ @enduml
  *
  * Result of:
  * $> grep -i "PLANTUML" fsm_single | sed 's/PLANTUML://'
@@ -124,6 +124,10 @@ public class FSM implements Context {
             break;
           case BUTTON_CLICKED:
             String btn = ((String)params);
+
+            FourInALine.Instance.snd.playButton();
+            FourInALine.Instance.vibrate(80);
+
             if (btn.equals("SINGLE PLAYER")) {
               MatchState.matchType = 0;
               FourInALine.Instance.fsm.state(States.MATCH_OPTIONS);
@@ -143,6 +147,7 @@ public class FSM implements Context {
               UIDialog.getAboutDialog();
             } else if (btn.equals("REMOVE ADS")) {
               FourInALine.Instance.nativeFunctions.inAppBilling();
+            } else if (btn.equals("RATE IT!")) {
             }
 
             break;

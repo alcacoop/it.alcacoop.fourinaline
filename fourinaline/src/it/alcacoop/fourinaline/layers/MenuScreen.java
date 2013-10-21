@@ -64,6 +64,8 @@ public class MenuScreen extends BaseScreen {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
           if (UIDialog.isOpened())
             return false;
+          FourInALine.Instance.snd.playButton();
+          FourInALine.Instance.vibrate(80);
           UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Line Mobile?");
         }
         return super.keyDown(event, keycode);
@@ -146,6 +148,7 @@ public class MenuScreen extends BaseScreen {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.nativeFunctions.gserviceOpenLeaderboards();
       }
     });
@@ -154,6 +157,7 @@ public class MenuScreen extends BaseScreen {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.nativeFunctions.gserviceOpenAchievements();
       }
     });
@@ -166,6 +170,7 @@ public class MenuScreen extends BaseScreen {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.nativeFunctions.openURL("https://plus.google.com/105593457876935389170/posts");
       }
     });
@@ -173,6 +178,7 @@ public class MenuScreen extends BaseScreen {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.nativeFunctions.openURL("twitter://user?screen_name=alcamobile", "http://mobile.twitter.com/alcamobile");
       }
     });
@@ -180,6 +186,7 @@ public class MenuScreen extends BaseScreen {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.nativeFunctions.openURL("fb://page/229928153837363", "https://m.facebook.com/pages/Alca-Mobile/229928153837363");
       }
     });

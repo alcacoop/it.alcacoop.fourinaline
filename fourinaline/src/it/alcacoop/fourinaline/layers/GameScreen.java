@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.layers;
 
@@ -73,6 +73,8 @@ public class GameScreen extends BaseScreen {
       public void clicked(InputEvent event, float x, float y) {
         if (UIDialog.isOpened())
           return;
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
       };
     };
@@ -81,6 +83,8 @@ public class GameScreen extends BaseScreen {
       public void clicked(InputEvent event, float x, float y) {
         if (UIDialog.isOpened())
           return;
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         UIDialog.getYesNoDialog(Events.RESIGN_GAME, "Really resign current game?");
       };
     };
@@ -101,6 +105,8 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
           if (UIDialog.isOpened())
             return false;
+          FourInALine.Instance.snd.playButton();
+          FourInALine.Instance.vibrate(80);
           UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
         }
         return super.keyDown(event, keycode);

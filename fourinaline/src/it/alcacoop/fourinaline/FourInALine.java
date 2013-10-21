@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline;
 
@@ -160,8 +160,13 @@ public class FourInALine extends Game implements ApplicationListener {
   @Override
   public void resume() {
   }
-  
+
   public String getResName() {
     return resname[ss];
+  }
+
+  public void vibrate(int millisecs) {
+    if (optionPrefs.getString("VIBRATION", "Yes").equals("Yes"))
+      Gdx.input.vibrate(millisecs);
   }
 }
