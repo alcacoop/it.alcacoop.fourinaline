@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.layers;
 
@@ -45,16 +45,32 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 
 public class MenuScreen extends BaseScreen {
 
-  private Table table;
+  private Table table, buttonGroup;
+  private ImageButton scoreboards, achievements, gplus, twitter, facebook;
 
   public MenuScreen() {
+    stage.addListener(new InputListener() {
+      @Override
+      public boolean keyDown(InputEvent event, int keycode) {
+        if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+          if (UIDialog.isOpened())
+            return false;
+          UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Line Mobile?");
+        }
+        return super.keyDown(event, keycode);
+      }
+    });
+
+
     table = new Table();
     table.setWidth(stage.getWidth() * 0.66f);
     table.setHeight(stage.getHeight() * 0.9f);
@@ -124,19 +140,66 @@ public class MenuScreen extends BaseScreen {
     table.row();
     table.add().colspan(2).fill().expand();
 
-    stage.addActor(table);
 
-    stage.addListener(new InputListener() {
+    scoreboards = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("leaderboards")));
+    scoreboards.addListener(new ClickListener() {
       @Override
-      public boolean keyDown(InputEvent event, int keycode) {
-        if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-          if (UIDialog.isOpened())
-            return false;
-          UIDialog.getYesNoDialog(Events.LEAVE_GAME, "Really quit Four in a Line Mobile?");
-        }
-        return super.keyDown(event, keycode);
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.nativeFunctions.gserviceOpenLeaderboards();
       }
     });
+    achievements = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("achievements")));
+    achievements.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.nativeFunctions.gserviceOpenAchievements();
+      }
+    });
+
+    gplus = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("gplus")));
+    twitter = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("twitter")));
+    facebook = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("facebook")));
+
+    gplus.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.nativeFunctions.openURL("https://plus.google.com/105593457876935389170/posts");
+      }
+    });
+    twitter.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.nativeFunctions.openURL("twitter://user?screen_name=alcamobile", "http://mobile.twitter.com/alcamobile");
+      }
+    });
+    facebook.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.nativeFunctions.openURL("fb://page/229928153837363", "https://m.facebook.com/pages/Alca-Mobile/229928153837363");
+      }
+    });
+
+    buttonGroup = new Table();
+    buttonGroup.setWidth(gplus.getWidth());
+    buttonGroup.setHeight(gplus.getHeight() * 6);
+    buttonGroup.add(achievements).width(gplus.getWidth()).height(gplus.getHeight()).fill();
+    buttonGroup.row().spaceTop(0);
+    buttonGroup.add(scoreboards).width(gplus.getWidth()).height(gplus.getHeight()).fill();
+    buttonGroup.row().spaceTop(gplus.getHeight() / 3);
+    buttonGroup.add(gplus).width(gplus.getWidth()).height(gplus.getHeight()).fill();
+    buttonGroup.row().spaceTop(0);
+    buttonGroup.add(twitter).width(gplus.getWidth()).height(gplus.getHeight()).fill();
+    buttonGroup.row().spaceTop(0);
+    buttonGroup.add(facebook).width(facebook.getWidth()).height(facebook.getHeight()).fill();
+    buttonGroup.setPosition(gplus.getWidth() / 2, -stage.getHeight());
+
+    stage.addActor(table);
+    stage.addActor(buttonGroup);
   }
 
   @Override
@@ -147,17 +210,20 @@ public class MenuScreen extends BaseScreen {
     stage.draw();
   }
 
+
   @Override
   public void show() {
     super.show();
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
+    buttonGroup.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(0.2f), Actions.moveTo(gplus.getWidth() / 4, (stage.getHeight() - buttonGroup.getHeight()) / 2, 0.2f))));
     table.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(animationTime),
         Actions.moveTo((stage.getWidth() - table.getWidth()) / 2, (stage.getHeight() - table.getHeight()) / 2, animationTime))));
   }
 
   @Override
   public void fadeOut() {
+    buttonGroup.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(0.2f), Actions.moveTo(gplus.getWidth() / 4, -stage.getHeight(), 0.2f))));
     table
         .addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(animationTime), Actions.moveTo(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2, animationTime))));
   }
