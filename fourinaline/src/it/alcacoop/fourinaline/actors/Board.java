@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.actors;
 
@@ -216,6 +216,7 @@ public class Board extends Group {
 
   public void moveEnd(int col) {
     FourInALine.Instance.snd.playMove();
+    FourInALine.Instance.vibrate(120);
     if (MatchState.currentPlayer == 1)
       MatchState.currentPlayer = 2;
     else
@@ -225,7 +226,8 @@ public class Board extends Group {
     // -1=CONTINUE, 0=TIE, 1=WON1, 2=WON2
 
     if (gameModel.getGameStatus() != GameStatus.CONTINUE_STATUS) {
-      if ((MatchState.currentPlayer == 2) && (MatchState.matchType == 2)) GServiceClient.getInstance().sendMessage("6 " + col);
+      if ((MatchState.currentPlayer == 2) && (MatchState.matchType == 2))
+        GServiceClient.getInstance().sendMessage("6 " + col);
       locked = true;
       FourInALine.Instance.fsm.state(States.CHECK_END_MATCH);
       if (gameModel.getGameStatus() == GameStatus.WON_STATUS) {
