@@ -153,4 +153,8 @@ public class FourInALine extends Game implements ApplicationListener {
   @Override
   public void resume() {
   }
+  
+  public String getResName() {
+    return resname[ss];
+  }
 }

@@ -29,9 +29,11 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.actors;
+
+import it.alcacoop.fourinaline.FourInALine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -44,7 +46,7 @@ public class ParticleEffectActor extends Actor {
 
   public ParticleEffectActor() {
     effect = new ParticleEffect();
-    effect.load(Gdx.files.internal("effects/fire.p"), Gdx.files.internal("effects"));
+    effect.load(Gdx.files.internal(FourInALine.Instance.getResName() + "/effects/fire.p"), Gdx.files.internal(FourInALine.Instance.getResName() + "/effects"));
   }
 
   public void draw(SpriteBatch batch, float parentAlpha) {
