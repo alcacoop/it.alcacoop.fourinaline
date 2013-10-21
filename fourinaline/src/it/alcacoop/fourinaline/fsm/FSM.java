@@ -69,8 +69,12 @@ import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.gservice.GServiceMessages;
 import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.logic.MatchState;
+import it.alcacoop.fourinaline.utils.AchievementsManager;
+import it.alcacoop.fourinaline.utils.ELORatingManager;
 
 import java.util.Random;
+
+import org.gojul.fourinaline.model.AlphaBeta;
 
 import com.badlogic.gdx.Gdx;
 
@@ -228,6 +232,7 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(AI_TURN);
               break;
             case 0: // SINGLE PLAYER
+              ELORatingManager.getInstance().setRatings(AlphaBeta.ratings[MatchState.AILevel - 1]);
               if (MatchState.whoStart == 1)
                 FourInALine.Instance.fsm.state(LOCAL_TURN);
               else
@@ -445,14 +450,13 @@ public class FSM implements Context {
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
           case GSERVICE_READY:
-            // GServiceClient.getInstance().sendMessage("8 " + FourInALine.Instance.optionPrefs.getString("multiboard", "0"));
-            GServiceClient.getInstance().sendMessage("8 0");
+            GServiceClient.getInstance().sendMessage("8 " + FourInALine.Instance.gameOptionPrefs.getString("multiboard", "0"));
             GServiceClient.getInstance().queue.pull(Events.GSERVICE_INIT_RATING);
             break;
 
           case GSERVICE_INIT_RATING:
-            // double opponentRating = (Double)params;
-            // ELORatingManager.getInstance().setRatings(opponentRating);
+            double opponentRating = (Double)params;
+            ELORatingManager.getInstance().setRatings(opponentRating);
 
             Random gen = new Random();
             waitTime = gen.nextLong();
@@ -489,15 +493,12 @@ public class FSM implements Context {
             FourInALine.Instance.board.reset();
             break;
           case BOARD_RESETTED:
+            if (MatchState.winner == 1) {
+              AchievementsManager.getInstance().checkAchievements(true);
+              ELORatingManager.getInstance().updateRating(true);
+            }
+
             if (MatchState.matchType == 2) {
-              // if ((ctx.board().getPIPS(0) <= 0) || (MatchState.resignValue == 1) ||
-              // (MatchState.resignValue == 2) || (MatchState.resignValue == 3)) {
-              // // YOU WIN
-              // AchievementsManager.getInstance().checkAchievements(true);
-              // ELORatingManager.getInstance().updateRating(true);
-              // } else {
-              // AchievementsManager.getInstance().checkAchievements(false);
-              // }
               FourInALine.Instance.nativeFunctions.gserviceResetRoom();
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
             } else {

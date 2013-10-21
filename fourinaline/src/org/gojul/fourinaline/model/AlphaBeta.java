@@ -60,6 +60,7 @@ public class AlphaBeta implements Serializable {
    */
   private float[] aiNoise = { 2f, 1.7f, 1.2f, 0.5f, 0f };
   private int aiLevel;
+  public static double[] ratings = { 650, 900, 1500, 1700, 1900 };
 
   /**
    * The random factor.

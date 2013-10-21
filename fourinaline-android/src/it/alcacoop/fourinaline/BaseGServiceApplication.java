@@ -34,6 +34,7 @@
 package it.alcacoop.fourinaline;
 
 import it.alcacoop.fourinaline.util.GServiceGameHelper;
+import it.alcacoop.fourinaline.utils.AchievementsManager;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -108,18 +109,21 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
   abstract void onErrorBehaviour(String msg);
 
+  abstract void onStateLoadedBehaviour(byte[] data);
+
+  abstract byte[] onStateConflictBehaviour(byte[] localData, byte[] serverData);
+
 
   @Override
   public void onStateConflict(int stateKey, String ver, byte[] localData, byte[] serverData) {
-    // gHelper.getAppStateClient().resolveState(this, APP_DATA_KEY, ver, AppDataManager.getInstance().resolveConflict(localData, serverData));
+    gHelper.getAppStateClient().resolveState(this, APP_DATA_KEY, ver, onStateConflictBehaviour(localData, serverData));
   }
 
   @Override
   public void onStateLoaded(int statusCode, int stateKey, byte[] data) {
 
     if (statusCode == AppStateClient.STATUS_OK) {
-      // AppDataManager.getInstance().loadState(data);
-      // ELORatingManager.getInstance().syncLeaderboards();
+      onStateLoadedBehaviour(data);
     } else if (statusCode == AppStateClient.STATUS_NETWORK_ERROR_STALE_DATA) {
     } else {
     }
@@ -211,8 +215,8 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
     }
     // FourInALine.Instance.gameScreen.updatePInfo(opponent, me);
-    // if (meSentInvitation)
-    // AchievementsManager.getInstance().checkSocialAchievements(opponent_player_id);
+    if (meSentInvitation)
+      AchievementsManager.getInstance().checkSocialAchievements(opponent_player_id);
   }
 
 
@@ -287,7 +291,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     prefs.putBoolean("ALREADY_SIGNEDIN", true);
     prefs.flush();
     gHelper.getGamesClient().registerInvitationListener(this);
-    // gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
+    gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
 
     if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
       invitationId = gHelper.getInvitationId();

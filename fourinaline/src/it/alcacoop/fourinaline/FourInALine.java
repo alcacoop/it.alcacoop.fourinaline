@@ -47,6 +47,7 @@ import java.util.TimerTask;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -81,6 +82,8 @@ public class FourInALine extends Game implements ApplicationListener {
 
   public FSM fsm;
 
+  public Preferences optionPrefs, matchOptionPrefs, gameOptionPrefs;
+
   public static FourInALine Instance;
 
   public FourInALine(NativeFunctions n) {
@@ -90,6 +93,10 @@ public class FourInALine extends Game implements ApplicationListener {
   @Override
   public void create() {
     Instance = this;
+    optionPrefs = Gdx.app.getPreferences("Options");
+    matchOptionPrefs = Gdx.app.getPreferences("MatchOptions");
+    gameOptionPrefs = Gdx.app.getPreferences("GameOptions");
+
     // CHECK SCREEN DIM AND SELECT CORRECT ATLAS
     int pWidth = Gdx.graphics.getWidth();
     if (pWidth <= 480)

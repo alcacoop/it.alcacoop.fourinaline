@@ -39,6 +39,8 @@ import it.alcacoop.fourinaline.fsm.FSM.States;
 import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.logic.MatchState;
+import it.alcacoop.fourinaline.utils.AppDataManager;
+import it.alcacoop.fourinaline.utils.ELORatingManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -278,5 +280,18 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   @Override
   void onErrorBehaviour(String msg) {
     UIDialog.getFlashDialog(Events.NOOP, msg);
+  }
+
+
+  @Override
+  void onStateLoadedBehaviour(byte[] data) {
+    AppDataManager.getInstance().loadState(data);
+    ELORatingManager.getInstance().syncLeaderboards();
+  }
+
+
+  @Override
+  byte[] onStateConflictBehaviour(byte[] localData, byte[] serverData) {
+    return AppDataManager.getInstance().resolveConflict(localData, serverData);
   }
 }

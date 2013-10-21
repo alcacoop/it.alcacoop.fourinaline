@@ -34,6 +34,7 @@
 package it.alcacoop.fourinaline;
 
 import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.utils.AppDataManager;
 import android.content.Intent;
 
 import com.google.android.gms.games.GamesClient;
@@ -156,10 +157,9 @@ public abstract class GServiceApplication extends BaseGServiceApplication implem
 
   @Override
   public void gserviceUpdateState() {
-    // if (gHelper.isSignedIn()) {
-    // // deleteAppState();
-    // gHelper.getAppStateClient().updateState(APP_DATA_KEY, AppDataManager.getInstance().getBytes());
-    // }
+    if (gHelper.isSignedIn()) {
+      gHelper.getAppStateClient().updateState(APP_DATA_KEY, AppDataManager.getInstance().getBytes());
+    }
   }
 
 }
