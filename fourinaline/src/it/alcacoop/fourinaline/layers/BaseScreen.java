@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline.layers;
 
@@ -112,6 +112,8 @@ public class BaseScreen implements Screen {
     alca.setColor(1, 1, 1, 1);
     top.setColor(1, 1, 1, 1);
     stage.addActor(alcaBtn);
+    if (!FourInALine.Instance.snd.isBGPlaying())
+      FourInALine.Instance.snd.playBGMusic();
   }
 
   public void initialize() {

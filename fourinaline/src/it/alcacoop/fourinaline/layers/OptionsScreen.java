@@ -95,6 +95,15 @@ public class OptionsScreen extends BaseScreen {
     };
 
 
+    ClickListener cls_m = new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
+        savePrefs();
+        FourInALine.Instance.snd.playBGMusic();
+      };
+    };
+
     titleLabel = new Label("OPTIONS", FourInALine.Instance.skin);
     soundLabel = new Label("Sound:", FourInALine.Instance.skin);
     musicLabel = new Label("Music:", FourInALine.Instance.skin);
@@ -114,7 +123,7 @@ public class OptionsScreen extends BaseScreen {
     music = new FixedButtonGroup();
     for (int i = 0; i < _yesNo.length; i++) {
       musicButtons[i] = new IconButton(_yesNo[i], null, ts);
-      musicButtons[i].addListener(cls);
+      musicButtons[i].addListener(cls_m);
       music.add(musicButtons[i]);
     }
 
