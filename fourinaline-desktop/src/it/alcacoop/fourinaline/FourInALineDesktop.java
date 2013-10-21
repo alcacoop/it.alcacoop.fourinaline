@@ -133,7 +133,7 @@ public class FourInALineDesktop implements NativeFunctions {
 
   @Override
   public String gservicePendingNotificationAreaInvitation() {
-    return null;
+    return "";
   }
 
 }
