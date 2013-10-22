@@ -147,7 +147,6 @@ public class MatchOptionsScreen extends BaseScreen {
     play.addListener(cl);
     back = new IconButton("BACK", FourInALine.Instance.atlas.findRegion("back"), ts, true, false, true);
     back.addListener(cl);
-    initFromPrefs();
     table = new Table();
     stage.addActor(table);
   }
@@ -203,6 +202,7 @@ public class MatchOptionsScreen extends BaseScreen {
   @Override
   public void show() {
     super.show();
+    initFromPrefs();
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
     table.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(animationTime),

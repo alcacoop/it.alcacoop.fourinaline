@@ -139,7 +139,7 @@ public class OptionsScreen extends BaseScreen {
     ts = FourInALine.Instance.skin.get("button", TextButtonStyle.class);
     back = new IconButton("BACK", FourInALine.Instance.atlas.findRegion("back"), ts, true, false, true);
     back.addListener(cl);
-    initFromPrefs();
+
     table = new Table();
     stage.addActor(table);
   }
@@ -152,6 +152,7 @@ public class OptionsScreen extends BaseScreen {
     music.setChecked(sMusic);
     String sVibration = FourInALine.Instance.optionPrefs.getString("VIBRATION", "Yes");
     vibration.setChecked(sVibration);
+    FourInALine.Instance.snd.playBGMusic();
   }
 
 
@@ -185,6 +186,7 @@ public class OptionsScreen extends BaseScreen {
   @Override
   public void show() {
     super.show();
+    initFromPrefs();
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
     table.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(animationTime),

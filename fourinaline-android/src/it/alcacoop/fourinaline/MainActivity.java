@@ -286,7 +286,8 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
   @Override
   void onStateLoadedBehaviour(byte[] data) {
-    System.out.println("APPSTATE: RECEIVED DATA:" + data);
+    String s = new String(data);
+    System.out.println("APPSTATE: RECEIVED DATA: " + s);
     AppDataManager.getInstance().loadState(data);
     ELORatingManager.getInstance().syncLeaderboards();
   }
