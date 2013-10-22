@@ -149,10 +149,10 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == PrivateDataManager.RC_REQUEST) {
+      FourInALine.Instance.menuScreen.redrawMainMenu();
       if (resultCode != 10000) {
         if (isProVersion()) {
           adView.setVisibility(View.GONE);
-          FourInALine.Instance.menuScreen.initMenu();
           if (adsTimer != null) {
             adsTimer.cancel();
             adsTimer.purge();

@@ -57,6 +57,7 @@ public class MenuScreen extends BaseScreen {
 
   private Table table, buttonGroup;
   private ImageButton scoreboards, achievements, gplus, twitter, facebook;
+  private IconButton sp, tp, gp, op, ri, ab, ad;
 
   public MenuScreen() {
     stage.addListener(new InputListener() {
@@ -73,21 +74,6 @@ public class MenuScreen extends BaseScreen {
       }
     });
 
-    initMenu();
-  }
-
-
-  public void initMenu() {
-    table = new Table();
-    table.setWidth(stage.getWidth() * 0.66f);
-    table.setHeight(stage.getHeight() * 0.9f);
-
-    float height = table.getHeight() / 7;
-    float width = table.getWidth() / 2;
-    float pad = height / 55;
-
-    table.setPosition(-table.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
-
     ClickListener cl = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.fsm.processEvent(Events.BUTTON_CLICKED, ((IconButton)event.getListenerActor()).getText().toString().toUpperCase());
@@ -96,57 +82,20 @@ public class MenuScreen extends BaseScreen {
 
 
     TextButtonStyle st = FourInALine.Instance.skin.get("mainmenu", TextButtonStyle.class);
-    IconButton sp = new IconButton("Single Player", FourInALine.Instance.atlas.findRegion("sp"), st);
+    sp = new IconButton("Single Player", FourInALine.Instance.atlas.findRegion("sp"), st);
     sp.addListener(cl);
-    IconButton tp = new IconButton("Two Players", FourInALine.Instance.atlas.findRegion("dp"), st);
+    tp = new IconButton("Two Players", FourInALine.Instance.atlas.findRegion("dp"), st);
     tp.addListener(cl);
-    IconButton gp = new IconButton("Online Multiplayer", FourInALine.Instance.atlas.findRegion("gpl"), st);
+    gp = new IconButton("Online Multiplayer", FourInALine.Instance.atlas.findRegion("gpl"), st);
     gp.addListener(cl);
-
-    IconButton op = new IconButton("Options", FourInALine.Instance.atlas.findRegion("opt"), st);
+    op = new IconButton("Options", FourInALine.Instance.atlas.findRegion("opt"), st);
     op.addListener(cl);
-
-    IconButton ri = new IconButton("Rate it!", FourInALine.Instance.atlas.findRegion("str"), st);
+    ri = new IconButton("Rate it!", FourInALine.Instance.atlas.findRegion("str"), st);
     ri.addListener(cl);
-    IconButton ab = new IconButton("About..", FourInALine.Instance.atlas.findRegion("abt"), st);
+    ab = new IconButton("About..", FourInALine.Instance.atlas.findRegion("abt"), st);
     ab.addListener(cl);
-
-    table.add(new Image(FourInALine.Instance.atlas.findRegion("logo"))).expand().colspan(2);
-
-    table.row().pad(pad);
-    table.add().colspan(2).fill().expand();
-
-    table.row().pad(pad);
-    table.add(sp).fill().expandX().height(height).colspan(2);
-
-    table.row().pad(pad);
-    table.add(tp).fill().expandX().height(height).width(width);
-    table.add(gp).fill().expandX().height(height).width(width);
-
-    table.row();
-    table.add().colspan(2).fill().expand();
-
-    table.row().pad(pad);
-    table.add(op).fill().expandX().height(height).colspan(2);
-
-
-    table.row();
-    table.add().colspan(2).fill().expand();
-
-    table.row().pad(pad);
-    table.add(ri).fill().expandX().height(height).width(width);
-    table.add(ab).fill().expandX().height(height).width(width);
-
-    if (!FourInALine.Instance.nativeFunctions.isProVersion()) {
-      IconButton ad = new IconButton("Remove Ads", FourInALine.Instance.atlas.findRegion("pro"), st);
-      ad.addListener(cl);
-      table.row().pad(pad);
-      table.add(ad).fill().expandX().height(height).colspan(2);
-    }
-
-    table.row();
-    table.add().colspan(2).fill().expand();
-
+    ad = new IconButton("Remove Ads", FourInALine.Instance.atlas.findRegion("pro"), st);
+    ad.addListener(cl);
 
     scoreboards = new ImageButton(new TextureRegionDrawable(FourInALine.Instance.atlas.findRegion("leaderboards")));
     scoreboards.addListener(new ClickListener() {
@@ -192,13 +141,66 @@ public class MenuScreen extends BaseScreen {
       public void clicked(InputEvent event, float x, float y) {
         FourInALine.Instance.snd.playButton();
         FourInALine.Instance.vibrate(80);
-        FourInALine.Instance.nativeFunctions.openURL("fb://page/229928153837363", "https://m.facebook.com/pages/Alca-Mobile/229928153837363");
+        FourInALine.Instance.nativeFunctions.openURL("fb://page/229928153837363", "https://m.facebook.com/AlcaMobile");
       }
     });
+
+    table = new Table();
+    table.setWidth(stage.getWidth() * 0.66f);
+    table.setHeight(stage.getHeight() * 0.9f);
 
     buttonGroup = new Table();
     buttonGroup.setWidth(gplus.getWidth());
     buttonGroup.setHeight(gplus.getHeight() * 6);
+
+    initMenu();
+  }
+
+
+  public void initMenu() {
+    table.reset();
+    buttonGroup.reset();
+    System.out.println("===> INIT MENU");
+
+    float height = table.getHeight() / 7;
+    float width = table.getWidth() / 2;
+    float pad = height / 55;
+
+    table.add(new Image(FourInALine.Instance.atlas.findRegion("logo"))).expand().colspan(2);
+
+    table.row().pad(pad);
+    table.add().colspan(2).fill().expand();
+
+    table.row().pad(pad);
+    table.add(sp).fill().expandX().height(height).colspan(2);
+
+    table.row().pad(pad);
+    table.add(tp).fill().expandX().height(height).width(width);
+    table.add(gp).fill().expandX().height(height).width(width);
+
+    table.row();
+    table.add().colspan(2).fill().expand();
+
+    table.row().pad(pad);
+    table.add(op).fill().expandX().height(height).colspan(2);
+
+
+    table.row();
+    table.add().colspan(2).fill().expand();
+
+    table.row().pad(pad);
+    table.add(ri).fill().expandX().height(height).width(width);
+    table.add(ab).fill().expandX().height(height).width(width);
+
+    if (!FourInALine.Instance.nativeFunctions.isProVersion()) {
+      table.row().pad(pad);
+      table.add(ad).fill().expandX().height(height).colspan(2);
+    }
+
+    table.row();
+    table.add().colspan(2).fill().expand();
+
+
     buttonGroup.add(achievements).width(gplus.getWidth()).height(gplus.getHeight()).fill();
     buttonGroup.row().spaceTop(0);
     buttonGroup.add(scoreboards).width(gplus.getWidth()).height(gplus.getHeight()).fill();
@@ -208,11 +210,12 @@ public class MenuScreen extends BaseScreen {
     buttonGroup.add(twitter).width(gplus.getWidth()).height(gplus.getHeight()).fill();
     buttonGroup.row().spaceTop(0);
     buttonGroup.add(facebook).width(facebook.getWidth()).height(facebook.getHeight()).fill();
+
+    table.setPosition(-table.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
     buttonGroup.setPosition(gplus.getWidth() / 2, -stage.getHeight());
 
     stage.addActor(table);
     stage.addActor(buttonGroup);
-
   }
 
 
@@ -225,8 +228,15 @@ public class MenuScreen extends BaseScreen {
   }
 
 
+  public void redrawMainMenu() {
+    initMenu();
+    buttonGroup.setPosition(gplus.getWidth() / 4, (stage.getHeight() - buttonGroup.getHeight()) / 2);
+    table.setPosition((stage.getWidth() - table.getWidth()) / 2, (stage.getHeight() - table.getHeight()) / 2);
+  }
+
   @Override
   public void show() {
+    System.out.println("BILLING: SHOW");
     super.show();
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
