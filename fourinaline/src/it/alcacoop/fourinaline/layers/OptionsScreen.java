@@ -89,17 +89,9 @@ public class OptionsScreen extends BaseScreen {
 
     ClickListener cls = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        FourInALine.Instance.snd.playButton();
-        FourInALine.Instance.vibrate(80);
-      };
-    };
-
-
-    ClickListener cls_m = new ClickListener() {
-      public void clicked(InputEvent event, float x, float y) {
-        FourInALine.Instance.snd.playButton();
-        FourInALine.Instance.vibrate(80);
         savePrefs();
+        FourInALine.Instance.snd.playButton();
+        FourInALine.Instance.vibrate(80);
         FourInALine.Instance.snd.playBGMusic();
       };
     };
@@ -123,7 +115,7 @@ public class OptionsScreen extends BaseScreen {
     music = new FixedButtonGroup();
     for (int i = 0; i < _yesNo.length; i++) {
       musicButtons[i] = new IconButton(_yesNo[i], null, ts);
-      musicButtons[i].addListener(cls_m);
+      musicButtons[i].addListener(cls);
       music.add(musicButtons[i]);
     }
 
