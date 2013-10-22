@@ -40,6 +40,7 @@ import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.layers.MatchOptionsScreen;
 import it.alcacoop.fourinaline.layers.MenuScreen;
 import it.alcacoop.fourinaline.layers.OptionsScreen;
+import it.alcacoop.fourinaline.layers.SplashScreen;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -130,9 +131,8 @@ public class FourInALine extends Game implements ApplicationListener {
     snd = new SoundManager();
 
     fsm = new FSM();
-    fsm.start();
+    setScreen(new SplashScreen(resname[ss] + "/alca.png"));
   }
-
 
   @Override
   public void setScreen(final Screen screen) {

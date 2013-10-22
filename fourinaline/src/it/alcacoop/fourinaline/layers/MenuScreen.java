@@ -81,7 +81,7 @@ public class MenuScreen extends BaseScreen {
     float width = table.getWidth() / 2;
     float pad = height / 55;
 
-    table.setPosition((stage.getWidth() - table.getWidth()) / 2, (stage.getHeight() - table.getHeight()) / 2);
+    table.setPosition(-table.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
 
     ClickListener cl = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
