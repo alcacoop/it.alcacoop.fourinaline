@@ -73,7 +73,11 @@ public class MenuScreen extends BaseScreen {
       }
     });
 
+    initMenu();
+  }
 
+
+  public void initMenu() {
     table = new Table();
     table.setWidth(stage.getWidth() * 0.66f);
     table.setHeight(stage.getHeight() * 0.9f);
@@ -133,7 +137,7 @@ public class MenuScreen extends BaseScreen {
     table.add(ri).fill().expandX().height(height).width(width);
     table.add(ab).fill().expandX().height(height).width(width);
 
-    if (true) { // TODO: isPremium
+    if (!FourInALine.Instance.nativeFunctions.isProVersion()) {
       IconButton ad = new IconButton("Remove Ads", FourInALine.Instance.atlas.findRegion("pro"), st);
       ad.addListener(cl);
       table.row().pad(pad);
@@ -208,7 +212,9 @@ public class MenuScreen extends BaseScreen {
 
     stage.addActor(table);
     stage.addActor(buttonGroup);
+
   }
+
 
   @Override
   public void render(float delta) {

@@ -152,6 +152,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
       if (resultCode != 10000) {
         if (isProVersion()) {
           adView.setVisibility(View.GONE);
+          FourInALine.Instance.menuScreen.initMenu();
           if (adsTimer != null) {
             adsTimer.cancel();
             adsTimer.purge();
