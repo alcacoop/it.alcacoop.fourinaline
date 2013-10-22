@@ -97,6 +97,7 @@ public class FourInALine extends Game implements ApplicationListener {
     optionPrefs = Gdx.app.getPreferences("Options");
     matchOptionPrefs = Gdx.app.getPreferences("MatchOptions");
     gameOptionPrefs = Gdx.app.getPreferences("GameOptions");
+    snd = new SoundManager();
 
     // CHECK SCREEN DIM AND SELECT CORRECT ATLAS
     int pWidth = Gdx.graphics.getWidth();
@@ -127,8 +128,6 @@ public class FourInALine extends Game implements ApplicationListener {
     board = new Board(7, 6, 4, gameScreen.getStage().getHeight() * 0.76f);
     board.setPosition(-gameScreen.getStage().getWidth(), (gameScreen.getStage().getHeight() - board.getHeight()) / 2);
     gameScreen.getStage().addActor(board);
-
-    snd = new SoundManager();
 
     fsm = new FSM();
     setScreen(new SplashScreen(resname[ss] + "/alca.png"));
