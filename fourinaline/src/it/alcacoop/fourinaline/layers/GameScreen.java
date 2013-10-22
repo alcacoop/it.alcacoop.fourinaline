@@ -190,12 +190,14 @@ public class GameScreen extends BaseScreen {
           @Override
           public void run() {
             FourInALine.Instance.fsm.processEvent(Events.START_GAME, null);
+            FourInALine.Instance.nativeFunctions.showAds(true);
           }
         })));
   }
 
   @Override
   public void fadeOut() {
+    FourInALine.Instance.nativeFunctions.showAds(false);
     table
         .addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(animationTime), Actions.moveTo(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2, animationTime))));
   }

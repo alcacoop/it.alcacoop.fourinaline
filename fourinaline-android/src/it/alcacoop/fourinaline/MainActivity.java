@@ -93,7 +93,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
       adView = new AdView(this, AdSize.IAB_BANNER, PrivateDataManager.ads_id);
     else
       adView = new AdView(this, AdSize.BANNER, PrivateDataManager.ads_id);
-    adView.setVisibility(View.VISIBLE);
+    adView.setVisibility(View.GONE);
 
     if (!isProVersion())
       adView.loadAd(new AdRequest());
@@ -211,7 +211,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
         public void run() {
           synchronized (this) {
             try {
-              wait(500);
+              wait(50);
             } catch (InterruptedException e) {
             }
             interstitial.show();

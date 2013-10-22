@@ -37,6 +37,7 @@ import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.actors.IconButton;
 import it.alcacoop.fourinaline.actors.UIDialog;
 import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -224,8 +225,16 @@ public class MenuScreen extends BaseScreen {
     Gdx.input.setInputProcessor(stage);
     Gdx.input.setCatchBackKey(true);
     buttonGroup.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(0.2f), Actions.moveTo(gplus.getWidth() / 4, (stage.getHeight() - buttonGroup.getHeight()) / 2, 0.2f))));
-    table.addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(animationTime),
-        Actions.moveTo((stage.getWidth() - table.getWidth()) / 2, (stage.getHeight() - table.getHeight()) / 2, animationTime))));
+    table.addAction(Actions.sequence(
+        Actions.parallel(Actions.fadeIn(animationTime), Actions.moveTo((stage.getWidth() - table.getWidth()) / 2, (stage.getHeight() - table.getHeight()) / 2, animationTime)),
+        Actions.run(new Runnable() {
+          @Override
+          public void run() {
+            if (FourInALine.Instance.fsm.previousState == States.CHECK_END_MATCH) {
+              FourInALine.Instance.nativeFunctions.showInterstitial();
+            }
+          }
+        })));
   }
 
   @Override
