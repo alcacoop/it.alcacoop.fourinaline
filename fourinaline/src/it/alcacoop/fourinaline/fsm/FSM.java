@@ -148,6 +148,7 @@ public class FSM implements Context {
             } else if (btn.equals("REMOVE ADS")) {
               FourInALine.Instance.nativeFunctions.inAppBilling();
             } else if (btn.equals("RATE IT!")) {
+              FourInALine.Instance.nativeFunctions.openURL("https://play.google.com/store/apps/details?id=it.alcacoop.fourinaline");
             }
 
             break;

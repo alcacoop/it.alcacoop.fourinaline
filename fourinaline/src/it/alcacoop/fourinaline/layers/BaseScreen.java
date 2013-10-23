@@ -41,17 +41,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class BaseScreen implements Screen {
 
   protected Stage stage;
   protected Image bgImg;
   public float animationTime = 0.2f;
-  protected static float lastBGX;
-  private float width;
   private Image alca, top;
   private TextButton alcaBtn;
 
@@ -60,7 +60,6 @@ public class BaseScreen implements Screen {
     stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     // VIEWPORT DIM = VIRTUAL RES (ON SELECTED TEXTURE BASIS)
     stage.setViewport(FourInALine.Instance.resolution[0], FourInALine.Instance.resolution[1], false);
-    width = stage.getWidth() * 1.2f;
 
     TextureRegion bgRegion = FourInALine.Instance.atlas.findRegion("bg");
     bgImg = new Image(bgRegion);
@@ -94,11 +93,18 @@ public class BaseScreen implements Screen {
     alcaBtn.setHeight(alca.getHeight());
     alcaBtn.setX(stage.getWidth() - alcaBtn.getHeight());
     alcaBtn.setColor(0, 0, 0, 0);
+    alcaBtn.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        FourInALine.Instance.nativeFunctions.openURL("market://search?q=pub:Alca Soc. Coop.");
+      }
+    });
 
 
     stage.addActor(bgImg);
     stage.addActor(alca);
     stage.addActor(top);
+    stage.addActor(alcaBtn);
   }
 
   @Override
