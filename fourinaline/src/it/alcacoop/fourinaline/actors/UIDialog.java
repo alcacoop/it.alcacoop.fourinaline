@@ -400,14 +400,13 @@ public final class UIDialog extends Table {
     instance.leaveWindow = false;
     instance.remove();
 
-    final String gnuBgLink = "http://www.gnubg.org";
+    final String gnuBgLink = "http://code.google.com/p/fourinaline";
     final String gplLink = "http://www.gnu.org/licenses/gpl.html";
-    final String githubLink1 = "https://github.com/alcacoop/it.alcacoop.FourInALine";
-    final String githubLink2 = "https://github.com/alcacoop/libgnubg-android";
-    final String wikipediaLink = "http://en.wikipedia.org/wiki/Backgammon#Rules";
+    final String githubLink1 = "https://github.com/alcacoop/it.alcacoop.fourinaline";
+    final String wikipediaLink = "http://en.wikipedia.org/wiki/Connect_Four";
 
     Table t = new Table();
-    t.add(new Label("ABOUT BACKGAMMON MOBILE", FourInALine.Instance.skin)).expand();
+    t.add(new Label("ABOUT FOUR IN A LINE MOBILE", FourInALine.Instance.skin)).expand();
     t.row();
     t.add(new Label(" ", FourInALine.Instance.skin)).fill().expand();
     t.row();
@@ -415,8 +414,8 @@ public final class UIDialog extends Table {
     Label link1 = new Label(gnuBgLink, FourInALine.Instance.skin);
     link1.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        // FourInALine.Instance.snd.playMoveStart(); //TODO
-        // FourInALine.Instance.nativeFunctions.openURL(gnuBgLink); //TODO
+        FourInALine.Instance.snd.playMove();
+        FourInALine.Instance.nativeFunctions.openURL(gnuBgLink);
       };
     });
     t.row();
@@ -428,8 +427,8 @@ public final class UIDialog extends Table {
     Label link2 = new Label(gplLink, FourInALine.Instance.skin);
     link2.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        // FourInALine.Instance.snd.playMoveStart(); //TODO
-        // FourInALine.Instance.nativeFunctions.openURL(gplLink); //TODO
+        FourInALine.Instance.snd.playMove();
+        FourInALine.Instance.nativeFunctions.openURL(gplLink);
       };
     });
     t.row();
@@ -441,21 +440,14 @@ public final class UIDialog extends Table {
     Label link3 = new Label(githubLink1, FourInALine.Instance.skin);
     link3.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        // FourInALine.Instance.snd.playMoveStart(); //TODO
-        // FourInALine.Instance.nativeFunctions.openURL(githubLink1); //TODO
+        FourInALine.Instance.snd.playMove();
+        FourInALine.Instance.nativeFunctions.openURL(githubLink1);
       };
     });
-    Label link4 = new Label(githubLink2, FourInALine.Instance.skin);
-    link4.addListener(new ClickListener() {
-      public void clicked(InputEvent event, float x, float y) {
-        // FourInALine.Instance.snd.playMoveStart(); //TODO
-        // FourInALine.Instance.nativeFunctions.openURL(githubLink2); //TODO
-      };
-    });
+
     t.row();
     t.add(link3);
-    t.row();
-    t.add(link4);
+
     t.row();
     t.add(new Label(" ", FourInALine.Instance.skin)).fill().expand();
     t.row();
@@ -463,8 +455,8 @@ public final class UIDialog extends Table {
     Label link5 = new Label(wikipediaLink, FourInALine.Instance.skin);
     link5.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        // FourInALine.Instance.snd.playMoveStart(); //TODO
-        // FourInALine.Instance.nativeFunctions.openURL(wikipediaLink); //TODO
+        FourInALine.Instance.snd.playMove();
+        FourInALine.Instance.nativeFunctions.openURL(wikipediaLink);
       };
     });
     t.row();
@@ -472,11 +464,11 @@ public final class UIDialog extends Table {
     t.row();
     t.add(new Label(" ", FourInALine.Instance.skin)).fill().expand();
     t.row();
-    t.add(new Label("If you enjoy our game support us rating on the Play Store", FourInALine.Instance.skin));
+    t.add(new Label("If you enjoy our game, support us rating on the Play Store", FourInALine.Instance.skin));
     t.row();
     t.add(new Label(" ", FourInALine.Instance.skin)).fill().expand();
     t.row();
-    t.add(new Label("Copyright 2012 - Alca Soc. Coop.", FourInALine.Instance.skin));
+    t.add(new Label("Copyright 2013 - Alca Soc. Coop.", FourInALine.Instance.skin));
 
 
     ScrollPane sc = new ScrollPane(t, FourInALine.Instance.skin);
