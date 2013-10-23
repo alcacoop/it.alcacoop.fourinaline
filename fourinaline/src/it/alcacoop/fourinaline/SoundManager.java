@@ -49,7 +49,7 @@ public class SoundManager {
     gameEnd = Gdx.audio.newSound(Gdx.files.internal("sounds/win.wav"));
 
     bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bg.ogg"));
-    bgMusic.setVolume(0.25f);
+    bgMusic.setVolume(0.5f);
     bgMusic.setLooping(true);
   }
 
@@ -64,6 +64,9 @@ public class SoundManager {
       bgMusic.stop();
   }
 
+  public void stopBGMusic() {
+    bgMusic.stop();
+  }
 
   public void playButton() {
     if (FourInALine.Instance.optionPrefs.getString("SOUND", "Yes").equals("Yes"))
@@ -85,4 +88,5 @@ public class SoundManager {
     if (FourInALine.Instance.optionPrefs.getString("SOUND", "Yes").equals("Yes"))
       newMessage.play();
   }
+
 }

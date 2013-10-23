@@ -85,6 +85,7 @@ public class SplashScreen extends BaseScreen implements Screen {
 
   @Override
   public void show() {
+    FourInALine.Instance.snd.stopBGMusic();
     Action r2 = Actions.run(new Runnable() {
       @Override
       public void run() {
@@ -109,10 +110,6 @@ public class SplashScreen extends BaseScreen implements Screen {
   public void pause() {
   }
 
-  @Override
-  public void resume() {
-    Gdx.graphics.requestRendering();
-  }
 
   @Override
   public void dispose() {
