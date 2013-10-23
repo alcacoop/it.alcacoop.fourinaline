@@ -57,7 +57,7 @@ public class GameScreen extends BaseScreen {
 
   private Table table;
   private PlayerBlock players[];
-  private Label nMatchTo;
+  private Label nMatchTo, thinking;
   private IconButton leave, resign;
 
   public ChatBox chatBox;
@@ -71,6 +71,8 @@ public class GameScreen extends BaseScreen {
     players[1].setName("CPU (L" + MatchState.AILevel + ")");
     players[1].setColor(2);
     nMatchTo = new Label("", FourInALine.Instance.skin);
+    thinking = new Label("Thinking.. plase wait", FourInALine.Instance.skin);
+    thinking.addAction(Actions.forever(Actions.sequence(Actions.fadeOut(0.25f), Actions.fadeIn(0.4f), Actions.delay(0.3f))));
 
     ClickListener clBack = new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -122,6 +124,9 @@ public class GameScreen extends BaseScreen {
     stage.addActor(table);
     chatBox = new ChatBox(stage);
     stage.addActor(chatBox);
+
+    thinking.setPosition((stage.getWidth() - thinking.getWidth()) / 2, thinking.getHeight() * 0.5f);
+    stage.addActor(thinking);
   }
 
   @Override
@@ -130,6 +135,19 @@ public class GameScreen extends BaseScreen {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     stage.act(delta);
     stage.draw();
+  }
+
+
+  public void showThinking(boolean show) {
+    if (show) {
+      if (MatchState.matchType == 0)
+        thinking.setText("CPU is thinking.. please wait!");
+      else
+        thinking.setText("Opponent's turn.. please wait!");
+      stage.addActor(thinking);
+    } else {
+      thinking.remove();
+    }
   }
 
   @Override
@@ -146,7 +164,7 @@ public class GameScreen extends BaseScreen {
 
     if (MatchState.matchType == 0) {
       players[0].setName("YOU");
-      players[1].setName("CPU (L" + MatchState.AILevel + ")");
+      players[1].setName("CPU (Lev" + MatchState.AILevel + ")");
     } else if (MatchState.matchType == 1) {
       players[0].setName("PLAYER1");
       players[1].setName("PLAYER2");

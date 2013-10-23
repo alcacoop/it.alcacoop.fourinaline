@@ -268,6 +268,7 @@ public class FSM implements Context {
         if (MatchState.winner == -1) {
           FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
         }
+        FourInALine.Instance.gameScreen.showThinking(false);
       }
 
       @Override
@@ -341,6 +342,7 @@ public class FSM implements Context {
     REMOTE_TURN {
       @Override
       public void enterState(Context ctx) {
+        FourInALine.Instance.gameScreen.showThinking(true);
         if (MatchState.winner == -1) {
           FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
           GServiceClient.getInstance().queue.pull(Events.GSERVICE_MOVES);
@@ -394,6 +396,7 @@ public class FSM implements Context {
     AI_TURN {
       @Override
       public void enterState(Context ctx) {
+        FourInALine.Instance.gameScreen.showThinking(true);
         if (MatchState.winner == -1) {
           FourInALine.Instance.gameScreen.highlightPlayer(MatchState.currentPlayer);
           FourInALine.Instance.board.playAI();
@@ -491,6 +494,11 @@ public class FSM implements Context {
     },
 
     CHECK_END_MATCH {
+      @Override
+      public void enterState(Context ctx) {
+        FourInALine.Instance.gameScreen.showThinking(false);
+      }
+
       @Override
       public boolean processEvent(Context ctx, Events evt, Object params) {
         switch (evt) {
