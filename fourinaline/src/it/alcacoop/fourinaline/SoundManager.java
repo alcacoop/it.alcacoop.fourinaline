@@ -48,7 +48,7 @@ public class SoundManager {
     newMessage = Gdx.audio.newSound(Gdx.files.internal("sounds/newmessage.wav"));
     gameEnd = Gdx.audio.newSound(Gdx.files.internal("sounds/win.wav"));
 
-    bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bg.mp3"));
+    bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bg.ogg"));
     bgMusic.setVolume(0.25f);
     bgMusic.setLooping(true);
   }
