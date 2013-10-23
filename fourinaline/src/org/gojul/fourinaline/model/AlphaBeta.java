@@ -58,7 +58,7 @@ public class AlphaBeta implements Serializable {
   /**
    * AI noise, one per level
    */
-  private float[] aiNoise = { 2f, 1.7f, 1.2f, 0.5f, 0f };
+  private float[] aiNoise = { 2f, 1.3f, 1.0f, 0.55f, 0f };
   private int aiLevel;
   public static double[] ratings = { 650, 900, 1500, 1700, 1900 };
 

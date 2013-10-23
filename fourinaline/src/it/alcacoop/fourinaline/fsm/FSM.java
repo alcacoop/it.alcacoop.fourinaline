@@ -198,7 +198,6 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.back();
             } else if (btn.equals("PLAY")) {
               MatchState.firstGame = true;
-              MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
               FourInALine.Instance.fsm.state(States.INIT_GAME);
             }
             break;
@@ -509,7 +508,6 @@ public class FSM implements Context {
               FourInALine.Instance.fsm.state(States.MAIN_MENU);
             } else {
               MatchState.mCount = 0;
-              MatchState.currentAILevel = (MatchState.AILevel >= 3) ? MatchState.AILevel : MatchState.defaultAIStartLevel;
               if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
                 MatchState.firstGame = false;
                 FourInALine.Instance.fsm.state(States.INIT_GAME);
