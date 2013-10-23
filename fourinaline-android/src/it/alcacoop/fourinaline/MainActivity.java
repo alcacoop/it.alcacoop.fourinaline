@@ -45,6 +45,7 @@ import it.alcacoop.fourinaline.utils.ELORatingManager;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -73,6 +74,7 @@ import com.google.ads.AdSize;
 import com.google.ads.AdView;
 import com.google.ads.InterstitialAd;
 
+@SuppressLint("NewApi")
 public class MainActivity extends GServiceApplication implements NativeFunctions, OnEditorActionListener {
   private int appVersionCode;
   private AdView adView;
@@ -135,9 +137,9 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
       size.y = display.getHeight();
     }
     int width = size.x;
-    View s1 = findViewById(R.id.space1);
-    View s2 = findViewById(R.id.space2);
-    View s3 = findViewById(R.id.chat_content);
+    View s1 = chatBox.findViewById(R.id.space1);
+    View s2 = chatBox.findViewById(R.id.space2);
+    View s3 = chatBox.findViewById(R.id.chat_content);
     ViewGroup.LayoutParams pars = s1.getLayoutParams();
     pars.width = Math.round(width * 0.15f) + 7;
     s1.setLayoutParams(pars);
@@ -148,7 +150,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     FourInALine.chatHeight = pars.height;
     pars.width = Math.round(width * 0.7f) - 14;
     s3.setLayoutParams(pars);
-    EditText target = (EditText)findViewById(R.id.message);
+    EditText target = (EditText)chatBox.findViewById(R.id.message);
     target.setOnEditorActionListener(this);
     /** CHATBOX DIMS **/
 
