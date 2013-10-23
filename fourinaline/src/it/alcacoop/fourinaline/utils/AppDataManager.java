@@ -109,6 +109,7 @@ public class AppDataManager {
     FourInALine.Instance.optionPrefs.flush();
     AchievementsManager.getInstance().prefs.flush();
 
-    FourInALine.Instance.snd.playBGMusic(); // WA: SHOULD SYNC BGMUSIC STATE
+    if (FourInALine.Instance.snd != null)
+      FourInALine.Instance.snd.playBGMusic(); // WA: SHOULD SYNC BGMUSIC STATE
   }
 }
