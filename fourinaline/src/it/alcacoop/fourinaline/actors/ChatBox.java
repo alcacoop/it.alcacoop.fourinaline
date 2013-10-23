@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class ChatBox extends Table {
-  private Stage stage; 
+  private Stage stage;
   public boolean visible = false;
   private boolean animating = false;
   private ScrollPane scroll;
@@ -31,14 +31,14 @@ public class ChatBox extends Table {
     super();
     stage = _stage;
 
-    setWidth(stage.getWidth()*0.7f);
-    setHeight(stage.getHeight()*0.8f);
+    setWidth(stage.getWidth() * 0.7f);
+    setHeight(stage.getHeight() * 0.8f);
 
     cont = new Table();
 
-    height = stage.getHeight()*0.6f;
+    height = stage.getHeight() * 0.6f;
     cheight = FourInALine.chatHeight;
-    position = (height)*0.31f;
+    position = (height) * 0.31f;
 
     r1 = new Runnable() {
       @Override
@@ -47,7 +47,7 @@ public class ChatBox extends Table {
           FourInALine.Instance.nativeFunctions.hideChatBox();
         else
           FourInALine.Instance.nativeFunctions.showChatBox();
-        visible=!visible;
+        visible = !visible;
       }
     };
 
@@ -62,7 +62,7 @@ public class ChatBox extends Table {
     tchat.bottom();
 
     cont.setHeight(height);
-    cont.setWidth(stage.getWidth()*0.7f);
+    cont.setWidth(stage.getWidth() * 0.7f);
     cont.setColor(0.85f, 0.85f, 0.85f, 0.85f);
 
 
@@ -72,17 +72,17 @@ public class ChatBox extends Table {
     scroll.setOverscroll(false, false);
     cont.add().expandX().fillX().height(cheight);
     cont.row();
-    cont.add(scroll).expand().fill().height((height-cheight));
+    cont.add(scroll).expand().fill().height((height - cheight));
 
-    add(cont).width(stage.getWidth()*0.7f).fill();
+    add(cont).width(stage.getWidth() * 0.7f).fill();
     row();
     add().expand().fill();
-    setX((stage.getWidth()-getWidth())/2);
-    setY(stage.getHeight()-position);
+    setX((stage.getWidth() - getWidth()) / 2);
+    setY(stage.getHeight() - position);
 
     setTouchable(Touchable.enabled);
 
-    addListener(new ClickListener(){
+    addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         toggle();
@@ -91,7 +91,8 @@ public class ChatBox extends Table {
   }
 
   public void toggle() {
-    if (animating) return;
+    if (animating)
+      return;
     if (!visible)
       show();
     else
@@ -115,7 +116,7 @@ public class ChatBox extends Table {
     if (visible) {
       visible = !visible;
       FourInALine.Instance.nativeFunctions.hideChatBox();
-      setY(stage.getHeight()-position);
+      setY(stage.getHeight() - position);
     }
     animating = false;
   }
@@ -129,7 +130,7 @@ public class ChatBox extends Table {
         if (direction)
           ls = FourInALine.Instance.skin.get("gray", LabelStyle.class);
         else
- ls = FourInALine.Instance.skin.get("black", LabelStyle.class);
+          ls = FourInALine.Instance.skin.get("black", LabelStyle.class);
 
         if (!user.equals(lastSender)) {
           if (!lastSender.equals("----")) {
@@ -137,24 +138,17 @@ public class ChatBox extends Table {
             tchat.add(new Image(FourInALine.Instance.skin.getDrawable("separator"))).colspan(2).fillX().height(6).expandX();
           }
           tchat.row();
-          tchat.add(new Label(user+" says: ", ls)).colspan(2).fillX();
+          tchat.add(new Label(user + " says: ", ls)).colspan(2).fillX();
           lastSender = user;
-        } 
+        }
 
-        tchat.row();    
-        tchat.add().width(stage.getWidth()*0.05f).right().top().fillX();
+        tchat.row();
+        tchat.add().width(stage.getWidth() * 0.05f).right().top().fillX();
         Label m = new Label(msg, ls);
         m.setWrap(true);
         tchat.add(m).left().expandX().fill().bottom();
         scroll.setWidget(tchat);
-        scroll.addAction(Actions.sequence(Actions.run(new Runnable() {
-          @Override
-          public void run() {
-            scroll.setScrollPercentY(1);
-          }
-        }), Actions.delay(1.2f)));
-
-        Gdx.graphics.requestRendering();        
+        scroll.setScrollPercentY(1);
       }
     });
   }
@@ -167,15 +161,11 @@ public class ChatBox extends Table {
         tchat = new Table();
         lastSender = "----";
         tchat.bottom();
-        setY(stage.getHeight()-position);
+        setY(stage.getHeight() - position);
         scroll.setWidget(tchat);
         setVisible(true);
       }
     });
-  }
-
-  public boolean isScrolling() {
-    return (scroll.getVelocityY()!=0);
   }
 
 }
