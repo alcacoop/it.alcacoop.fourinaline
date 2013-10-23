@@ -119,24 +119,6 @@ public class BaseScreen implements Screen {
   public void initialize() {
   }
 
-  public void moveBG(float x) {
-    float _x = lastBGX;
-    float newx = _x + x * 2;
-    if (newx > 0)
-      newx = 0;
-    if (newx < (stage.getWidth() - width))
-      newx = stage.getWidth() - width;
-    if (lastBGX != newx) {
-      bgImg.setX(newx);
-      Gdx.graphics.requestRendering();
-    }
-    lastBGX = newx;
-  }
-
-
-  public void fixBGImg() {
-    bgImg.setX(lastBGX);
-  }
 
   public Stage getStage() {
     return stage;

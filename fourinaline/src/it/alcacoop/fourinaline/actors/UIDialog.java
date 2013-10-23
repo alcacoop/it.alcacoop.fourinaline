@@ -501,14 +501,8 @@ public final class UIDialog extends Table {
 
     stage.addActor(instance);
     instance.setY(stage.getHeight());
-    instance.addAction(Actions.sequence(
-        Actions.sequence(Actions.parallel(Actions.color(new Color(1, 1, 1, alpha), 0.2f), Actions.moveTo((stage.getWidth() - width) / 2, (stage.getHeight() - height) / 2, 0.2f))),
-        Actions.run(new Runnable() {
-          @Override
-          public void run() {
-            Gdx.graphics.setContinuousRendering(true);
-          }
-        })));
+    instance.addAction(
+        Actions.sequence(Actions.parallel(Actions.color(new Color(1, 1, 1, alpha), 0.2f), Actions.moveTo((stage.getWidth() - width) / 2, (stage.getHeight() - height) / 2, 0.2f))));
   }
 
 

@@ -106,7 +106,8 @@ public class GameScreen extends BaseScreen {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-          if (UIDialog.isOpened()) return false;
+          if (UIDialog.isOpened())
+            return false;
           if (chatBox.visible) {
             chatBox.hide();
           } else {
@@ -129,9 +130,6 @@ public class GameScreen extends BaseScreen {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     stage.act(delta);
     stage.draw();
-    // Table.drawDebug(stage);
-    if ((MatchState.matchType == 2) && (chatBox.isScrolling()))
-      Gdx.graphics.requestRendering();
   }
 
   @Override

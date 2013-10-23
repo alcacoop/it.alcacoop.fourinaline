@@ -201,10 +201,6 @@ public class OptionsScreen extends BaseScreen {
   }
 
 
-  @Override
-  public void resume() {
-    Gdx.graphics.requestRendering();
-  }
 
   public void initTable() {
     table.clear();

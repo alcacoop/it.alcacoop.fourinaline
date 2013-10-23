@@ -217,11 +217,6 @@ public class MatchOptionsScreen extends BaseScreen {
   }
 
 
-  @Override
-  public void resume() {
-    Gdx.graphics.requestRendering();
-  }
-
   public void initTable() {
     table.clear();
     table.setHeight(stage.getHeight() * 0.9f);
