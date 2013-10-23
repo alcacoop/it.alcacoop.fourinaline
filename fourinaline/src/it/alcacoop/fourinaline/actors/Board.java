@@ -236,7 +236,11 @@ public class Board extends Group {
         MatchState.winner = gameModel.getCurrentPlayer().hashCode();
         System.out.println("THE WINNER IS: " + MatchState.winner);
         FourInALine.Instance.gameScreen.incScore(MatchState.winner);
-        UIDialog.getContinueDialog(Events.GAME_TERMINATED, "The winner is " + FourInALine.Instance.gameScreen.getPlayerName(MatchState.winner) + "!", 0.8f);
+        if ((MatchState.anScore[0] < MatchState.nMatchTo) && (MatchState.anScore[1] < MatchState.nMatchTo)) {
+          UIDialog.getContinueDialog(Events.GAME_TERMINATED, FourInALine.Instance.gameScreen.getPlayerName(MatchState.winner) + " won a game!", 0.8f);
+        } else {
+          UIDialog.getContinueDialog(Events.GAME_TERMINATED, FourInALine.Instance.gameScreen.getPlayerName(MatchState.winner) + " won the match!", 0.8f);
+        }
       } else if (gameModel.getGameStatus() == GameStatus.TIE_STATUS) {
         System.out.println("PAREGGIO!");
         MatchState.winner = 0;
