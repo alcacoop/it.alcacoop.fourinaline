@@ -29,7 +29,7 @@
  #  If not, see <http://http://www.gnu.org/licenses/>             #
  #                                                                #
  ##################################################################
-**/
+ **/
 
 package it.alcacoop.fourinaline;
 
@@ -192,31 +192,22 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     mParticipants = room.getParticipants();
     mMyId = room.getParticipantId(gHelper.getGamesClient().getCurrentPlayerId());
     updateRoom(room);
-    String me, opponent, opponent_player_id;
+    String opponent_player_id;
 
     SecureRandom rdm = new SecureRandom();
     String sRdm = new BigInteger(130, rdm).toString(32);
 
     if (mParticipants.get(0).getParticipantId() == mMyId) {
-      me = mParticipants.get(0).getDisplayName();
-      opponent = mParticipants.get(1).getDisplayName();
-
       if (mParticipants.get(1).getPlayer() == null)
         opponent_player_id = sRdm;
       else
         opponent_player_id = mParticipants.get(1).getPlayer().getPlayerId();
-
     } else {
-      me = mParticipants.get(1).getDisplayName();
-      opponent = mParticipants.get(0).getDisplayName();
-
       if (mParticipants.get(0).getPlayer() == null)
         opponent_player_id = sRdm;
       else
         opponent_player_id = mParticipants.get(0).getPlayer().getPlayerId();
-
     }
-    // FourInALine.Instance.gameScreen.updatePInfo(opponent, me);
     if (meSentInvitation)
       AchievementsManager.getInstance().checkSocialAchievements(opponent_player_id);
   }
