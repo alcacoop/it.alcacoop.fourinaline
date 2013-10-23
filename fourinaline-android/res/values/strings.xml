@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Four in a Line Mobile</string>
+    <string name="send">SEND</string>
+    <string name="clear">X</string>
+    <string name="chat_message">Chat message...</string>
     <string name="APP_ID">867205486260</string>
 </resources>

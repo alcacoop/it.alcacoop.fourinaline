@@ -34,6 +34,7 @@
 package it.alcacoop.fourinaline.layers;
 
 import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.actors.ChatBox;
 import it.alcacoop.fourinaline.actors.IconButton;
 import it.alcacoop.fourinaline.actors.PlayerBlock;
 import it.alcacoop.fourinaline.actors.UIDialog;
@@ -58,6 +59,8 @@ public class GameScreen extends BaseScreen {
   private PlayerBlock players[];
   private Label nMatchTo;
   private IconButton leave, resign;
+
+  public ChatBox chatBox;
 
   public GameScreen() {
     players = new PlayerBlock[2];
@@ -103,16 +106,21 @@ public class GameScreen extends BaseScreen {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-          if (UIDialog.isOpened())
-            return false;
-          FourInALine.Instance.snd.playButton();
-          FourInALine.Instance.vibrate(80);
-          UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
+          if (UIDialog.isOpened()) return false;
+          if (chatBox.visible) {
+            chatBox.hide();
+          } else {
+            FourInALine.Instance.snd.playButton();
+            FourInALine.Instance.vibrate(80);
+            UIDialog.getYesNoDialog(Events.LEAVE_MATCH, "Really leave current match?");
+          }
         }
         return super.keyDown(event, keycode);
       }
     });
     stage.addActor(table);
+    chatBox = new ChatBox(stage);
+    stage.addActor(chatBox);
   }
 
   @Override
@@ -122,6 +130,8 @@ public class GameScreen extends BaseScreen {
     stage.act(delta);
     stage.draw();
     // Table.drawDebug(stage);
+    if ((MatchState.matchType == 2) && (chatBox.isScrolling()))
+      Gdx.graphics.requestRendering();
   }
 
   @Override
@@ -177,6 +187,13 @@ public class GameScreen extends BaseScreen {
     table.add(FourInALine.Instance.board);
 
     table.setPosition(-stage.getWidth(), (stage.getHeight() - table.getHeight()) / 2);
+
+    if (MatchState.matchType == 2) {
+      chatBox.reset();
+    } else {
+      chatBox.setVisible(false);
+      chatBox.hardHide();
+    }
   }
 
   @Override

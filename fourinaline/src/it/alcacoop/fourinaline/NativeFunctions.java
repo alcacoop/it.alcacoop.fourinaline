@@ -40,8 +40,8 @@ public interface NativeFunctions extends GServiceInterface {
   public void openURL(String url);
   public void openURL(String url, String fallback);
 
-  // public void hideChatBox();
-  // public void showChatBox();
+  public void hideChatBox();
+  public void showChatBox();
   
   public boolean isProVersion();
   public void inAppBilling();

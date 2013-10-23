@@ -35,6 +35,7 @@ package it.alcacoop.fourinaline;
 
 import it.alcacoop.fourinaline.actors.Board;
 import it.alcacoop.fourinaline.fsm.FSM;
+import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.layers.BaseScreen;
 import it.alcacoop.fourinaline.layers.GameScreen;
 import it.alcacoop.fourinaline.layers.MatchOptionsScreen;
@@ -84,6 +85,7 @@ public class FourInALine extends Game implements ApplicationListener {
   public FSM fsm;
 
   public Preferences optionPrefs, matchOptionPrefs, gameOptionPrefs;
+  public static float chatHeight = 20;
 
   public static FourInALine Instance;
 
@@ -167,5 +169,10 @@ public class FourInALine extends Game implements ApplicationListener {
   public void vibrate(int millisecs) {
     if (optionPrefs.getString("VIBRATION", "Yes").equals("Yes"))
       Gdx.input.vibrate(millisecs);
+  }
+
+  public void appendChatMessage(String msg, boolean direction) {
+    GServiceClient.getInstance().sendMessage("90 " + msg);
+    gameScreen.chatBox.appendMessage("You", msg, direction);
   }
 }

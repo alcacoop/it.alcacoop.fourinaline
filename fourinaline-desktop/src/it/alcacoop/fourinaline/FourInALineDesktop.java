@@ -136,4 +136,12 @@ public class FourInALineDesktop implements NativeFunctions {
     return "";
   }
 
+  @Override
+  public void hideChatBox() {
+  }
+
+  @Override
+  public void showChatBox() {
+  }
+
 }

@@ -113,6 +113,8 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
   abstract byte[] onStateConflictBehaviour(byte[] localData, byte[] serverData);
 
+  abstract void onResetRoomBehaviour();
+
 
   @Override
   public void onStateConflict(int stateKey, String ver, byte[] localData, byte[] serverData) {
@@ -486,7 +488,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   }
 
   public void _gserviceResetRoom() {
-    // FourInALine.Instance.gameScreen.chatBox.hardHide();
+    onResetRoomBehaviour();
     gConnecting = false;
     meSentInvitation = false;
     if (mRoomId != null) {

@@ -86,7 +86,7 @@ public class GServiceClient implements GServiceMessages {
 
 
   public void processReceivedMessage(String s) {
-    int coockie = coockieMonster.fIBSCookie(s);
+    int coockie = coockieMonster.getCookie(s);
     switch (coockie) {
       case GSERVICE_READY:
         queue.post(Events.GSERVICE_READY, null);
@@ -106,8 +106,8 @@ public class GServiceClient implements GServiceMessages {
         queue.post(Events.GSERVICE_MOVES, col);
         break;
       case GSERVICE_CHATMSG:
-        // s = s.replace("90 ", "");
-        // FourInALine.Instance.fsm.processEvent(Events.GSERVICE_CHATMSG, s);
+        s = s.replace("90 ", "");
+        FourInALine.Instance.fsm.processEvent(Events.GSERVICE_CHATMSG, s);
         break;
       case GSERVICE_ABANDON:
         chunks = s.split(" ");

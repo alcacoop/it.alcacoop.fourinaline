@@ -52,7 +52,7 @@ public class GServiceCookieMonster implements GServiceMessages {
     prepareBatches();
   }
   
-  public int fIBSCookie(String message) {
+  public int getCookie(String message) {
     int result = 0;
     Iterator<GServiceCookieMonster.CookieDough> iter;
     CookieDough ptr = null;

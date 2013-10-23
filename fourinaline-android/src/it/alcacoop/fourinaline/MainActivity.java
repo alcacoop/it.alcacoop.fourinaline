@@ -48,14 +48,24 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.view.Display;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.ads.AdRequest;
@@ -63,15 +73,17 @@ import com.google.ads.AdSize;
 import com.google.ads.AdView;
 import com.google.ads.InterstitialAd;
 
-public class MainActivity extends GServiceApplication implements NativeFunctions {
+public class MainActivity extends GServiceApplication implements NativeFunctions, OnEditorActionListener {
   private int appVersionCode;
   private AdView adView;
+  private View chatBox;
   private InterstitialAd interstitial;
   private View gameView;
   private Timer adsTimer;
   private TimerTask adsTask;
 
 
+  @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -105,6 +117,40 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     adParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     layout.addView(gameView);
     layout.addView(adView, adParams);
+
+    LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    chatBox = inflater.inflate(R.layout.chat_box, null);
+    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+    chatBox.setVisibility(View.GONE);
+    layout.addView(chatBox, params);
+
+    /** CHATBOX DIMS **/
+    Display display = getWindowManager().getDefaultDisplay();
+    // rotation = display.getRotation();
+    Point size = new Point();
+    try {
+      display.getSize(size);
+    } catch (java.lang.NoSuchMethodError ignore) { // Older device
+      size.x = display.getWidth();
+      size.y = display.getHeight();
+    }
+    int width = size.x;
+    View s1 = findViewById(R.id.space1);
+    View s2 = findViewById(R.id.space2);
+    View s3 = findViewById(R.id.chat_content);
+    ViewGroup.LayoutParams pars = s1.getLayoutParams();
+    pars.width = Math.round(width * 0.15f) + 7;
+    s1.setLayoutParams(pars);
+    pars = s2.getLayoutParams();
+    pars.width = Math.round(width * 0.15f) + 7;
+    s2.setLayoutParams(pars);
+    pars = s3.getLayoutParams();
+    FourInALine.chatHeight = pars.height;
+    pars.width = Math.round(width * 0.7f) - 14;
+    s3.setLayoutParams(pars);
+    EditText target = (EditText)findViewById(R.id.message);
+    target.setOnEditorActionListener(this);
+    /** CHATBOX DIMS **/
 
     setContentView(layout);
   }
@@ -297,4 +343,77 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   byte[] onStateConflictBehaviour(byte[] localData, byte[] serverData) {
     return AppDataManager.getInstance().resolveConflict(localData, serverData);
   }
+
+  @Override
+  void onResetRoomBehaviour() {
+    FourInALine.Instance.gameScreen.chatBox.hardHide();
+  }
+
+
+  @Override
+  public void showChatBox() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        chatBox.setVisibility(View.VISIBLE);
+      }
+    });
+  }
+
+
+  @Override
+  public void hideChatBox() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        EditText chat = (EditText)findViewById(R.id.message);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(chat.getWindowToken(), 0);
+        chatBox.setVisibility(View.GONE);
+      }
+    });
+  }
+
+
+  @Override
+  public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+    sendMessage(null);
+    return false;
+  }
+  
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if ((FourInALine.Instance==null)||
+        (FourInALine.Instance.currentScreen==null)||
+        (FourInALine.Instance.getScreen()==null))
+      return super.onKeyDown(keyCode, event);
+    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+      adjustFocus();
+      FourInALine.Instance.gameScreen.chatBox.hide();
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  public void clearMessage(View v) {
+    EditText chat = (EditText)findViewById(R.id.message);
+    chat.setText("");
+  }
+
+  private void sendMessage(View v) {
+    EditText chat = (EditText)findViewById(R.id.message);
+    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(chat.getWindowToken(), 0);
+    Editable msg = chat.getText();
+    if (msg.toString().length() > 0) {
+      chat.setText("");
+      FourInALine.Instance.appendChatMessage(msg.toString(), true);
+    }
+    adjustFocus();
+  }
+
+  private void adjustFocus() {
+    gameView.setFocusableInTouchMode(true);
+    gameView.requestFocus();
+  }
+
 }
