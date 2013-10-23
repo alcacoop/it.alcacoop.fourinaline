@@ -60,12 +60,15 @@ public class SoundManager {
   public void playBGMusic() {
     if (FourInALine.Instance.optionPrefs.getString("MUSIC", "Yes").equals("Yes"))
       bgMusic.play();
-    else
-      bgMusic.stop();
+    else {
+      if ((bgMusic != null) && (bgMusic.isPlaying()))
+        bgMusic.stop();
+    }
   }
 
   public void stopBGMusic() {
-    bgMusic.stop();
+    if ((bgMusic != null) && (bgMusic.isPlaying()))
+      bgMusic.stop();
   }
 
   public void playButton() {
