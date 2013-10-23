@@ -147,8 +147,14 @@ public class ChatBox extends Table {
         Label m = new Label(msg, ls);
         m.setWrap(true);
         tchat.add(m).left().expandX().fill().bottom();
-        scroll.setWidget(tchat);
-        scroll.setScrollPercentY(1);
+
+        scroll.addAction(Actions.sequence(Actions.delay(0.1f), Actions.run(new Runnable() {
+          @Override
+          public void run() {
+            scroll.setScrollPercentY(1.0f);
+          }
+        })));
+
       }
     });
   }
