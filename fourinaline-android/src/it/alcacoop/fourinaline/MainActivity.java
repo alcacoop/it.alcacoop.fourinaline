@@ -382,12 +382,10 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     sendMessage(null);
     return false;
   }
-  
+
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if ((FourInALine.Instance==null)||
-        (FourInALine.Instance.currentScreen==null)||
-        (FourInALine.Instance.getScreen()==null))
+    if ((FourInALine.Instance == null) || (FourInALine.Instance.currentScreen == null) || (FourInALine.Instance.getScreen() == null))
       return super.onKeyDown(keyCode, event);
     if ((keyCode == KeyEvent.KEYCODE_BACK)) {
       adjustFocus();
@@ -401,7 +399,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     chat.setText("");
   }
 
-  private void sendMessage(View v) {
+  public void sendMessage(View v) {
     EditText chat = (EditText)findViewById(R.id.message);
     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(chat.getWindowToken(), 0);
