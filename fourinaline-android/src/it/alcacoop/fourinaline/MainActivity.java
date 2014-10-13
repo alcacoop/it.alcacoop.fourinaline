@@ -69,10 +69,10 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
-import com.google.ads.InterstitialAd;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 @SuppressLint("NewApi")
 public class MainActivity extends GServiceApplication implements NativeFunctions, OnEditorActionListener {
@@ -85,6 +85,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   private TimerTask adsTask;
 
 
+  @SuppressLint("InflateParams")
   @SuppressWarnings("deprecation")
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -103,15 +104,20 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     /** ADS INITIALIZATION **/
     PrivateDataManager.initData();
     PrivateDataManager.createBillingData(this);
+    adView = new AdView(this);
+    adView.setAdUnitId(PrivateDataManager.ads_id);
+
     if (isTablet(this))
-      adView = new AdView(this, AdSize.IAB_BANNER, PrivateDataManager.ads_id);
+      adView.setAdSize(AdSize.SMART_BANNER);
     else
-      adView = new AdView(this, AdSize.BANNER, PrivateDataManager.ads_id);
+      adView.setAdSize(AdSize.BANNER);
     adView.setVisibility(View.GONE);
 
     if (!isProVersion())
-      adView.loadAd(new AdRequest());
-    interstitial = new InterstitialAd(this, PrivateDataManager.int_id);
+      adView.loadAd(new AdRequest.Builder().build());
+
+    interstitial = new InterstitialAd(this);
+    interstitial.setAdUnitId(PrivateDataManager.int_id);
     /** ADS INITIALIZATION **/
 
     RelativeLayout.LayoutParams adParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -156,8 +162,6 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
 
     setContentView(layout);
   }
-
-
   @Override
   protected void onResume() {
     super.onResume();
@@ -168,8 +172,8 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
         public void run() {
           runOnUiThread(new Runnable() {
             public void run() {
-              if ((!isProVersion()) && (!interstitial.isReady())) {
-                interstitial.loadAd(new AdRequest());
+              if ((!isProVersion()) && (!interstitial.isLoaded())) {
+                interstitial.loadAd(new AdRequest.Builder().build());
               }
             }
           });
@@ -241,7 +245,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
       @Override
       public void run() {
         if (show) {
-          adView.loadAd(new AdRequest());
+          adView.loadAd(new AdRequest.Builder().build());
           adView.setVisibility(View.VISIBLE);
         } else {
           adView.setVisibility(View.GONE);
@@ -254,20 +258,19 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   public void showInterstitial() {
     if (isProVersion())
       return;
-    if (interstitial.isReady()) {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          synchronized (this) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        synchronized (this) {
+          if (interstitial.isLoaded()) {
             try {
               wait(50);
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException e) {}
             interstitial.show();
           }
         }
-      });
-    }
+      }
+    });
   }
 
   @Override
@@ -415,5 +418,9 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
     gameView.setFocusableInTouchMode(true);
     gameView.requestFocus();
   }
+
+
+  @Override
+  public void onInvitationRemoved(String arg0) {}
 
 }

@@ -33,6 +33,7 @@
 
 package it.alcacoop.fourinaline;
 
+import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.util.GServiceGameHelper;
 import it.alcacoop.fourinaline.utils.AchievementsManager;
 
@@ -60,23 +61,28 @@ import android.widget.TextView;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.google.android.gms.appstate.AppStateClient;
-import com.google.android.gms.appstate.OnStateLoadedListener;
+import com.google.android.gms.appstate.AppStateManager;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.images.ImageManager;
-import com.google.android.gms.games.GamesClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeReliableMessageSentListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
-public abstract class BaseGServiceApplication extends AndroidApplication implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener,
-    RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener, RealTimeReliableMessageSentListener, OnStateLoadedListener {
+@SuppressLint("InflateParams")
+public abstract class BaseGServiceApplication extends AndroidApplication
+    implements GServiceGameHelper.GameHelperListener, RealTimeMessageReceivedListener, RoomStatusUpdateListener,
+    RoomUpdateListener, OnInvitationReceivedListener, RealTimeMultiplayer.ReliableMessageSentCallback
+{
+
 
   protected Preferences prefs;
   protected GServiceGameHelper gHelper;
@@ -115,26 +121,22 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
   abstract void onResetRoomBehaviour();
 
-
-  @Override
-  public void onStateConflict(int stateKey, String ver, byte[] localData, byte[] serverData) {
-    gHelper.getAppStateClient().resolveState(this, APP_DATA_KEY, ver, onStateConflictBehaviour(localData, serverData));
+  public void onStateConflict(AppStateManager.StateConflictResult conflictResult) {
+    AppStateManager.resolve(gHelper.getApiClient(), conflictResult.getStateKey(), conflictResult.getResolvedVersion(),
+        onStateConflictBehaviour(conflictResult.getLocalData(), conflictResult.getServerData()));
   }
 
-  @Override
   public void onStateLoaded(int statusCode, int stateKey, byte[] data) {
 
-    if (statusCode == AppStateClient.STATUS_OK) {
+    if (statusCode == GServiceClient.STATUS_OK) { // OK
       onStateLoadedBehaviour(data);
-    } else if (statusCode == AppStateClient.STATUS_NETWORK_ERROR_STALE_DATA) {
-    } else {
     }
   }
 
   @Override
   public void onRealTimeMessageSent(int statusCode, int token, String recipientParticipantId) {
-    if (statusCode != GamesClient.STATUS_OK) {
-      onLeaveRoomBehaviour(GamesClient.STATUS_NETWORK_ERROR_OPERATION_FAILED);
+    if (statusCode != GServiceClient.STATUS_OK) {
+      onLeaveRoomBehaviour(GServiceClient.STATUS_NETWORK_ERROR_OPERATION_FAILED);
     }
   }
 
@@ -142,7 +144,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   @Override
   public void onInvitationReceived(Invitation invitation) {
     if (shouldShowInvitationDialog()) {
-      gHelper.getGamesClient().declineRoomInvitation(invitation.getInvitationId());
+      Games.RealTimeMultiplayer.declineInvitation(gHelper.getApiClient(), invitation.getInvitationId());
       return;
     }
     gserviceInvitationReceived(invitation.getInviter().getIconImageUri(), invitation.getInviter().getDisplayName(), invitation.getInvitationId());
@@ -176,21 +178,21 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
 
   @Override
   public void onRoomCreated(int statusCode, Room room) {
-    if (statusCode != GamesClient.STATUS_OK) {
+    if (statusCode != GServiceClient.STATUS_OK) {
       hideProgressDialog();
       onErrorBehaviour("Unknown error");
       return;
     }
     mRoomId = room.getRoomId();
     meSentInvitation = true;
-    Intent i = gHelper.getGamesClient().getRealTimeWaitingRoomIntent(room, Integer.MAX_VALUE);
+    Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(gHelper.getApiClient(), room, Integer.MAX_VALUE);
     startActivityForResult(i, RC_WAITING_ROOM);
   }
 
   @Override
   public void onConnectedToRoom(Room room) {
     mParticipants = room.getParticipants();
-    mMyId = room.getParticipantId(gHelper.getGamesClient().getCurrentPlayerId());
+    mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(gHelper.getApiClient()));
     updateRoom(room);
     String opponent_player_id;
 
@@ -253,7 +255,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   @Override
   public void onPeersDisconnected(Room room, List<String> arg1) {
     System.out.println("---> P2P PEER DISCONNECTED");
-    onLeaveRoomBehaviour(GamesClient.STATUS_OK);
+    onLeaveRoomBehaviour(GServiceClient.STATUS_OK);
     updateRoom(room);
   }
 
@@ -276,17 +278,31 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   }
 
   @Override
-  public void onSignInFailed() {
-  }
+  public void onSignInFailed() {}
 
   @Override
   public void onSignInSucceeded() {
     prefs.putBoolean("ALREADY_SIGNEDIN", true);
     prefs.flush();
-    gHelper.getGamesClient().registerInvitationListener(this);
-    gHelper.getAppStateClient().loadState(this, APP_DATA_KEY);
+    Games.Invitations.registerInvitationListener(gHelper.getApiClient(), this);
 
-    if (gHelper.getInvitationId() != null && gHelper.getGamesClient().isConnected()) {
+    System.out.println("===> LOADING APPSTATE");
+    AppStateManager.load(gHelper.getApiClient(), APP_DATA_KEY).setResultCallback(
+        new ResultCallback<AppStateManager.StateResult>() {
+          @Override
+          public void onResult(AppStateManager.StateResult result) {
+            AppStateManager.StateConflictResult conflictResult = result.getConflictResult();
+            AppStateManager.StateLoadedResult loadedResult = result.getLoadedResult();
+            if (loadedResult != null) {
+              onStateLoaded(loadedResult.getStatus().getStatusCode(), loadedResult.getStateKey(), loadedResult.getLocalData());
+            } else if (conflictResult != null) {
+              onStateConflict(conflictResult);
+            }
+          }
+        });
+
+
+    if (gHelper.hasInvitation()) {
       invitationId = gHelper.getInvitationId();
     }
   }
@@ -303,8 +319,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
         alert.setView(myView).setTitle("Invitation received").setCancelable(false).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
-            gHelper.getGamesClient().declineRoomInvitation(invitationId);
-
+            Games.RealTimeMultiplayer.declineInvitation(gHelper.getApiClient(), invitationId);
           }
         });
         alert.setPositiveButton("Accept", null);
@@ -342,7 +357,8 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     roomConfigBuilder.setMessageReceivedListener(this);
     roomConfigBuilder.setRoomStatusUpdateListener(this);
     _gserviceResetRoom();
-    gHelper.getGamesClient().joinRoom(roomConfigBuilder.build());
+    Games.RealTimeMultiplayer.join(gHelper.getApiClient(), roomConfigBuilder.build());
+
     showProgressDialog();
   }
 
@@ -420,8 +436,9 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   protected void onStart() {
     super.onStart();
     prefs = Gdx.app.getPreferences("GameOptions");
-    gHelper = new GServiceGameHelper(this, prefs.getBoolean("ALREADY_SIGNEDIN", false));
-    gHelper.setup(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
+    gHelper = new GServiceGameHelper(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
+    gHelper.setup(this);
+
     ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
     List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
     for (RunningTaskInfo runningTaskInfo : taskInfos) {
@@ -437,7 +454,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
   protected void onStop() {
     super.onStop();
     if (mRoomId != null) {
-      onLeaveRoomBehaviour(GamesClient.STATUS_REAL_TIME_INACTIVE_ROOM);
+      onLeaveRoomBehaviour(GServiceClient.STATUS_REAL_TIME_INACTIVE_ROOM);
     }
     gHelper.onStop();
   }
@@ -448,12 +465,12 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     if (requestCode == RC_SELECT_PLAYERS) {
       if (resultCode == RESULT_OK) {
         Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(GamesClient.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
         if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
           autoMatchCriteria = RoomConfig.createAutoMatchCriteria(minAutoMatchPlayers, maxAutoMatchPlayers, 0);
         }
-        final ArrayList<String> invitees = data.getStringArrayListExtra(GamesClient.EXTRA_PLAYERS);
+        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
         // create the room
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
         rtmConfigBuilder.addPlayersToInvite(invitees);
@@ -463,7 +480,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
           rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         }
         _gserviceResetRoom();
-        gHelper.getGamesClient().createRoom(rtmConfigBuilder.build());
+        Games.RealTimeMultiplayer.create(gHelper.getApiClient(), rtmConfigBuilder.build());
       } else {
         hideProgressDialog();
       }
@@ -483,7 +500,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
     gConnecting = false;
     meSentInvitation = false;
     if (mRoomId != null) {
-      gHelper.getGamesClient().leaveRoom(this, mRoomId);
+      Games.RealTimeMultiplayer.leave(gHelper.getApiClient(), this, mRoomId);
       mRoomId = null;
     }
   }
@@ -540,12 +557,12 @@ public abstract class BaseGServiceApplication extends AndroidApplication impleme
       gHelper.setListener(new GServiceGameHelper.GameHelperListener() {
         @Override
         public void onSignInSucceeded() {
-          gHelper.setListener(this);
+          gHelper.setListener(BaseGServiceApplication.this);
           // MainActivity.this.onSignInSucceeded();
           if (from == FROM_ACHIEVEMENTS)
-            startActivityForResult(gHelper.getGamesClient().getAchievementsIntent(), RC_ACHIEVEMENTS);
+            startActivityForResult(Games.Achievements.getAchievementsIntent(gHelper.getApiClient()), RC_ACHIEVEMENTS);
           else
-            startActivityForResult(gHelper.getGamesClient().getAllLeaderboardsIntent(), RC_LEADERBOARD);
+            startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(gHelper.getApiClient()), RC_LEADERBOARD);
         }
 
         @Override

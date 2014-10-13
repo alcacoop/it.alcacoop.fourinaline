@@ -134,9 +134,9 @@ public class GServiceClient implements GServiceMessages {
   }
 
 
-  private final static int STATUS_OK = 0;
-  private final static int STATUS_NETWORK_ERROR_OPERATION_FAILED = 6;
-  private final static int STATUS_REAL_TIME_INACTIVE_ROOM = 7005;
+  public final static int STATUS_OK = 0;
+  public final static int STATUS_NETWORK_ERROR_OPERATION_FAILED = 6;
+  public final static int STATUS_REAL_TIME_INACTIVE_ROOM = 7005;
 
   public void leaveRoom(int code) {
     // FourInALine.Instance.nativeFunctions.gserviceResetRoom();
