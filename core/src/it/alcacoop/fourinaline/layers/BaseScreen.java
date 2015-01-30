@@ -46,6 +46,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class BaseScreen implements Screen {
 
@@ -57,9 +58,11 @@ public class BaseScreen implements Screen {
 
   public BaseScreen() {
     // STAGE DIM = SCREEN RES
-    stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+    // stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     // VIEWPORT DIM = VIRTUAL RES (ON SELECTED TEXTURE BASIS)
-    stage.setViewport(FourInALine.Instance.resolution[0], FourInALine.Instance.resolution[1], false);
+    // stage.setViewport(FourInALine.Instance.resolution[0], FourInALine.Instance.resolution[1], false);
+
+    stage = new Stage(new StretchViewport(FourInALine.Instance.resolution[0], FourInALine.Instance.resolution[1]));
 
     TextureRegion bgRegion = FourInALine.Instance.atlas.findRegion("bg");
     bgImg = new Image(bgRegion);

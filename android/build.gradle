@@ -3,11 +3,11 @@ android {
     compileSdkVersion 21
 
     defaultConfig {
-        applicationId "it.alcacoop.backgammon"
+        applicationId "it.alcacoop.fourinaline"
         minSdkVersion 9
         targetSdkVersion 21
-        versionCode 285
-        versionName "2.8.5"
+        versionCode 110
+        versionName "1.1.0"
     }
 
     sourceSets {
@@ -17,7 +17,7 @@ android {
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
+            assets.srcDirs = ['../assets/data']
         }
 
         instrumentTest.setRoot('tests')

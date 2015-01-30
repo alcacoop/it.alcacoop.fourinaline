@@ -1,16 +1,16 @@
 package it.alcacoop.fourinaline.utils;
 
 
-import it.alcacoop.fourinaline.FourInALine;
-import it.alcacoop.fourinaline.logic.MatchState;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.utils.Json;
+import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.logic.MatchState;
+import it.alcacoop.fourinaline.utils.legacy.Json;
 
 public class AchievementsManager {
 

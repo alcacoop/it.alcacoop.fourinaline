@@ -1,11 +1,10 @@
 package it.alcacoop.fourinaline.utils;
 
-import it.alcacoop.fourinaline.FourInALine;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.badlogic.gdx.utils.Json;
+import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.utils.legacy.Json;
 
 public class AppDataManager {
 

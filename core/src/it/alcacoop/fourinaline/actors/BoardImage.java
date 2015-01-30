@@ -49,11 +49,8 @@
 
 package it.alcacoop.fourinaline.actors;
 
-import it.alcacoop.fourinaline.FourInALine;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -68,6 +65,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Scaling;
+
+import it.alcacoop.fourinaline.FourInALine;
 
 
 public class BoardImage extends Widget {
@@ -144,7 +143,7 @@ public class BoardImage extends Widget {
     fbo1.begin();
     sb.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
-    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     if (drawable != null) {
       for (int x = 0; x < nx; x++)
         for (int y = 0; y < ny; y++) {
@@ -158,7 +157,7 @@ public class BoardImage extends Widget {
     sb.setShader(shader);
     sb.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
-    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
     wood.bind();

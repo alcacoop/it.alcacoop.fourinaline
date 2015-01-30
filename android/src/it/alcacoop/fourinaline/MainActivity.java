@@ -33,18 +33,6 @@
 
 package it.alcacoop.fourinaline;
 
-import it.alcacoop.fourinaline.actors.UIDialog;
-import it.alcacoop.fourinaline.fsm.FSM.Events;
-import it.alcacoop.fourinaline.fsm.FSM.States;
-import it.alcacoop.fourinaline.gservice.GServiceClient;
-import it.alcacoop.fourinaline.layers.GameScreen;
-import it.alcacoop.fourinaline.logic.MatchState;
-import it.alcacoop.fourinaline.utils.AppDataManager;
-import it.alcacoop.fourinaline.utils.ELORatingManager;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -74,6 +62,18 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import it.alcacoop.fourinaline.actors.UIDialog;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.fsm.FSM.States;
+import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.layers.GameScreen;
+import it.alcacoop.fourinaline.logic.MatchState;
+import it.alcacoop.fourinaline.utils.AppDataManager;
+import it.alcacoop.fourinaline.utils.ELORatingManager;
+
 @SuppressLint("NewApi")
 public class MainActivity extends GServiceApplication implements NativeFunctions, OnEditorActionListener {
   private int appVersionCode;
@@ -91,7 +91,7 @@ public class MainActivity extends GServiceApplication implements NativeFunctions
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-    cfg.useGL20 = true;
+    //cfg.useGLSurfaceView20API18 = true;
     gameView = initializeForView(new FourInALine(this), cfg);
 
     requestWindowFeature(Window.FEATURE_NO_TITLE);

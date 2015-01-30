@@ -42,7 +42,7 @@ public class FixedButtonGroup extends ButtonGroup {
   public void setChecked(String text) {
     if (text == null) throw new IllegalArgumentException("text cannot be null.");
     for (int i = 0, n = getButtons().size; i < n; i++) {
-      Button button = getButtons().get(i);
+      Button button = (Button)getButtons().get(i);
       if (button instanceof IconButton && text.equals((String)((IconButton)button).getText().toString())) {
         button.setChecked(true);
         return;

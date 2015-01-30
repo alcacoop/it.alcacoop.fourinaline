@@ -33,13 +33,8 @@
 
 package it.alcacoop.fourinaline.actors;
 
-import it.alcacoop.fourinaline.FourInALine;
-
-import java.util.Random;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -51,6 +46,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool.Poolable;
+
+import java.util.Random;
+
+import it.alcacoop.fourinaline.FourInALine;
 
 public class Checker extends Actor implements Poolable {
 
@@ -83,7 +82,6 @@ public class Checker extends Actor implements Poolable {
     setColor(1);
   }
 
-  @Override
   public void draw(SpriteBatch batch, float parentAlpha) {
     Color c = getColor();
     batch.setColor(c.r, c.g, c.b, c.a * parentAlpha);
@@ -113,7 +111,7 @@ public class Checker extends Actor implements Poolable {
 
     fbo.begin();
     Gdx.gl.glClearColor(1, 1, 1, 0);
-    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     sb.setShader(shader);
     shader.begin();
     sb.begin();
