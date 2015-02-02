@@ -33,14 +33,6 @@
 
 package it.alcacoop.fourinaline.layers;
 
-import it.alcacoop.fourinaline.FourInALine;
-import it.alcacoop.fourinaline.actors.ChatBox;
-import it.alcacoop.fourinaline.actors.IconButton;
-import it.alcacoop.fourinaline.actors.PlayerBlock;
-import it.alcacoop.fourinaline.actors.UIDialog;
-import it.alcacoop.fourinaline.fsm.FSM.Events;
-import it.alcacoop.fourinaline.logic.MatchState;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
@@ -51,6 +43,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
+import it.alcacoop.fourinaline.FourInALine;
+import it.alcacoop.fourinaline.actors.ChatBox;
+import it.alcacoop.fourinaline.actors.IconButton;
+import it.alcacoop.fourinaline.actors.PlayerBlock;
+import it.alcacoop.fourinaline.actors.UIDialog;
+import it.alcacoop.fourinaline.fsm.FSM.Events;
+import it.alcacoop.fourinaline.logic.MatchState;
 
 
 public class GameScreen extends BaseScreen {
@@ -103,7 +103,6 @@ public class GameScreen extends BaseScreen {
     table = new Table();
     table.setWidth(stage.getWidth() * 0.9f);
     table.setHeight(stage.getHeight() * 0.78f);
-    table.debug();
     stage.addListener(new InputListener() {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
@@ -175,7 +174,6 @@ public class GameScreen extends BaseScreen {
 
 
     Table tp = new Table();
-    tp.debug();
     tp.setFillParent(false);
     tp.add(nMatchTo).expandX().colspan(2);
 

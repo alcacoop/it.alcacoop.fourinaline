@@ -38,6 +38,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -82,7 +83,8 @@ public class Checker extends Actor implements Poolable {
     setColor(1);
   }
 
-  public void draw(SpriteBatch batch, float parentAlpha) {
+  @Override
+  public void draw(Batch batch, float parentAlpha) {
     Color c = getColor();
     batch.setColor(c.r, c.g, c.b, c.a * parentAlpha);
     if (color == 1)

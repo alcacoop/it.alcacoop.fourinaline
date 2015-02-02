@@ -33,12 +33,12 @@
 
 package it.alcacoop.fourinaline.actors;
 
-import it.alcacoop.fourinaline.FourInALine;
-
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import it.alcacoop.fourinaline.FourInALine;
 
 public class ParticleEffectActor extends Actor {
 
@@ -49,7 +49,8 @@ public class ParticleEffectActor extends Actor {
     effect.load(Gdx.files.internal(FourInALine.Instance.getResName() + "/effects/fire.p"), Gdx.files.internal(FourInALine.Instance.getResName() + "/effects"));
   }
 
-  public void draw(SpriteBatch batch, float parentAlpha) {
+  @Override
+  public void draw(Batch batch, float parentAlpha) {
     effect.draw(batch);
   }
 
