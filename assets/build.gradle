@@ -31,7 +31,7 @@ task cleanGenerated () {
 
 
 task clean (overwrite: true, type: Delete, group: 'Asset Generation') {
-    delete "data/hdpi", "data/ldpi", "data/mdpi", "data/sounds"
+    delete "data/hdpi", "data/ldpi", "data/mdpi", "data/sounds", "data/shaders"
 }
 
 // Copy static assets
@@ -40,6 +40,11 @@ task copyStatics (group: 'Asset Generation') {
     copy {
         from "data-src/statics/sounds"
         into "data/sounds"
+    }
+    // shaders
+    copy {
+        from "data-src/statics/shaders"
+        into "data/shaders"
     }
 
     ['hdpi', 'ldpi', 'mdpi'].each { res ->
@@ -52,6 +57,11 @@ task copyStatics (group: 'Asset Generation') {
         copy {
             from "data-src/statics/images/$res"
             into "data/$res"
+        }
+        // effects
+        copy {
+            from "data-src/statics/effects/$res"
+            into "data/$res/effects"
         }
         // myskin.json
         copy {

@@ -78,3 +78,6 @@ hs_err_pid*
 ## Project Specific
 tmp/
 desktop/data/
+
+## Generated assets
+assets/data/*
