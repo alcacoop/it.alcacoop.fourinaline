@@ -3,6 +3,7 @@ package it.alcacoop.fourinaline.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.Json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.Map;
 
 import it.alcacoop.fourinaline.FourInALine;
 import it.alcacoop.fourinaline.logic.MatchState;
-import it.alcacoop.fourinaline.utils.legacy.Json;
 
 public class AchievementsManager {
 
@@ -67,7 +67,10 @@ public class AchievementsManager {
     prefs = Gdx.app.getPreferences("Achievemnts");
     String currentString = prefs.getString("OPPONENTS", "{}");
     Json json = new Json();
-    opponents_played = json.fromJson(ArrayList.class, currentString);
+    if (currentString.equals("{}"))
+      opponents_played = new ArrayList<String>();
+    else
+      opponents_played = json.fromJson(ArrayList.class, currentString);
   }
 
   public static synchronized AchievementsManager getInstance() {

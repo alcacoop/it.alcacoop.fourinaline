@@ -33,8 +33,6 @@
 
 package it.alcacoop.fourinaline;
 
-import it.alcacoop.fourinaline.gservice.GServiceClient;
-import it.alcacoop.fourinaline.utils.AppDataManager;
 import android.content.Intent;
 
 import com.google.android.gms.appstate.AppStateManager;
@@ -42,6 +40,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.multiplayer.Participant;
+
+import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.utils.AppDataManager;
 
 
 public abstract class GServiceApplication extends BaseGServiceApplication implements GServiceInterface {
@@ -153,5 +154,20 @@ public abstract class GServiceApplication extends BaseGServiceApplication implem
       AppStateManager.update(gHelper.getApiClient(), APP_DATA_KEY, AppDataManager.getInstance().getBytes());
     }
   }
+
+  /* USE THIS TO DELETE APPSTATE DATA
+  public void gserviceDeleteAppState() {
+    if (gHelper.isSignedIn()) {
+        System.out.println(" ===> APPSTATE DELETION!");
+        AppStateManager.delete(gHelper.getApiClient(), APP_DATA_KEY).setResultCallback(new ResultCallback<AppStateManager.StateDeletedResult>() {
+            @Override
+            public void onResult(AppStateManager.StateDeletedResult arg0) {
+                System.out.println("GSERVICE STATE DELETED");
+            }
+        });
+    }
+  }
+  */
+
 
 }
