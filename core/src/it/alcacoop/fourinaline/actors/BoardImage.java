@@ -54,6 +54,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -103,6 +104,7 @@ public class BoardImage extends Widget {
     System.out.println(shader.getLog());
   }
 
+  @Override
   public void layout() {
     if (drawable == null)
       return;
@@ -171,7 +173,8 @@ public class BoardImage extends Widget {
     fbo2.end();
   }
 
-  public void draw(SpriteBatch batch, float parentAlpha) {
+  @Override
+  public void draw(Batch batch, float parentAlpha) {
     validate();
     Color color = getColor();
     batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
