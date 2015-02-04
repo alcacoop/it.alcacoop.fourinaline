@@ -33,12 +33,8 @@
 
 package it.alcacoop.fourinaline.actors;
 
-import it.alcacoop.fourinaline.FourInALine;
-
-import java.util.Random;
-
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -47,6 +43,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+
+import java.util.Random;
+
+import it.alcacoop.fourinaline.FourInALine;
 
 public class IconButton extends Button {
   private final Label label;
@@ -130,7 +130,7 @@ public class IconButton extends Button {
     return style;
   }
 
-  private void baseDraw(SpriteBatch batch, float parentAlpha) {
+  private void baseDraw(Batch batch, float parentAlpha) {
     validate();
 
     Drawable background = null;
@@ -161,7 +161,8 @@ public class IconButton extends Button {
   }
 
 
-  public void draw(SpriteBatch batch, float parentAlpha) {
+  @Override
+  public void draw(Batch batch, float parentAlpha) {
     Color fontColor;
     if (isDisabled() && style.disabledFontColor != null)
       fontColor = style.disabledFontColor;
