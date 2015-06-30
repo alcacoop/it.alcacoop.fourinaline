@@ -1,13 +1,13 @@
 android {
-    buildToolsVersion "21.1.2"
-    compileSdkVersion 21
+    buildToolsVersion "22.0.1"
+    compileSdkVersion 22
 
     defaultConfig {
         applicationId "it.alcacoop.fourinaline"
         minSdkVersion 9
-        targetSdkVersion 21
-        versionCode 120
-        versionName "1.2.0"
+        targetSdkVersion 22
+        versionCode 1300
+        versionName "1.3.00"
     }
 
     sourceSets {
