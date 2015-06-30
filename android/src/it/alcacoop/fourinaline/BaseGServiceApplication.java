@@ -143,8 +143,13 @@ public abstract class BaseGServiceApplication extends AndroidApplication
             .load(gHelper.getApiClient(), APP_DATA_KEY)
             .await();
         if (!load.getStatus().isSuccess()) {
-          System.out.println("GSERVICE: Could not load App State for migration.");
-          return false;
+          // Create the snapshot and return without errors
+          System.out.println("GSERVICE: Could not load App State for migration. Creating empty snapshot.");
+          Snapshots.OpenSnapshotResult open = Games.Snapshots
+              .open(gHelper.getApiClient(), snapshotName, true)
+              .await();
+          Games.Snapshots.discardAndClose(gHelper.getApiClient(), open.getSnapshot());
+          return true;
         }
 
         // Save locally with AppDataManager
