@@ -35,11 +35,12 @@ package it.alcacoop.fourinaline;
 
 import android.content.Intent;
 
-import com.google.android.gms.appstate.AppStateManager;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
+import com.google.android.gms.games.snapshot.Snapshots;
 
 import it.alcacoop.fourinaline.gservice.GServiceClient;
 import it.alcacoop.fourinaline.utils.AppDataManager;
@@ -151,7 +152,21 @@ public abstract class GServiceApplication extends BaseGServiceApplication implem
   @Override
   public void gserviceUpdateState() {
     if (gHelper.isSignedIn()) {
-      AppStateManager.update(gHelper.getApiClient(), APP_DATA_KEY, AppDataManager.getInstance().getBytes());
+      System.out.println("===> SAVEDGAME UPDATE");
+
+      Games.Snapshots.open(gHelper.getApiClient(), snapshotName, true).setResultCallback(
+          new ResultCallback<Snapshots.OpenSnapshotResult>() {
+            @Override
+            public void onResult(Snapshots.OpenSnapshotResult result) {
+              if (result.getStatus().isSuccess()) {
+                // Write data
+                result.getSnapshot().getSnapshotContents().writeBytes(AppDataManager.getInstance().getBytes());
+                // Commit and close
+                Games.Snapshots.commitAndClose(gHelper.getApiClient(), result.getSnapshot(), SnapshotMetadataChange.EMPTY_CHANGE);
+              }
+            }
+          }
+      );
     }
   }
 

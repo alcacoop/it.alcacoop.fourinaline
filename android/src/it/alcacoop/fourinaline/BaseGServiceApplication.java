@@ -33,15 +33,6 @@
 
 package it.alcacoop.fourinaline;
 
-import it.alcacoop.fourinaline.gservice.GServiceClient;
-import it.alcacoop.fourinaline.util.GServiceGameHelper;
-import it.alcacoop.fourinaline.utils.AchievementsManager;
-
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
@@ -50,6 +41,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -65,6 +57,7 @@ import com.google.android.gms.appstate.AppStateManager;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
@@ -76,6 +69,20 @@ import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
+import com.google.android.gms.games.snapshot.Snapshot;
+import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
+import com.google.android.gms.games.snapshot.Snapshots;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+
+import it.alcacoop.fourinaline.gservice.GServiceClient;
+import it.alcacoop.fourinaline.util.GServiceGameHelper;
+import it.alcacoop.fourinaline.utils.AchievementsManager;
+import it.alcacoop.fourinaline.utils.AppDataManager;
 
 @SuppressLint("InflateParams")
 public abstract class BaseGServiceApplication extends AndroidApplication
@@ -93,6 +100,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication
   protected String mMyId = null;
   protected ArrayList<Participant> mParticipants = null;
   protected boolean meSentInvitation;
+  protected String snapshotName = "snapshotPrefs";
 
   ProgressDialog mProgressDialog = null;
   protected static int RC_SELECT_PLAYERS = 6000;
@@ -121,15 +129,97 @@ public abstract class BaseGServiceApplication extends AndroidApplication
 
   abstract void onResetRoomBehaviour();
 
-  public void onStateConflict(AppStateManager.StateConflictResult conflictResult) {
-    AppStateManager.resolve(gHelper.getApiClient(), conflictResult.getStateKey(), conflictResult.getResolvedVersion(),
-        onStateConflictBehaviour(conflictResult.getLocalData(), conflictResult.getServerData()));
+  private void migrateFromAppState() {
+    AsyncTask<Void, Void, Boolean> migrateTask = new AsyncTask<Void, Void, Boolean>() {
+      @Override
+      protected void onPreExecute() {
+        showProgressDialog();
+      }
+
+      @Override
+      protected Boolean doInBackground(Void... params) {
+        // Load AppState data
+        AppStateManager.StateResult load = AppStateManager
+            .load(gHelper.getApiClient(), APP_DATA_KEY)
+            .await();
+        if (!load.getStatus().isSuccess()) {
+          System.out.println("GSERVICE: Could not load App State for migration.");
+          return false;
+        }
+
+        // Save locally with AppDataManager
+        byte[] data = load.getLoadedResult().getLocalData();
+        AppDataManager.getInstance().loadState(data);
+
+        // Create snapshot
+        Snapshots.OpenSnapshotResult open = Games.Snapshots
+            .open(gHelper.getApiClient(), snapshotName, true)
+            .await();
+
+        // Write data and commit
+        Snapshot snapshot = open.getSnapshot();
+        snapshot.getSnapshotContents().writeBytes(data);
+        Snapshots.CommitSnapshotResult commit = Games.Snapshots
+            .commitAndClose(gHelper.getApiClient(), snapshot, SnapshotMetadataChange.EMPTY_CHANGE)
+            .await();
+        if (!commit.getStatus().isSuccess()) {
+          System.out.println("GSERVICE: COMMIT Could not open Snapshot for migration.");
+          return false;
+        }
+
+        // No failures
+        System.out.println("GSERVICE: migration ok!");
+        return true;
+      }
+
+      @Override
+      protected void onPostExecute(Boolean aBoolean) {
+        hideProgressDialog();
+      }
+    };
+
+    migrateTask.execute();
   }
 
-  public void onStateLoaded(int statusCode, int stateKey, byte[] data) {
+  private void onStateConflict(Snapshots.OpenSnapshotResult result) {
+    final Snapshot remoteSnapshot = result.getSnapshot();
+    final Snapshot localSnapshot = result.getConflictingSnapshot();
 
-    if (statusCode == GServiceClient.STATUS_OK) { // OK
-      onStateLoadedBehaviour(data);
+    // Resolve with one of the snapshot (temporarily)
+    Games.Snapshots.resolveConflict(gHelper.getApiClient(), result.getConflictId(), remoteSnapshot);
+
+    // Reopen the snapshot and write bytes on the result snapshot
+    Games.Snapshots.open(gHelper.getApiClient(), snapshotName, true).setResultCallback(
+        new ResultCallback<Snapshots.OpenSnapshotResult>() {
+          @Override
+          public void onResult(Snapshots.OpenSnapshotResult res) {
+            int status = res.getStatus().getStatusCode();
+            byte[] data = new byte[0];
+            if (status == GamesStatusCodes.STATUS_OK) {
+              try {
+                data = onStateConflictBehaviour(localSnapshot.getSnapshotContents().readFully(),
+                    res.getSnapshot().getSnapshotContents().readFully());
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+              // Write data
+              res.getSnapshot().getSnapshotContents().writeBytes(data);
+
+              // Commit and close
+              Games.Snapshots.commitAndClose(gHelper.getApiClient(), res.getSnapshot(), SnapshotMetadataChange.EMPTY_CHANGE);
+            }
+          }
+        }
+    );
+  }
+
+  private void onStateLoaded(Snapshots.OpenSnapshotResult result) {
+    if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+      try {
+        onStateLoadedBehaviour(result.getSnapshot().getSnapshotContents().readFully());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -284,24 +374,29 @@ public abstract class BaseGServiceApplication extends AndroidApplication
   public void onSignInSucceeded() {
     prefs.putBoolean("ALREADY_SIGNEDIN", true);
     prefs.flush();
+
     Games.Invitations.registerInvitationListener(gHelper.getApiClient(), this);
 
-    System.out.println("===> LOADING APPSTATE");
-    AppStateManager.load(gHelper.getApiClient(), APP_DATA_KEY).setResultCallback(
-        new ResultCallback<AppStateManager.StateResult>() {
+    System.out.println("===> LOADING SAVEDGAME");
+    Games.Snapshots.open(gHelper.getApiClient(), snapshotName, false).setResultCallback(
+        new ResultCallback<Snapshots.OpenSnapshotResult>() {
           @Override
-          public void onResult(AppStateManager.StateResult result) {
-            AppStateManager.StateConflictResult conflictResult = result.getConflictResult();
-            AppStateManager.StateLoadedResult loadedResult = result.getLoadedResult();
-            if (loadedResult != null) {
-              onStateLoaded(loadedResult.getStatus().getStatusCode(), loadedResult.getStateKey(), loadedResult.getLocalData());
-            } else if (conflictResult != null) {
-              onStateConflict(conflictResult);
+          public void onResult(Snapshots.OpenSnapshotResult result) {
+            int status = result.getStatus().getStatusCode();
+            switch (status) {
+              case GamesStatusCodes.STATUS_SNAPSHOT_NOT_FOUND:
+                migrateFromAppState();
+                break;
+              case GamesStatusCodes.STATUS_OK:
+                onStateLoaded(result);
+                break;
+              case GamesStatusCodes.STATUS_SNAPSHOT_CONFLICT:
+                onStateConflict(result);
+                break;
             }
           }
-        });
-
-
+        }
+    );
     if (gHelper.hasInvitation()) {
       invitationId = gHelper.getInvitationId();
     }
@@ -436,7 +531,7 @@ public abstract class BaseGServiceApplication extends AndroidApplication
   protected void onStart() {
     super.onStart();
     prefs = Gdx.app.getPreferences("GameOptions");
-    gHelper = new GServiceGameHelper(this, GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
+    gHelper = new GServiceGameHelper(this, GServiceGameHelper.CLIENT_SNAPSHOT | GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
     gHelper.setup(this);
 
     ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
@@ -572,6 +667,21 @@ public abstract class BaseGServiceApplication extends AndroidApplication
       });
     }
     gserviceSignIn();
+  }
+
+  public void gserviceDeleteSnapshot() {
+    System.out.println("GSERVICE: Going to delete savedgames");
+    Games.Snapshots.open(gHelper.getApiClient(), snapshotName, false).setResultCallback(
+        new ResultCallback<Snapshots.OpenSnapshotResult>() {
+          @Override
+          public void onResult(Snapshots.OpenSnapshotResult res) {
+            if (res.getStatus().getStatusCode() != GamesStatusCodes.STATUS_SNAPSHOT_NOT_FOUND) {
+              Games.Snapshots.delete(gHelper.getApiClient(), res.getSnapshot().getMetadata());
+              System.out.println("GSERVICE: SavedGames DELETED!");
+            }
+          }
+        }
+    );
   }
 
 }
