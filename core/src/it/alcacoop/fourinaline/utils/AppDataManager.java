@@ -76,8 +76,8 @@ public class AppDataManager {
     app_data.put("matchTo", hRemote.get("matchTo"));
     app_data.put("variant", hRemote.get("variant"));
 
-    ArrayList<String> local_played_list = jLocal.fromJson(ArrayList.class, hLocal.get("opponents"));
-    ArrayList<String> remote_played_list = jRemote.fromJson(ArrayList.class, hRemote.get("opponents"));
+    ArrayList<String> local_played_list = jLocal.fromJson(ArrayList.class, (hLocal.get("opponents").equals("{}") ? "" : hLocal.get("opponents")));
+    ArrayList<String> remote_played_list = jRemote.fromJson(ArrayList.class, (hRemote.get("opponents").equals("{}") ? "" : hRemote.get("opponents")));
     if (local_played_list.size() >= remote_played_list.size())
       app_data.put("opponents", hLocal.get("opponents"));
     else
