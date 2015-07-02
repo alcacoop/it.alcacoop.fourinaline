@@ -34,8 +34,6 @@
 package it.alcacoop.fourinaline;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -539,14 +537,6 @@ public abstract class BaseGServiceApplication extends AndroidApplication
     gHelper = new GServiceGameHelper(this, GServiceGameHelper.CLIENT_SNAPSHOT | GServiceGameHelper.CLIENT_APPSTATE | GServiceGameHelper.CLIENT_GAMES);
     gHelper.setup(this);
 
-    ActivityManager actvityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE);
-    List<RunningTaskInfo> taskInfos = actvityManager.getRunningTasks(3);
-    for (RunningTaskInfo runningTaskInfo : taskInfos) {
-      if (runningTaskInfo.baseActivity.getPackageName().contains("gms")) {
-        gserviceSignIn();
-        break;
-      }
-    }
     gHelper.onStart(this);
   }
 
